@@ -66,6 +66,9 @@ export default function AdminDashboard() {
   const [seeding, setSeeding]       = useState(false);
   const [seedResult, setSeedResult] = useState(null);
   const [seedError, setSeedError]   = useState(null);
+  const [seedingPosts, setSeedingPosts]       = useState(false);
+  const [seedPostsResult, setSeedPostsResult] = useState(null);
+  const [seedPostsError, setSeedPostsError]   = useState(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) { setLoading(false); return; }
@@ -93,6 +96,27 @@ export default function AdminDashboard() {
       setSeedError(err.message);
     }
     setSeeding(false);
+  }
+
+  async function handleSeedPosts() {
+    if (!window.confirm('Migrate the 24 static blog articles into Supabase? Existing slugs will be skipped.')) return;
+    setSeedingPosts(true); setSeedPostsResult(null); setSeedPostsError(null);
+    try {
+      const client = getSupabaseClient();
+      const { data: sessionData } = await client.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res   = await fetch('/api/admin/posts/seed', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const body  = await res.json();
+      if (!res.ok) { setSeedPostsError(body.error); setSeedingPosts(false); return; }
+      setSeedPostsResult(`Seeded ${body.data.created} articles. Skipped ${body.data.skipped} (already existed).`);
+      fetchCounts().then(setCounts).catch(() => {});
+    } catch (err) {
+      setSeedPostsError(err.message);
+    }
+    setSeedingPosts(false);
   }
 
   const n = (key) => loading ? '—' : String(counts?.[key] ?? 0);
@@ -194,6 +218,26 @@ export default function AdminDashboard() {
           </Button>
         </AdminCard>
       )}
+      {isSupabaseConfigured() && auth.isAdmin && (
+        <AdminCard style={{ borderColor: 'rgba(255,193,71,0.3)', marginTop: 20 }}>
+          <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 14, fontWeight: 700, color: '#ffc147', marginBottom: 8 }}>
+            📝 Seed Blog Articles from Static Data
+          </h3>
+          <p style={{ color: '#9fb3d4', fontSize: 13, lineHeight: 1.6, marginBottom: 14 }}>
+            One-time migration — copies the 24 static blog articles from <code>data/index.js</code> into Supabase.
+            Existing slugs are skipped so it&apos;s safe to run again.
+          </p>
+          {seedPostsError  && <ErrorBanner message={seedPostsError} />}
+          {seedPostsResult && (
+            <div style={{ background: 'rgba(0,208,132,0.1)', border: '1px solid rgba(0,208,132,0.3)', borderRadius: 8, padding: '10px 14px', color: '#00d084', fontSize: 13, marginBottom: 12 }}>
+              ✓ {seedPostsResult}
+            </div>
+          )}
+          <Button onClick={handleSeedPosts} disabled={seedingPosts} variant="secondary">
+            {seedingPosts ? 'Seeding…' : 'Seed Supabase with blog articles'}
+          </Button>
+        </AdminCard>
+      )}
     </AdminLayout>
   );
-}
+                                                                  }
