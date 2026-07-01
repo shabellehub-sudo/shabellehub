@@ -1,0 +1,137 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function role() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    function signedIn()  { return request.auth != null; }
+    function isAdmin()   { return signedIn() && role() == 'admin'; }
+    function isEditor()  { return signedIn() && role() in ['editor', 'admin']; }
+
+    // ── Users ────────────────────────────────────────────────────────────────
+    match /users/{uid} {
+      allow read:  if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // ── Tools ────────────────────────────────────────────────────────────────
+    match /tools/{id} {
+      allow read:           if resource.data.status == 'published' || isEditor();
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Posts ────────────────────────────────────────────────────────────────
+    match /posts/{id} {
+      allow read:           if resource.data.status == 'published' || isEditor();
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Categories ───────────────────────────────────────────────────────────
+    match /categories/{id} {
+      allow read:           if true;
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Tags ─────────────────────────────────────────────────────────────────
+    match /tags/{id} {
+      allow read:           if true;
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Authors ──────────────────────────────────────────────────────────────
+    match /authors/{id} {
+      allow read:           if true;
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Media ────────────────────────────────────────────────────────────────
+    match /media/{id} {
+      allow read:           if true;
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Settings (legacy singleton) ──────────────────────────────────────────
+    match /settings/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // ── Homepage CMS (singleton) ─────────────────────────────────────────────
+    match /homepage/{id} {
+      allow read:  if true;
+      allow write: if isEditor();
+    }
+
+    // ── Navigation CMS ───────────────────────────────────────────────────────
+    match /navigation/{id} {
+      allow read:  if true;
+      allow write: if isEditor();
+    }
+
+    // ── Footer CMS ───────────────────────────────────────────────────────────
+    match /footer/{id} {
+      allow read:  if true;
+      allow write: if isEditor();
+    }
+
+    // ── Site Settings ────────────────────────────────────────────────────────
+    match /site_settings/{id} {
+      allow read:  if true;
+      allow write: if isAdmin();
+    }
+
+    // ── Announcements ────────────────────────────────────────────────────────
+    match /announcements/{id} {
+      allow read:           if true;
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Pages ────────────────────────────────────────────────────────────────
+    match /pages/{id} {
+      allow read:  if true;
+      allow write: if isEditor();
+    }
+
+    // ── Affiliate Links (Phase 5A) ────────────────────────────────────────────
+    match /affiliate_links/{id} {
+      allow read:           if true;
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Newsletter Subscribers (Phase 7A) ─────────────────────────────────────
+    match /subscribers/{id} {
+      allow create: if true;       // public signup
+      allow read:   if isEditor(); // editor+ view list
+      allow update: if isEditor(); // status changes
+      allow delete: if isAdmin();  // admin only
+    }
+
+    // ── Newsletters — content/template documents (Phase 7B) ───────────────────
+    // Editors can create and update. Only admins can delete.
+    // No public read — email content is private.
+    match /newsletters/{id} {
+      allow read:           if isEditor();
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Newsletter Campaigns (Phase 7B) ──────────────────────────────────────
+    // Editors can create and update. Only admins can delete.
+    match /newsletter_campaigns/{id} {
+      allow read:           if isEditor();
+      allow create, update: if isEditor();
+      allow delete:         if isAdmin();
+    }
+
+    // ── Deny everything else ─────────────────────────────────────────────────
+    match /{document=**} { allow read, write: if false; }
+  }
+}
