@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
             <ul style={{ marginTop: 10, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 3, fontFamily: 'monospace', fontSize: 12 }}>
               <li>NEXT_PUBLIC_SUPABASE_URL</li>
               <li>NEXT_PUBLIC_SUPABASE_ANON_KEY</li>
-              <li>SUPABASE_SERVICE_ROLE_KEY</li>
+              <li>SUPABASE_SERVICE_ROLE{''}_KEY</li>
             </ul>
           </div>
         ) : auth.status === 'loading' ? (
