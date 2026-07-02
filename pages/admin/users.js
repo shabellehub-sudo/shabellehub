@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { AdminCard, Button, Select, ErrorBanner, EmptyState } from '../../components/admin/ui';
+import { AdminCard, Select, ErrorBanner, EmptyState } from '../../components/admin/ui';
 import { listCmsUsers, updateUserRole } from '../../lib/cms/adminUsers';
 import { useAuth } from '../../lib/cms/useAuth';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../lib/supabase';
+import { isSupabaseConfigured } from '../../lib/supabase';
 
 export default function AdminUsersPage() {
   const auth = useAuth();
@@ -13,7 +13,7 @@ export default function AdminUsersPage() {
   const [savingId, setSavingId] = useState(null);
 
   const load = useCallback(async () => {
-    if (!isFirebaseConfigured()) { setLoading(false); return; }
+    if (!isSupabaseConfigured()) { setLoading(false); return; }
     setLoading(true);
     const { data, error } = await listCmsUsers();
     setUsers(data || []);
@@ -32,6 +32,11 @@ export default function AdminUsersPage() {
     load();
   }
 
+  function formatDate(val) {
+    if (!val) return '—';
+    try { return new Date(val).toLocaleDateString(); } catch { return '—'; }
+  }
+
   return (
     <AdminLayout title="Admin Users" requiredRole="admin">
       <div style={{
@@ -46,12 +51,12 @@ export default function AdminUsersPage() {
 
       <ErrorBanner message={error} />
 
-      {!isFirebaseConfigured() ? (
+      {!isSupabaseConfigured() ? (
         <EmptyState message="No database connection." sub="Configure Supabase to manage users." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
       ) : users.length === 0 ? (
-        <EmptyState message="No users found." sub="Users appear here automatically after they be created in Firebase Auth." />
+        <EmptyState message="No users found." sub="Users appear here automatically after they are created in Supabase Auth." />
       ) : (
         <AdminCard style={{ padding: 0, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
@@ -67,7 +72,7 @@ export default function AdminUsersPage() {
               {users.map(u => (
                 <tr key={u.id} style={{ borderBottom: '1px solid #14213a' }}>
                   <td style={{ padding: '12px 16px', fontWeight: 600 }}>{u.email}</td>
-                  <td style={{ padding: '12px 16px', color: '#9fb3d4' }}>{u.display_name || '—'}</td>
+                  <td style={{ padding: '12px 16px', color: '#9fb3d4' }}>{u.name || u.display_name || '—'}</td>
                   <td style={{ padding: '12px 16px' }}>
                     <Select
                       value={u.role}
@@ -79,7 +84,7 @@ export default function AdminUsersPage() {
                       <option value="admin">Admin</option>
                     </Select>
                   </td>
-                  <td style={{ padding: '12px 16px', color: '#6b82a8' }}>{new Date(u.created_at).toLocaleDateString()}</td>
+                  <td style={{ padding: '12px 16px', color: '#6b82a8' }}>{formatDate(u.created_at)}</td>
                 </tr>
               ))}
             </tbody>
