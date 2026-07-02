@@ -40,7 +40,7 @@ export default function AdminUsersPage() {
       }}>
         New sign-ups default to <strong>editor</strong>. There is no self-service admin promotion —
         an existing admin must promote someone here. This list and every role change is verified
-        server-side in <code>pages/api/admin/users/**</code> using the Firebase Admin SDK;
+        server-side in <code>pages/api/admin/users/**</code> using the Supabase Admin SDK;
         it is not enforced by anything in this page&rsquo;s client-side code.
       </div>
 
