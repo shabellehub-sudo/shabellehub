@@ -47,7 +47,7 @@ export default function AdminUsersPage() {
       <ErrorBanner message={error} />
 
       {!isFirebaseConfigured() ? (
-        <EmptyState message="No database connection." sub="Configure Firebase to manage users." />
+        <EmptyState message="No database connection." sub="Configure Supabase to manage users." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
       ) : users.length === 0 ? (
