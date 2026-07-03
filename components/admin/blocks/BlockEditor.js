@@ -1,107 +1,253 @@
-// components/admin/blocks/ComparisonTableBlock.js
-const inp = {
-  background: '#080d1a', border: '1px solid #1a2d4a', borderRadius: 6,
-  padding: '6px 8px', fontSize: 12, color: '#e8f0ff', outline: 'none',
-  fontFamily: 'Inter, sans-serif', width: '100%', boxSizing: 'border-box',
+// components/admin/blocks/BlockEditor.js
+// Orchestrates all block types. No new npm packages — pure React + inline styles.
+
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { createBlock, BLOCK_MENU, BLOCK_TYPES } from '../../../lib/cms/blocks';
+
+// Block-type editors
+import ParagraphBlock        from './ParagraphBlock';
+import HeadingBlock          from './HeadingBlock';
+import ImageBlock            from './ImageBlock';
+import GalleryBlock          from './GalleryBlock';
+import TableBlock            from './TableBlock';
+import ComparisonTableBlock  from './ComparisonTableBlock';
+import YouTubeBlock          from './YouTubeBlock';
+import ProsConsBlock         from './ProsConsBlock';
+import QuoteBlock            from './QuoteBlock';
+import CalloutBlock          from './CalloutBlock';
+
+const EDITOR_MAP = {
+  [BLOCK_TYPES.PARAGRAPH]:        ParagraphBlock,
+  [BLOCK_TYPES.HEADING]:          HeadingBlock,
+  [BLOCK_TYPES.IMAGE]:            ImageBlock,
+  [BLOCK_TYPES.GALLERY]:          GalleryBlock,
+  [BLOCK_TYPES.TABLE]:            TableBlock,
+  [BLOCK_TYPES.COMPARISON_TABLE]: ComparisonTableBlock,
+  [BLOCK_TYPES.YOUTUBE]:          YouTubeBlock,
+  [BLOCK_TYPES.PROS_CONS]:        ProsConsBlock,
+  [BLOCK_TYPES.QUOTE]:            QuoteBlock,
+  [BLOCK_TYPES.CALLOUT]:          CalloutBlock,
+  [BLOCK_TYPES.DIVIDER]:          () => (
+    <div style={{ borderTop: '1px dashed #2a3d5c', margin: '4px 0', pointerEvents: 'none' }} />
+  ),
 };
-const btn = (accent) => ({
-  padding: '4px 10px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-  background: `rgba(${accent},0.08)`, border: `1px solid rgba(${accent},0.25)`,
-  color: `rgb(${accent})`,
+
+const BLOCK_LABELS = Object.fromEntries(BLOCK_MENU.map(b => [b.type, `${b.icon} ${b.label}`]));
+
+// ── Shared styles ─────────────────────────────────────────────────────────────
+const iconBtn = (color = '#6b82a8') => ({
+  background: 'none', border: 'none', color, cursor: 'pointer',
+  fontSize: 14, padding: '4px 6px', borderRadius: 4, lineHeight: 1,
+  fontFamily: 'Inter, sans-serif',
 });
 
-export default function ComparisonTableBlock({ block, onChange }) {
-  const columns = block.columns || ['Tool', 'Feature', 'Price'];
-  const rows    = block.rows    || [{ label: '', values: columns.map(() => ''), highlight: false }];
+// ── Single block wrapper ──────────────────────────────────────────────────────
+function BlockShell({ block, index, total, onUpdate, onRemove, onMove, onDuplicate, onToggleCollapse, dragHandleProps }) {
+  const BlockEditor = EDITOR_MAP[block.type];
+  const label       = BLOCK_LABELS[block.type] || block.type;
 
-  function update(key, val) { onChange({ ...block, [key]: val }); }
+  return (
+    <div
+      style={{
+        background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 10,
+        marginBottom: 8, overflow: 'hidden',
+        boxShadow: dragHandleProps?.isDragging ? '0 4px 20px rgba(0,0,0,0.4)' : 'none',
+      }}
+    >
+      {/* Header bar */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 6,
+        padding: '7px 10px', background: '#080d1a', borderBottom: block.collapsed ? 'none' : '1px solid #1a2d4a',
+        userSelect: 'none',
+      }}>
+        {/* Drag handle */}
+        <span
+          {...(dragHandleProps || {})}
+          title="Drag to reorder"
+          style={{ color: '#2a3d5c', cursor: 'grab', fontSize: 16, lineHeight: 1, padding: '0 2px' }}
+        >⠿</span>
 
-  function setColumn(i, val) {
-    const next = [...columns]; next[i] = val;
-    update('columns', next);
+        <span style={{ fontSize: 11, fontWeight: 700, color: '#6b82a8', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {label}
+        </span>
+
+        {/* Move up/down */}
+        <button style={iconBtn()} disabled={index === 0}       onClick={() => onMove(index, -1)} title="Move up">↑</button>
+        <button style={iconBtn()} disabled={index >= total - 1} onClick={() => onMove(index, +1)} title="Move down">↓</button>
+
+        {/* Duplicate */}
+        <button style={iconBtn()} onClick={() => onDuplicate(index)} title="Duplicate">⧉</button>
+
+        {/* Collapse / expand */}
+        <button style={iconBtn('#14FFF4')} onClick={() => onToggleCollapse(index)} title={block.collapsed ? 'Expand' : 'Collapse'}>
+          {block.collapsed ? '▸' : '▾'}
+        </button>
+
+        {/* Remove */}
+        <button style={iconBtn('#ff4d6d')} onClick={() => onRemove(index)} title="Remove block">×</button>
+      </div>
+
+      {/* Block content */}
+      {!block.collapsed && BlockEditor && (
+        <div style={{ padding: 14 }}>
+          <BlockEditor block={block} onChange={(updated) => onUpdate(index, updated)} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Add block menu ─────────────────────────────────────────────────────────────
+function AddBlockMenu({ onAdd }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  // Close on outside click
+  const handleBlur = useCallback((e) => {
+    if (ref.current && !ref.current.contains(e.relatedTarget)) setOpen(false);
+  }, []);
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'inline-block' }} onBlur={handleBlur}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          padding: '9px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+          background: 'rgba(20,255,244,0.08)', border: '1px solid rgba(20,255,244,0.25)', color: '#14FFF4',
+        }}
+      >
+        + Add Block
+      </button>
+
+      {open && (
+        <div style={{
+          position: 'absolute', top: '110%', left: 0, zIndex: 200,
+          background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 10,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+          display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2,
+          padding: 8, minWidth: 280,
+        }}>
+          {BLOCK_MENU.map(({ type, label, icon }) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => { onAdd(type); setOpen(false); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '8px 10px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                background: 'transparent', border: 'none', color: '#9fb3d4', textAlign: 'left',
+                transition: 'background 0.1s, color 0.1s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(20,255,244,0.08)'; e.currentTarget.style.color = '#14FFF4'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9fb3d4'; }}
+            >
+              <span style={{ fontSize: 16, width: 20, textAlign: 'center', flexShrink: 0 }}>{icon}</span>
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main BlockEditor ───────────────────────────────────────────────────────────
+export default function BlockEditor({ blocks = [], onChange }) {
+  // Drag state (simple index-based swap — no external DnD lib)
+  const dragIdx  = useRef(null);
+  const [dragOver, setDragOver] = useState(null);
+
+  // HTML5 native `draggable` intercepts touch events and blocks tapping/typing
+  // into inputs on mobile browsers. Only enable it on devices with a real
+  // mouse (pointer: fine); touch/mobile users reorder with the ↑ ↓ buttons.
+  const [canDrag, setCanDrag] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    setCanDrag(window.matchMedia('(pointer: fine)').matches);
+  }, []);
+
+  function update(index, updated) {
+    onChange(blocks.map((b, i) => i === index ? updated : b));
   }
-  function addColumn() {
-    const next = [...columns, `Feature ${columns.length}`];
-    update('columns', next);
-    update('rows', rows.map(r => ({ ...r, values: [...r.values, ''] })));
+  function remove(index) {
+    onChange(blocks.filter((_, i) => i !== index));
   }
-  function removeColumn(i) {
-    if (columns.length <= 1) return;
-    update('columns', columns.filter((_, ci) => ci !== i));
-    update('rows', rows.map(r => ({ ...r, values: r.values.filter((_, ci) => ci !== i) })));
-    if (block.highlightColumn === i) update('highlightColumn', null);
+  function add(type) {
+    onChange([...blocks, createBlock(type)]);
   }
-  function addRow() {
-    update('rows', [...rows, { label: '', values: columns.map(() => ''), highlight: false }]);
+  function move(index, dir) {
+    const target = index + dir;
+    if (target < 0 || target >= blocks.length) return;
+    const next = [...blocks];
+    [next[index], next[target]] = [next[target], next[index]];
+    onChange(next);
   }
-  function removeRow(i) {
-    update('rows', rows.filter((_, ri) => ri !== i));
+  function duplicate(index) {
+    const copy = JSON.parse(JSON.stringify(blocks[index]));
+    copy.id = `block_${Date.now()}_dup`;
+    const next = [...blocks];
+    next.splice(index + 1, 0, copy);
+    onChange(next);
   }
-  function setRow(i, key, val) {
-    update('rows', rows.map((r, ri) => ri === i ? { ...r, [key]: val } : r));
+  function toggleCollapse(index) {
+    onChange(blocks.map((b, i) => i === index ? { ...b, collapsed: !b.collapsed } : b));
   }
-  function setCell(ri, ci, val) {
-    update('rows', rows.map((r, i) =>
-      i === ri ? { ...r, values: r.values.map((v, j) => j === ci ? val : v) } : r
-    ));
+
+  // ── Drag-and-drop (HTML5, no lib) ──────────────────────────────────────────
+  function onDragStart(idx) { dragIdx.current = idx; }
+  function onDragEnd()      { dragIdx.current = null; setDragOver(null); }
+  function onDragOver(e, idx) {
+    e.preventDefault();
+    if (dragIdx.current !== null && dragIdx.current !== idx) setDragOver(idx);
+  }
+  function onDrop(idx) {
+    if (dragIdx.current === null || dragIdx.current === idx) return;
+    const next = [...blocks];
+    const [moved] = next.splice(dragIdx.current, 1);
+    next.splice(idx, 0, moved);
+    onChange(next);
+    dragIdx.current = null;
+    setDragOver(null);
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div>
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#6b82a8', textTransform: 'uppercase', letterSpacing: 0.5 }}>Title</span>
-        <input style={{ ...inp, marginTop: 5 }} value={block.title || ''} onChange={e => update('title', e.target.value)} placeholder="e.g. AI Writing Tools Comparison" />
-      </div>
+    <div>
+      {blocks.length === 0 && (
+        <div style={{ padding: '24px 0', textAlign: 'center', color: '#3d5470', fontSize: 13 }}>
+          No blocks yet. Click <strong>+ Add Block</strong> to start writing.
+        </div>
+      )}
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <button type="button" style={btn('20,255,244')} onClick={addColumn}>+ Column</button>
-        <button type="button" style={btn('20,255,244')} onClick={addRow}>+ Row</button>
-      </div>
+      {blocks.map((block, index) => (
+        <div
+          key={block.id || index}
+          draggable={canDrag}
+          onDragStart={() => onDragStart(index)}
+          onDragEnd={onDragEnd}
+          onDragOver={e => onDragOver(e, index)}
+          onDrop={() => onDrop(index)}
+          style={{
+            outline: dragOver === index ? '2px solid #14FFF4' : 'none',
+            borderRadius: 10,
+            transition: 'outline 0.1s',
+          }}
+        >
+          <BlockShell
+            block={block}
+            index={index}
+            total={blocks.length}
+            onUpdate={update}
+            onRemove={remove}
+            onMove={move}
+            onDuplicate={duplicate}
+            onToggleCollapse={toggleCollapse}
+          />
+        </div>
+      ))}
 
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-          <thead>
-            <tr>
-              <th style={{ padding: '4px', fontSize: 11, color: '#6b82a8', textAlign: 'left', width: 130 }}>Label</th>
-              {columns.map((col, i) => (
-                <th key={i} style={{ padding: '4px' }}>
-                  <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                    <input style={{ ...inp, fontWeight: 700 }} value={col} onChange={e => setColumn(i, e.target.value)} />
-                    <button type="button" onClick={() => update('highlightColumn', block.highlightColumn === i ? null : i)}
-                      title="Mark as best value"
-                      style={{ background: 'none', border: 'none', fontSize: 14, cursor: 'pointer', color: block.highlightColumn === i ? '#ffc147' : '#3d5470' }}>★</button>
-                    {columns.length > 1 && (
-                      <button type="button" onClick={() => removeColumn(i)} style={{ background: 'none', border: 'none', color: '#ff4d6d', cursor: 'pointer', fontSize: 14, flexShrink: 0 }}>×</button>
-                    )}
-                  </div>
-                </th>
-              ))}
-              <th style={{ width: 60, fontSize: 11, color: '#6b82a8' }}>Highlight</th>
-              <th style={{ width: 24 }} />
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, ri) => (
-              <tr key={ri} style={{ background: row.highlight ? 'rgba(20,255,244,0.03)' : 'transparent' }}>
-                <td style={{ padding: '4px', minWidth: 130 }}>
-                  <input style={{ ...inp, minWidth: 120 }} value={row.label || ''} onChange={e => setRow(ri, 'label', e.target.value)} placeholder="Row label" />
-                </td>
-                {(row.values || []).map((val, ci) => (
-                  <td key={ci} style={{ padding: '4px' }}>
-                    <input style={inp} value={val} onChange={e => setCell(ri, ci, e.target.value)} placeholder="…" />
-                  </td>
-                ))}
-                <td style={{ textAlign: 'center', padding: '4px' }}>
-                  <input type="checkbox" checked={!!row.highlight} onChange={e => setRow(ri, 'highlight', e.target.checked)} style={{ accentColor: '#14FFF4' }} />
-                </td>
-                <td>
-                  <button type="button" onClick={() => removeRow(ri)} style={{ background: 'none', border: 'none', color: '#ff4d6d', cursor: 'pointer', fontSize: 14 }}>×</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <AddBlockMenu onAdd={add} />
     </div>
   );
-    }
+                     }
