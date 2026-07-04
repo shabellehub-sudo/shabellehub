@@ -84,6 +84,12 @@ function renderMarkdown(md) {
       if (/^### (.+)$/.test(line)) return `<h3 style="font-family:Space Grotesk,sans-serif;font-size:17px;font-weight:700;margin:20px 0 10px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^### /, '')))}</h3>`;
       if (/^## (.+)$/.test(line))  return `<h2 style="font-family:Space Grotesk,sans-serif;font-size:20px;font-weight:700;margin:24px 0 12px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^## /, '')))}</h2>`;
       if (/^# (.+)$/.test(line))   return `<h2 style="font-family:Space Grotesk,sans-serif;font-size:clamp(20px,4.5vw,28px);font-weight:800;margin:28px 0 16px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^# /, '')))}</h2>`;
+      { const imgMatch = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+        if (imgMatch) {
+          const [, alt, src] = imgMatch;
+          return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" style="width:100%;height:auto;border-radius:12px;border:1px solid #1a2d4a;margin:20px 0;display:block" />`;
+        }
+      }
       if (/^- (.+)$/.test(line))   return `<li style="color:#6b82a8;font-size:14px;line-height:1.7;margin-bottom:6px">${inlineFormat(escapeHtml(line.replace(/^- /, '')))}</li>`;
       if (/^\d+\. (.+)$/.test(line)) return `<li style="color:#6b82a8;font-size:14px;line-height:1.7;margin-bottom:6px" data-ordered="true">${inlineFormat(escapeHtml(line.replace(/^\d+\. /, '')))}</li>`;
       if (line.trim() === '') return '';
