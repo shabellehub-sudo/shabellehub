@@ -325,7 +325,7 @@ export default function BlogPostPage({ post }) {
             {post.faqs.map((faq, i) => (
               <details key={i} style={{ marginBottom: 12, background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 10 }}>
                 <summary style={{ padding: '14px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 14.5, color: '#e8f0ff', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  {faq.question}
+                  {faq.question|| faq.q}
                   <span style={{ color: '#14FFF4', fontSize: 18, fontWeight: 400, flexShrink: 0 }}>+</span>
                 </summary>
                 <div style={{ padding: '0 18px 16px', color: '#9fb3d4', fontSize: 14, lineHeight: 1.7 }}>
