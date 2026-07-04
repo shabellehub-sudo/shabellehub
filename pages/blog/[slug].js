@@ -329,7 +329,7 @@ export default function BlogPostPage({ post }) {
                   <span style={{ color: '#14FFF4', fontSize: 18, fontWeight: 400, flexShrink: 0 }}>+</span>
                 </summary>
                 <div style={{ padding: '0 18px 16px', color: '#9fb3d4', fontSize: 14, lineHeight: 1.7 }}>
-                  {faq.answer}
+                  {faq.answer|| faq.a}
                 </div>
               </details>
             ))}
