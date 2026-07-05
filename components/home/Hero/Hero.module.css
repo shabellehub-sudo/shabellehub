@@ -1,0 +1,93 @@
+.hero {
+  position: relative;
+  padding: 60px 20px 48px;
+  text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.headline {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: var(--text-display-xl);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.headlineAccent {
+  color: var(--accent);
+  background: var(--gradient-aurora);
+  background-clip: text;
+  -webkit-background-clip: text;
+  /* Fallback: if background-clip:text isn't supported, .headlineAccent
+     still shows solid var(--accent) color set above. */
+}
+
+.subhead {
+  color: var(--muted);
+  font-size: 16px;
+  max-width: 520px;
+  margin: 0 auto 36px;
+  line-height: var(--leading-relaxed);
+}
+
+.ctas {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.scrollIndicator {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  color: var(--muted);
+  animation: bounce 2s ease-in-out infinite;
+  transition: color var(--duration-base) var(--ease-standard);
+}
+
+.scrollIndicator:hover {
+  color: var(--accent);
+}
+
+.scrollIndicator:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollIndicator {
+    animation: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 44px 16px 36px;
+  }
+}

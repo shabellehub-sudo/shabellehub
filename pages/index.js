@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { NextSeo } from 'next-seo';
 import { tools, blogPosts, toolsCount, categoriesCount, avgRating } from '../data';
@@ -9,6 +7,8 @@ import { TransparencyNotice } from '../components/compliance';
 import AdSlot from '../components/AdSlot';
 import NewsletterSignupForm from '../components/newsletter/SignupForm';
 import { getHomepageBlogProps } from '../lib/cms/homepageBlog';
+import Hero from '../components/home/Hero/Hero';
+import SectionHeader from '../components/shared/SectionHeader/SectionHeader';
 
 export async function getStaticProps() {
   try {
@@ -23,15 +23,8 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
   // Merge Firestore posts with static fallback — Firestore takes priority
   const livePosts = [...featuredPosts, ...recentPosts];
   const displayPosts = livePosts.length > 0 ? livePosts : blogPosts;
-  const [query, setQuery] = useState('');
-  const router = useRouter();
 
   const featuredTools = tools.filter(t => t.featured);
-
-  const handleSearch = () => {
-    const q = query.trim();
-    if (q) router.push(`/tools?q=${encodeURIComponent(q)}`);
-  };
 
   return (
     <>
@@ -60,90 +53,11 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
         dangerouslySetInnerHTML={{ __html: JSON.stringify(getWebsiteStructuredData()) }}
       />
 
-      {/* ── HERO ── */}
-      <section style={{
-        padding: '60px 20px 48px', textAlign: 'center',
-        background: 'radial-gradient(ellipse 90% 55% at 50% 0%, rgba(20,255,244,0.07), transparent 70%)',
-      }}>
-        <p style={{ color: '#14FFF4', fontSize: 11, fontWeight: 800, letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 14 }}>
-          The Ultimate 2026 AI Discovery Platform
-        </p>
-        <h1 style={{
-          fontFamily: 'Space Grotesk, sans-serif',
-          fontSize: 'clamp(28px, 7vw, 52px)',
-          fontWeight: 800, lineHeight: 1.12, marginBottom: 20, color: '#e8f0ff',
-        }}>
-          Discover the Best<br />
-          <span style={{ color: '#14FFF4' }}>AI Tools in One Place</span>
-        </h1>
-        <p style={{ color: '#6b82a8', fontSize: 16, maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.7 }}>
-          Compare, review, and explore the world&rsquo;s top AI tools for writing, coding,
-          productivity, design, video, automation, and more.
-        </p>
-
-        {/* Search */}
-        <div style={{
-          display: 'flex', background: '#0f1829', border: '1px solid #1a2d4a',
-          borderRadius: 14, padding: 5, maxWidth: 480, margin: '0 auto', gap: 5,
-        }}
-          role="search"
-        >
-          <input
-            type="search"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleSearch()}
-            placeholder="Search AI tools..."
-            aria-label="Search AI tools"
-            style={{
-              flex: 1, background: 'none', border: 'none', outline: 'none',
-              padding: '0 14px', color: '#e8f0ff', fontSize: 15, minHeight: 44,
-            }}
-          />
-          <button
-            onClick={handleSearch}
-            aria-label="Submit search"
-            style={{
-              background: '#14FFF4', color: '#080d1a', border: 'none',
-              borderRadius: 10, padding: '0 22px', fontWeight: 800, fontSize: 14, cursor: 'pointer',
-            }}
-          >
-            Search
-          </button>
-        </div>
-
-        {/* Primary CTAs */}
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginTop: 24 }}>
-          <Link href="/tools" style={{
-            display: 'inline-block', background: '#14FFF4', color: '#080d1a',
-            borderRadius: 12, padding: '13px 28px', fontWeight: 800, fontSize: 15, textDecoration: 'none',
-          }}>
-            Explore Tools →
-          </Link>
-          <Link href="/blog" style={{
-            display: 'inline-block', background: 'none', color: '#e8f0ff',
-            border: '1px solid #1a2d4a', borderRadius: 12, padding: '13px 28px',
-            fontWeight: 700, fontSize: 15, textDecoration: 'none',
-          }}>
-            Latest AI Reviews
-          </Link>
-        </div>
-
-        {/* Category pills */}
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', marginTop: 20 }}>
-          {['Writing', 'Coding', 'Images', 'Research', 'Video', 'Automation'].map(tag => (
-            <Link key={tag} href={`/tools?q=${tag}`} style={{
-              fontSize: 12, color: '#6b82a8', background: 'rgba(26,45,74,0.5)',
-              border: '1px solid #1a2d4a', borderRadius: 20, padding: '5px 14px', textDecoration: 'none',
-            }}>
-              {tag}
-            </Link>
-          ))}
-        </div>
-      </section>
+      {/* ── HERO (Phase 2: aurora mesh, animated search, floating cards) ── */}
+      <Hero tools={tools} />
 
       {/* ── STATS BAR ── */}
-      <div style={{ background: '#0c1522', borderTop: '1px solid #1a2d4a', borderBottom: '1px solid #1a2d4a', padding: '18px 20px' }}>
+      <div id="stats" style={{ background: '#0c1522', borderTop: '1px solid #1a2d4a', borderBottom: '1px solid #1a2d4a', padding: '18px 20px', scrollMarginTop: 20 }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'center', gap: 40, flexWrap: 'wrap' }}>
           {[
             { num: String(toolsCount),       label: 'Tools Reviewed' },
@@ -177,12 +91,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
 
       {/* ── FEATURED TOOLS ── */}
       <Section surface>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }}>
-          <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 20, fontWeight: 800 }}>⚡ Featured AI Tools</h2>
-          <Link href="/tools" style={{ fontSize: 13, color: '#6b82a8', textDecoration: 'none', border: '1px solid #1a2d4a', borderRadius: 8, padding: '6px 14px' }}>
-            View all →
-          </Link>
-        </div>
+        <SectionHeader icon="⚡" title="Featured AI Tools" ctaLabel="View all" ctaHref="/tools" />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: 16 }}>
           {featuredTools.map(tool => (
             <ToolCard
@@ -221,12 +130,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
 
       {/* ── LATEST BLOG ── */}
       <Section surface>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }}>
-          <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 20, fontWeight: 800 }}>📝 Latest AI Reviews</h2>
-          <Link href="/blog" style={{ fontSize: 13, color: '#6b82a8', textDecoration: 'none', border: '1px solid #1a2d4a', borderRadius: 8, padding: '6px 14px' }}>
-            All posts →
-          </Link>
-        </div>
+        <SectionHeader icon="📝" title="Latest AI Reviews" ctaLabel="All posts" ctaHref="/blog" />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
           {displayPosts.slice(0, 3).map(post => (
             <Link key={post.id || post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
@@ -307,4 +211,4 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
       </section>
     </>
   );
-                  }
+}

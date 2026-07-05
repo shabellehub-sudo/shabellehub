@@ -1,0 +1,177 @@
+.wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Aurora mesh ── */
+.aurora {
+  position: absolute;
+  inset: 0;
+}
+
+.blobCyan,
+.blobViolet {
+  position: absolute;
+  width: 60vw;
+  max-width: 640px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.16;
+  will-change: transform;
+}
+
+.blobCyan {
+  background: radial-gradient(circle, var(--accent), transparent 70%);
+  top: -10%;
+  left: -10%;
+  animation: driftCyan var(--duration-ambient, 8000ms) ease-in-out infinite;
+  animation-duration: 18s;
+}
+
+.blobViolet {
+  background: radial-gradient(circle, var(--accent-2), transparent 70%);
+  top: 0%;
+  right: -15%;
+  animation: driftViolet 22s ease-in-out infinite;
+}
+
+@keyframes driftCyan {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(6%, 8%); }
+}
+
+@keyframes driftViolet {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-8%, 6%); }
+}
+
+/* ── Desktop floating cards ── */
+.floaters {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .floaters {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+
+  .floater {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 10px 16px 10px 10px;
+    box-shadow: var(--shadow-md);
+    animation: bob 6s ease-in-out infinite;
+  }
+
+  .floater[data-index='0'] { top: 12%;  left: 2%;   animation-delay: 0s; }
+  .floater[data-index='1'] { top: 55%;  left: 0%;   animation-delay: 1.5s; }
+  .floater[data-index='2'] { top: 30%;  right: 1%;  animation-delay: 3s; }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+}
+
+.floaterInitial {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-aurora-strong);
+  color: var(--bg);
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.floaterBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.floaterName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.floaterMeta {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── Mobile strip ── */
+.strip {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  padding: 0 20px;
+  margin-top: 28px;
+}
+
+@media (min-width: 1024px) {
+  .strip {
+    display: none;
+  }
+}
+
+.stripItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px 6px 6px;
+}
+
+.stripInitial {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--gradient-aurora-strong);
+  color: var(--bg);
+  font-weight: 800;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stripName {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stripRating {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blobCyan, .blobViolet, .floater {
+    animation: none;
+  }
+}
