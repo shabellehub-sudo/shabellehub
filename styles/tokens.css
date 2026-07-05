@@ -1,0 +1,116 @@
+/* ============================================================
+   SHABELLE HUB — DESIGN SYSTEM TOKENS (Phase 1)
+   ------------------------------------------------------------
+   This file EXTENDS the existing :root block in styles/globals.css.
+   It does not redefine --accent, --bg, --card, --border, --text,
+   --muted, --surface, --red, --green, --gold — those already exist
+   and are untouched. Import this file AFTER globals.css.
+
+   Usage: add to pages/_app.js
+     import '../styles/globals.css';
+     import '../styles/tokens.css';
+   ============================================================ */
+
+:root {
+  /* ── SECONDARY ACCENT (new) ──────────────────────────────
+     Cyan stays primary (brand identity, do not change).
+     Violet is the duotone partner for gradients / glow only —
+     never used alone as a CTA color, so brand recognition
+     stays anchored to cyan. */
+  --accent-2: #6C5CFF;
+  --accent-2-dim: #4A3FC7;
+
+  /* Signature gradient — used for hero mesh, premium badges,
+     card hover glows. Two-hue, not a rainbow. */
+  --gradient-aurora: linear-gradient(135deg, rgba(20,255,244,0.16), rgba(108,92,255,0.12));
+  --gradient-aurora-strong: linear-gradient(135deg, rgba(20,255,244,0.35), rgba(108,92,255,0.28));
+  --glow-cyan: 0 0 40px rgba(20,255,244,0.25);
+  --glow-violet: 0 0 40px rgba(108,92,255,0.25);
+
+  /* ── SPACING SCALE (4px base) ──────────────────────────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ── RADIUS SCALE ─────────────────────────────────────── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* ── ELEVATION / SHADOW SYSTEM ──────────────────────────
+     Dark-theme shadows need to be darker + tighter than
+     light-theme defaults, with an optional accent-tinted
+     glow variant for interactive/featured elements. */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.45);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.55);
+  --shadow-focus: 0 0 0 3px rgba(20,255,244,0.35);
+
+  /* ── GLASS MORPHISM ──────────────────────────────────── */
+  --glass-bg: rgba(15,24,41,0.6);
+  --glass-border: rgba(255,255,255,0.08);
+  --glass-blur: blur(16px);
+
+  /* ── TYPE SCALE (fluid, clamp-based) ────────────────────
+     Display = Space Grotesk, Body/UI = Inter (already loaded
+     in pages/_document.js — no font changes needed). */
+  --text-display-xl: clamp(32px, 6vw, 56px);
+  --text-display-lg: clamp(26px, 4.5vw, 40px);
+  --text-display-md: clamp(20px, 3vw, 28px);
+  --text-body-lg: 17px;
+  --text-body-md: 15px;
+  --text-body-sm: 13px;
+  --text-caption: 11px;
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  /* ── MOTION TOKENS ───────────────────────────────────────
+     Paired durations/easings so every component animates in
+     the same "voice". Standard easing mimics Linear/Framer's
+     snappy-but-soft curve, not a generic ease-in-out. */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 450ms;
+  --duration-ambient: 8000ms;
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── LAYOUT ─────────────────────────────────────────────── */
+  --container-max: 1200px;
+  --container-narrow: 720px;
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+}
+
+/* Respect reduced motion globally — any component using the
+   ambient/duration tokens above must also honor this. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+    --duration-ambient: 0ms;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

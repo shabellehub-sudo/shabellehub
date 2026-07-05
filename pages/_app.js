@@ -6,6 +6,7 @@ import { defaultSEO } from '../lib/seo';
 import Analytics from '../components/Analytics';
 import AdSenseScript from '../components/AdSenseScript';
 import '../styles/globals.css';
+import '../styles/tokens.css';
 import AnnouncementBanner from '../components/AnnouncementBanner';
 
 export default function App({ Component, pageProps }) {
