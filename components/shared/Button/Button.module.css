@@ -26,6 +26,13 @@
 }
 
 /* ── Sizes ── */
+.sm {
+  font-size: var(--text-body-sm);
+  padding: 8px 16px;
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+}
+
 .md {
   font-size: var(--text-body-md);
   padding: 13px 28px;

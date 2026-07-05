@@ -2,13 +2,14 @@ import Link from 'next/link';
 import { NextSeo } from 'next-seo';
 import { tools, blogPosts, toolsCount, categoriesCount, avgRating } from '../data';
 import { getOrganizationStructuredData, getWebsiteStructuredData } from '../lib/seo';
-import { ToolCard, NewsletterForm, Section } from '../components/ui';
+import { NewsletterForm, Section } from '../components/ui';
 import { TransparencyNotice } from '../components/compliance';
 import AdSlot from '../components/AdSlot';
 import NewsletterSignupForm from '../components/newsletter/SignupForm';
 import { getHomepageBlogProps } from '../lib/cms/homepageBlog';
 import Hero from '../components/home/Hero/Hero';
 import SectionHeader from '../components/shared/SectionHeader/SectionHeader';
+import FeaturedTools from '../components/home/FeaturedTools/FeaturedTools';
 
 export async function getStaticProps() {
   try {
@@ -25,6 +26,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
   const displayPosts = livePosts.length > 0 ? livePosts : blogPosts;
 
   const featuredTools = tools.filter(t => t.featured);
+  const trendingTools = tools.filter(t => t.hot).sort((a, b) => b.rating - a.rating);
 
   return (
     <>
@@ -89,20 +91,28 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
         </div>
       </div>
 
-      {/* ── FEATURED TOOLS ── */}
-      <Section surface>
-        <SectionHeader icon="⚡" title="Featured AI Tools" ctaLabel="View all" ctaHref="/tools" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: 16 }}>
-          {featuredTools.map(tool => (
-            <ToolCard
-              key={tool.id}
-              tool={tool}
-              isFavorite={favorites.includes(tool.id)}
-              onToggleFavorite={toggleFavorite}
-            />
-          ))}
-        </div>
-      </Section>
+      {/* ── FEATURED TOOLS (Phase 3: redesigned cards) ── */}
+      <FeaturedTools
+        tools={featuredTools}
+        title="Featured AI Tools"
+        icon="⚡"
+        favorites={favorites}
+        onToggleFavorite={toggleFavorite}
+      />
+
+      {/* ── TRENDING NOW (Phase 3) ── */}
+      {trendingTools.length > 0 && (
+        <FeaturedTools
+          tools={trendingTools}
+          title="Trending Now"
+          icon="🔥"
+          ctaLabel="View all"
+          ctaHref="/tools"
+          favorites={favorites}
+          onToggleFavorite={toggleFavorite}
+          showRank
+        />
+      )}
 
       {/* ── NEWSLETTER ── */}
       <section style={{

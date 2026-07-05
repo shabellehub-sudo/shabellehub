@@ -1,0 +1,179 @@
+.cardLink {
+  display: block;
+  text-decoration: none;
+  border-radius: var(--radius-lg);
+  outline: none;
+}
+
+.cardLink:focus-visible .card {
+  box-shadow: var(--shadow-focus);
+}
+
+.card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+  overflow: hidden;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              transform var(--duration-base) var(--ease-standard),
+              box-shadow var(--duration-base) var(--ease-standard);
+}
+
+/* Top accent line — same "voice" as the Hero aurora, just quieter */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-aurora-strong);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+.cardHovered {
+  border-color: rgba(20, 255, 244, 0.35);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md), var(--glow-cyan);
+}
+
+.cardHovered::before {
+  opacity: 1;
+}
+
+.rank {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: var(--text-caption);
+  font-weight: 800;
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  background: var(--gradient-aurora-strong);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.identityText {
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: var(--text-body-md);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.category {
+  display: block;
+  color: var(--muted);
+  font-size: var(--text-caption);
+  margin-top: 1px;
+}
+
+.favoriteBtn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.favoriteBtn[data-active='true'] {
+  color: var(--red);
+}
+
+.badgeChip {
+  align-self: flex-start;
+}
+
+.desc {
+  color: var(--muted);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-relaxed);
+  flex: 1;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  font-size: var(--text-caption);
+  color: var(--muted);
+  background: rgba(26, 45, 74, 0.5);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 8px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(26, 45, 74, 0.6);
+  padding-top: var(--space-3);
+  margin-top: auto;
+}
+
+.price {
+  font-weight: 700;
+  font-size: var(--text-body-sm);
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .cardHovered {
+    transition: none;
+    transform: none;
+  }
+}
