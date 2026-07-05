@@ -10,6 +10,9 @@ import { getHomepageBlogProps } from '../lib/cms/homepageBlog';
 import Hero from '../components/home/Hero/Hero';
 import SectionHeader from '../components/shared/SectionHeader/SectionHeader';
 import FeaturedTools from '../components/home/FeaturedTools/FeaturedTools';
+import EditorsChoice from '../components/home/EditorsChoice/EditorsChoice';
+import Testimonials from '../components/home/Testimonials/Testimonials';
+import FAQ from '../components/home/FAQ/FAQ';
 
 export async function getStaticProps() {
   try {
@@ -113,6 +116,15 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
           showRank
         />
       )}
+
+      {/* ── EDITOR'S CHOICE (Phase 4) ── */}
+      <EditorsChoice tools={tools} />
+
+      {/* ── TESTIMONIALS (Phase 4) ── */}
+      <Testimonials />
+
+      {/* ── FAQ (Phase 4: schema markup) ── */}
+      <FAQ limit={5} />
 
       {/* ── NEWSLETTER ── */}
       <section style={{
