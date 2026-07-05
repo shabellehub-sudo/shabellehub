@@ -1,4 +1,4 @@
-// pages/admin/index.js — Dashboard with live Supabase counts + seed button
+ // pages/admin/index.js — Dashboard with live Supabase counts + seed button
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AdminLayout from '../../components/admin/AdminLayout';
@@ -240,4 +240,4 @@ export default function AdminDashboard() {
       )}
     </AdminLayout>
   );
-                                                                  }
+                                                     }
