@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Button from '../../shared/Button/Button';
 import HeroSearch from './HeroSearch';
-import HeroVisual from './HeroVisual';
+import HeroVisual, { HeroProofStrip } from './HeroVisual';
 import { fadeUp, staggerContainer } from '../../../lib/motion';
 import styles from './Hero.module.css';
 
@@ -31,6 +31,10 @@ export default function Hero({ tools = [] }) {
         animate="visible"
         variants={staggerContainer(0.12)}
       >
+        <motion.div variants={fadeUp}>
+          <HeroProofStrip tools={topFeatured} />
+        </motion.div>
+
         <motion.p className={styles.eyebrow} variants={fadeUp}>
           The Ultimate 2026 AI Discovery Platform
         </motion.p>

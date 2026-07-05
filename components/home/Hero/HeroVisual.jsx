@@ -21,35 +21,48 @@ export default function HeroVisual({ tools = [] }) {
         <span className={styles.blobViolet} />
       </div>
 
+      {/* Desktop: floating glass cards positioned around the hero.
+          This stays inside the absolute background layer since it's
+          meant to float freely around the copy, not push it. */}
       {tools.length > 0 && (
-        <>
-          {/* Desktop: floating glass cards positioned around the hero */}
-          <div className={styles.floaters}>
-            {tools.slice(0, 3).map((tool, i) => (
-              <div key={tool.id} className={styles.floater} data-index={i}>
-                <span className={styles.floaterInitial}>{tool.name.charAt(0)}</span>
-                <div className={styles.floaterBody}>
-                  <span className={styles.floaterName}>{tool.name}</span>
-                  <span className={styles.floaterMeta}>
-                    {tool.category} · ★ {tool.rating}
-                  </span>
-                </div>
+        <div className={styles.floaters}>
+          {tools.slice(0, 3).map((tool, i) => (
+            <div key={tool.id} className={styles.floater} data-index={i}>
+              <span className={styles.floaterInitial}>{tool.name.charAt(0)}</span>
+              <div className={styles.floaterBody}>
+                <span className={styles.floaterName}>{tool.name}</span>
+                <span className={styles.floaterMeta}>
+                  {tool.category} · ★ {tool.rating}
+                </span>
               </div>
-            ))}
-          </div>
-
-          {/* Mobile: compact strip, same data, no absolute positioning */}
-          <div className={styles.strip}>
-            {tools.slice(0, 3).map((tool) => (
-              <div key={tool.id} className={styles.stripItem}>
-                <span className={styles.stripInitial}>{tool.name.charAt(0)}</span>
-                <span className={styles.stripName}>{tool.name}</span>
-                <span className={styles.stripRating}>★ {tool.rating}</span>
-              </div>
-            ))}
-          </div>
-        </>
+            </div>
+          ))}
+        </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * HeroProofStrip — mobile-only compact row of the same featured tools.
+ * Rendered as a normal-flow sibling inside Hero's .content (NOT inside
+ * the absolutely-positioned HeroVisual .wrap) so it actually occupies
+ * space and pushes the eyebrow/headline down instead of floating over
+ * them. Previously this lived inside .wrap, which caused it to overlap
+ * the eyebrow text on mobile since .wrap is taken out of document flow.
+ */
+export function HeroProofStrip({ tools = [] }) {
+  if (tools.length === 0) return null;
+
+  return (
+    <div className={styles.strip} aria-hidden="true">
+      {tools.slice(0, 3).map((tool) => (
+        <div key={tool.id} className={styles.stripItem}>
+          <span className={styles.stripInitial}>{tool.name.charAt(0)}</span>
+          <span className={styles.stripName}>{tool.name}</span>
+          <span className={styles.stripRating}>★ {tool.rating}</span>
+        </div>
+      ))}
     </div>
   );
 }

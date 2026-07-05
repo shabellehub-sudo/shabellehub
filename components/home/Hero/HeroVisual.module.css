@@ -119,15 +119,17 @@
   white-space: nowrap;
 }
 
-/* ── Mobile strip ── */
+/* ── Mobile strip ──
+   Rendered by HeroProofStrip, as a normal-flow sibling inside Hero's
+   .content — not inside .wrap. No position/inset needed here since it
+   now sits in document flow like any other block. */
 .strip {
   display: flex;
   gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
-  position: relative;
   padding: 0 20px;
-  margin-top: 28px;
+  margin-bottom: 20px;
 }
 
 @media (min-width: 1024px) {
