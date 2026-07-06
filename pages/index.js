@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { NextSeo } from 'next-seo';
 import { tools, blogPosts, toolsCount, categoriesCount, avgRating } from '../data';
 import { getOrganizationStructuredData, getWebsiteStructuredData } from '../lib/seo';
@@ -10,9 +11,25 @@ import { getHomepageBlogProps } from '../lib/cms/homepageBlog';
 import Hero from '../components/home/Hero/Hero';
 import SectionHeader from '../components/shared/SectionHeader/SectionHeader';
 import FeaturedTools from '../components/home/FeaturedTools/FeaturedTools';
-import EditorsChoice from '../components/home/EditorsChoice/EditorsChoice';
-import Testimonials from '../components/home/Testimonials/Testimonials';
-import FAQ from '../components/home/FAQ/FAQ';
+
+// Phase 5: EditorsChoice / Testimonials / FAQ are below the fold on every
+// viewport, so they're loaded as separate client chunks instead of being
+// bundled into the initial homepage JS. `ssr: true` (the default) is kept
+// explicit here on purpose — FAQ emits FAQPage JSON-LD that must still be
+// present in the server-rendered HTML for search engines, so we only want
+// to trim the client bundle, not skip server rendering.
+const EditorsChoice = dynamic(() => import('../components/home/EditorsChoice/EditorsChoice'), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: 420 }} aria-hidden="true" />,
+});
+const Testimonials = dynamic(() => import('../components/home/Testimonials/Testimonials'), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: 360 }} aria-hidden="true" />,
+});
+const FAQ = dynamic(() => import('../components/home/FAQ/FAQ'), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: 400 }} aria-hidden="true" />,
+});
 
 export async function getStaticProps() {
   try {

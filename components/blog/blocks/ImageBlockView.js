@@ -16,6 +16,7 @@ export default function ImageBlockView({ block }) {
         src={block.url}
         alt={block.alt || ''}
         loading="lazy"
+        decoding="async"
         style={{ maxWidth: '100%', width: maxWidth, borderRadius: 10, display: 'block' }}
       />
       {block.caption && (

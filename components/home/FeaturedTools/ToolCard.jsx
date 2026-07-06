@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { StarRating } from '../../ui';
 import { openAffiliateLink } from '../../../lib/affiliate';
 import Badge from '../../shared/Badge/Badge';
@@ -16,8 +16,15 @@ import styles from './ToolCard.module.css';
  * Behavior parity with the original card is intentional: same favorite
  * toggle, same affiliate click handling (stopPropagation so it doesn't
  * trigger the card's Link), same navigation to /tools/[slug].
+ *
+ * Phase 5: wrapped in memo() — with 6+ cards per grid, toggling one
+ * favorite used to re-render every card in the section on every click.
+ * `tool` is a stable reference from data/index.js and `isFavorite` is a
+ * plain boolean, so a shallow-prop comparison is exactly what we want
+ * here (onToggleFavorite must stay a stable function reference from the
+ * parent — see the useCallback in pages/_app.js).
  */
-export default function ToolCard({ tool, isFavorite, onToggleFavorite, rank }) {
+function ToolCard({ tool, isFavorite, onToggleFavorite, rank }) {
   const [hovered, setHovered] = useState(false);
 
   const handleFavorite = (e) => {
@@ -97,3 +104,6 @@ export default function ToolCard({ tool, isFavorite, onToggleFavorite, rank }) {
     </Link>
   );
 }
+
+export default memo(ToolCard);
+

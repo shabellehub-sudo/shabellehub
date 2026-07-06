@@ -297,6 +297,8 @@ export default function BlogPostPage({ post }) {
           <img
             src={post.featured_image_url}
             alt={post.featured_image_alt || post.title}
+            fetchPriority="high"
+            decoding="async"
             style={{ width: '100%', borderRadius: 14, marginBottom: 28, objectFit: 'cover', maxHeight: 420 }}
           />
         )}

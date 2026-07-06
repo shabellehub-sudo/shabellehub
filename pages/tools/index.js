@@ -6,6 +6,7 @@ import { ToolCard, PageTitle } from '../../components/ui';
 import { EditorialResponsibilityNotice } from '../../components/eeat';
 import { ContentUpdateNotice } from '../../components/compliance';
 import { categoryToSlug } from '../../lib/categories';
+import useDebounce from '../../hooks/useDebounce';
 import Link from 'next/link';
 
 // FIX #9: role=tab buttons now have proper aria-selected and the container
@@ -21,6 +22,11 @@ export default function ToolsPage({ favorites = [], toggleFavorite }) {
   const [sort,      setSort]      = useState('rating');
   const [mounted,   setMounted]   = useState(false);
 
+  // Phase 5: the input itself stays bound to `search` so typing feels
+  // instant, but the 60+ tool filter/sort below only runs against the
+  // debounced value — same pattern already used in HeroSearch.
+  const debouncedSearch = useDebounce(search, 200);
+
   useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
@@ -32,7 +38,7 @@ export default function ToolsPage({ favorites = [], toggleFavorite }) {
 
   const filtered = useMemo(() => {
     let list = tools.filter(t => {
-      const q = search.toLowerCase();
+      const q = debouncedSearch.toLowerCase();
       const matchSearch = !q ||
         t.name.toLowerCase().includes(q) ||
         t.desc.toLowerCase().includes(q) ||
@@ -56,7 +62,7 @@ export default function ToolsPage({ favorites = [], toggleFavorite }) {
     ];
 
     return list;
-  }, [search, activeCat, sort, favorites, mounted]);
+  }, [debouncedSearch, activeCat, sort, favorites, mounted]);
 
   // FIX #8/#18: no brand suffix — titleTemplate appends it
   const seoTitle =

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { DefaultSeo } from 'next-seo';
 import { Navbar, Footer } from '../components/Layout';
@@ -35,10 +35,14 @@ export default function App({ Component, pageProps }) {
     } catch { /* fail silently */ }
   }, [favorites, isMounted]);
 
-  const toggleFavorite = (id) =>
+  // Phase 5: stable reference so memo(ToolCard) actually skips re-renders.
+  // Uses the functional setState form, so it never needs `favorites` as a
+  // dependency and never changes identity across renders.
+  const toggleFavorite = useCallback((id) => {
     setFavorites(prev =>
       prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
     );
+  }, []);
 
   const favoriteCount = isMounted ? favorites.length : 0;
 

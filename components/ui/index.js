@@ -1,4 +1,4 @@
-import { useState, useId } from 'react';
+import { useState, useId, memo } from 'react';
 import Link from 'next/link';
 // FIXED: was '../lib/affiliate' (wrong — resolves to components/lib/affiliate which doesn't exist)
 // Correct relative path from components/ui/ up two levels to lib/
@@ -70,7 +70,12 @@ export function Badge({ text, variant = 'default' }) {
 // Clicking the card body now navigates to /tools/[slug] via a Link wrapper.
 // The save bookmark button and "Try Free" button use stopPropagation so they
 // don't trigger the Link navigation.
-export function ToolCard({ tool, isFavorite, onToggleFavorite }) {
+// Phase 5: wrapped in memo() below — the /tools directory page can render
+// 60+ of these at once, and toggling one favorite used to re-render all
+// of them. `tool` is a stable reference and `isFavorite` a plain boolean,
+// so shallow-prop memo is a direct win (onToggleFavorite is memoized with
+// useCallback in pages/_app.js so its reference stays stable too).
+function ToolCardBase({ tool, isFavorite, onToggleFavorite }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -184,6 +189,8 @@ export function ToolCard({ tool, isFavorite, onToggleFavorite }) {
     </div>
   );
 }
+
+export const ToolCard = memo(ToolCardBase);
 
 // ─── NEWSLETTER FORM ──────────────────────────────────────────────────────────
 export function NewsletterForm() {
