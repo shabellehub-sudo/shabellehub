@@ -21,7 +21,7 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   overflow-x: hidden;
   min-height: 100vh;
 }
@@ -87,7 +87,7 @@ input, textarea, select { font-family: inherit; }
   font-size: 14px;
   text-decoration: none;
   transition: top 0.15s ease;
-  font-family: Inter, sans-serif;
+  font-family: var(--font-body);
 }
 .skip-link:focus,
 .skip-link:focus-visible {

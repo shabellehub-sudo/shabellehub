@@ -9,13 +9,14 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* Preconnect — eliminates DNS + TLS latency for Google Fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
+        {/*
+          Google Fonts <link> removed (Phase 5 perf fix): this was an
+          external, render-blocking stylesheet request (~150ms, flagged
+          by PageSpeed as "Render-blocking requests" + a multi-hop
+          "Network dependency tree"). Fonts are now self-hosted via
+          next/font/google — see lib/fonts.js — with zero external
+          requests and no render-blocking behavior.
+        */}
         <link rel="icon"             href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <meta name="theme-color"     content="#080d1a" />

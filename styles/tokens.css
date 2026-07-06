@@ -12,6 +12,17 @@
    ============================================================ */
 
 :root {
+  /* ── FONTS (Phase 5 perf fix) ─────────────────────────────
+     Previously every component hardcoded 'Space Grotesk'/'Inter'
+     as literal font-family strings, loaded via a render-blocking
+     <link rel="stylesheet"> to fonts.googleapis.com in _document.js.
+     Now fonts are self-hosted via next/font/google (see lib/fonts.js),
+     which exposes them as CSS variables (--font-space-grotesk,
+     --font-inter) set on a wrapper in _app.js. These two tokens are
+     the single place components should reference going forward. */
+  --font-heading: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+
   /* ── SECONDARY ACCENT (new) ──────────────────────────────
      Cyan stays primary (brand identity, do not change).
      Violet is the duotone partner for gradients / glow only —

@@ -54,7 +54,7 @@
   position: absolute;
   top: var(--space-3);
   right: var(--space-3);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-heading);
   font-size: var(--text-caption);
   font-weight: 800;
   color: var(--muted);
@@ -87,7 +87,7 @@
   justify-content: center;
   font-size: 16px;
   font-weight: 800;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-heading);
 }
 
 .identityText {
@@ -102,7 +102,7 @@
 }
 
 .name {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-heading);
   font-size: var(--text-body-md);
   font-weight: 700;
   color: var(--text);

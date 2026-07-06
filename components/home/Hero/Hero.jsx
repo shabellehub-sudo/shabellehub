@@ -39,11 +39,21 @@ export default function Hero({ tools = [] }) {
           The Ultimate 2026 AI Discovery Platform
         </motion.p>
 
-        <motion.h1 className={styles.headline} variants={fadeUp}>
+        {/*
+          Plain h1, NOT motion.h1: Lighthouse flagged this as the LCP
+          element at 6.2s. It was wrapped in framer-motion starting at
+          opacity:0, so it stayed invisible until JS hydrated and ran
+          the animation — on a throttled connection that's a multi-second
+          delay before the largest above-the-fold content paints. A plain
+          element paints at full opacity immediately in the server-rendered
+          HTML; the fade-up motion now runs as a pure CSS animation
+          (see .headline in Hero.module.css) which doesn't need JS at all.
+        */}
+        <h1 className={styles.headline}>
           Discover the Best
           <br />
           <span className={styles.headlineAccent}>AI Tools in One Place</span>
-        </motion.h1>
+        </h1>
 
         <motion.p className={styles.subhead} variants={fadeUp}>
           Compare, review, and explore the world&rsquo;s top AI tools for writing, coding,

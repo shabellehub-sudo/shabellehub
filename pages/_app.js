@@ -8,6 +8,7 @@ import AdSenseScript from '../components/AdSenseScript';
 import '../styles/globals.css';
 import '../styles/tokens.css';
 import AnnouncementBanner from '../components/AnnouncementBanner';
+import { spaceGrotesk, inter } from '../lib/fonts';
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
@@ -35,9 +36,10 @@ export default function App({ Component, pageProps }) {
     } catch { /* fail silently */ }
   }, [favorites, isMounted]);
 
-  // Phase 5: stable reference so memo(ToolCard) actually skips re-renders.
-  // Uses the functional setState form, so it never needs `favorites` as a
-  // dependency and never changes identity across renders.
+  // useCallback + functional setState updater ([] deps is safe here since we
+  // never read `favorites` directly in the closure) — this keeps the function
+  // reference stable across renders, which is required for React.memo on
+  // ToolCard to actually skip re-renders when an unrelated favorite toggles.
   const toggleFavorite = useCallback((id) => {
     setFavorites(prev =>
       prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
@@ -49,11 +51,11 @@ export default function App({ Component, pageProps }) {
   if (isAdminRoute) {
     // Admin pages manage their own layout via AdminLayout component
     return (
-      <>
+      <div className={`${spaceGrotesk.variable} ${inter.variable}`}>
         <DefaultSeo {...defaultSEO} />
         <Analytics />
         <Component {...pageProps} />
-      </>
+      </div>
     );
   }
 
@@ -63,7 +65,10 @@ export default function App({ Component, pageProps }) {
       <Analytics />
       <AdSenseScript />
       <AnnouncementBanner />
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div
+        className={`${spaceGrotesk.variable} ${inter.variable}`}
+        style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
+      >
         <Navbar favoriteCount={favoriteCount} />
         <main id="main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Component
