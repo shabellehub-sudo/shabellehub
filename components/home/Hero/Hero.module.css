@@ -81,12 +81,30 @@
   line-height: var(--leading-relaxed);
 }
 
+/*
+ * .searchSlot — own stacking context, ranked above .ctas. CSS
+ * animations on opacity/transform (like .reveal above) establish a
+ * stacking context of their own, which traps any z-index set inside
+ * (e.g. HeroSearch's dropdown) so it can only be compared against
+ * other elements within that same context — not against sibling divs
+ * like .ctas. Without this, whichever .reveal div comes later in the
+ * DOM (.ctas) paints on top regardless of the dropdown's own z-index.
+ * Explicitly ranking .searchSlot's own context above .ctas's fixes
+ * this at the source instead of just raising numbers inside HeroSearch.
+ */
+.searchSlot {
+  position: relative;
+  z-index: 5;
+}
+
 .ctas {
   display: flex;
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .scrollIndicator {

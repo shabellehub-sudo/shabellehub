@@ -19,6 +19,14 @@ import styles from './Hero.module.css';
  * JavaScript". The same stagger effect now runs as a pure CSS animation
  * (see .reveal in Hero.module.css), so there's no JS cost and no
  * hydration delay at all.
+ *
+ * Search dropdown fix: the div wrapping HeroSearch also gets
+ * .searchSlot, which sets its own stacking context (z-index: 5) ranked
+ * above .ctas (z-index: 1). Without this, both .reveal divs create
+ * their own stacking contexts (any CSS animation on opacity/transform
+ * does this) and the *later* one in the DOM — .ctas — would paint over
+ * the search suggestions dropdown regardless of the dropdown's own
+ * z-index, since that z-index is trapped inside its own div's context.
  */
 export default function Hero({ tools = [] }) {
   const topFeatured = tools
@@ -55,7 +63,7 @@ export default function Hero({ tools = [] }) {
           productivity, design, video, automation, and more.
         </p>
 
-        <div className={styles.reveal} style={{ '--reveal-delay': '0.36s' }}>
+        <div className={`${styles.reveal} ${styles.searchSlot}`} style={{ '--reveal-delay': '0.36s' }}>
           <HeroSearch tools={tools} />
         </div>
 
