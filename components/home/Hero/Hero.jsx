@@ -1,9 +1,7 @@
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Button from '../../shared/Button/Button';
 import HeroSearch from './HeroSearch';
 import HeroVisual, { HeroProofStrip } from './HeroVisual';
-import { fadeUp, staggerContainer } from '../../../lib/motion';
 import styles from './Hero.module.css';
 
 /**
@@ -14,6 +12,13 @@ import styles from './Hero.module.css';
  * keeps this component testable and keeps data-shape decisions at the
  * page level, per the single-responsibility split the rest of the
  * refactor follows.
+ *
+ * Framer Motion removed (Phase 5 perf follow-up): it was pulled into
+ * the bundle for a handful of simple fade-up-on-load animations on this
+ * one component — PageSpeed flagged that as "unused JavaScript"/"legacy
+ * JavaScript". The same stagger effect now runs as a pure CSS animation
+ * (see .reveal in Hero.module.css), so there's no JS cost and no
+ * hydration delay at all.
  */
 export default function Hero({ tools = [] }) {
   const topFeatured = tools
@@ -25,29 +30,19 @@ export default function Hero({ tools = [] }) {
     <section className={styles.hero}>
       <HeroVisual tools={topFeatured} />
 
-      <motion.div
-        className={styles.content}
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer(0.12)}
-      >
-        <motion.div variants={fadeUp}>
+      <div className={styles.content}>
+        <div className={styles.reveal} style={{ '--reveal-delay': '0s' }}>
           <HeroProofStrip tools={topFeatured} />
-        </motion.div>
+        </div>
 
-        <motion.p className={styles.eyebrow} variants={fadeUp}>
+        <p className={`${styles.eyebrow} ${styles.reveal}`} style={{ '--reveal-delay': '0.12s' }}>
           The Ultimate 2026 AI Discovery Platform
-        </motion.p>
+        </p>
 
         {/*
-          Plain h1, NOT motion.h1: Lighthouse flagged this as the LCP
-          element at 6.2s. It was wrapped in framer-motion starting at
-          opacity:0, so it stayed invisible until JS hydrated and ran
-          the animation — on a throttled connection that's a multi-second
-          delay before the largest above-the-fold content paints. A plain
-          element paints at full opacity immediately in the server-rendered
-          HTML; the fade-up motion now runs as a pure CSS animation
-          (see .headline in Hero.module.css) which doesn't need JS at all.
+          Plain h1, no reveal animation at all: Lighthouse flagged this
+          as the LCP element at 6.2s when it waited on JS. It now paints
+          at full opacity immediately in the server-rendered HTML.
         */}
         <h1 className={styles.headline}>
           Discover the Best
@@ -55,24 +50,24 @@ export default function Hero({ tools = [] }) {
           <span className={styles.headlineAccent}>AI Tools in One Place</span>
         </h1>
 
-        <motion.p className={styles.subhead} variants={fadeUp}>
+        <p className={`${styles.subhead} ${styles.reveal}`} style={{ '--reveal-delay': '0.24s' }}>
           Compare, review, and explore the world&rsquo;s top AI tools for writing, coding,
           productivity, design, video, automation, and more.
-        </motion.p>
+        </p>
 
-        <motion.div variants={fadeUp}>
+        <div className={styles.reveal} style={{ '--reveal-delay': '0.36s' }}>
           <HeroSearch tools={tools} />
-        </motion.div>
+        </div>
 
-        <motion.div className={styles.ctas} variants={fadeUp}>
+        <div className={`${styles.ctas} ${styles.reveal}`} style={{ '--reveal-delay': '0.48s' }}>
           <Button href="/tools" variant="primary" size="lg">
             Explore Tools →
           </Button>
           <Button href="/blog" variant="secondary" size="lg">
             Latest AI Reviews
           </Button>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       <a href="#stats" className={styles.scrollIndicator} aria-label="Scroll to statistics">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
