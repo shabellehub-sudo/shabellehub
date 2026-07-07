@@ -92,7 +92,7 @@
   box-shadow: var(--shadow-lg);
   list-style: none;
   overflow: hidden;
-  z-index: 20;
+  z-index: 200;
 }
 
 .suggestion {
