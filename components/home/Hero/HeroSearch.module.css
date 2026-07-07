@@ -2,6 +2,8 @@
   max-width: 480px;
   margin: 0 auto;
   position: relative;
+  z-index: 300;
+  isolation: isolate;
 }
 
 .searchBox {
@@ -92,7 +94,7 @@
   box-shadow: var(--shadow-lg);
   list-style: none;
   overflow: hidden;
-  z-index: 200;
+  z-index: 9999;
 }
 
 .suggestion {
