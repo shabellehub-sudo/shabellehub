@@ -9,6 +9,17 @@ const nextConfig = {
     ],
   },
 
+  // Perf (Phase 6): inlines critical, above-the-fold CSS directly into the
+  // HTML response and defers/loads the rest asynchronously, instead of
+  // shipping N render-blocking <link rel="stylesheet"> tags per page.
+  // PageSpeed flagged "Render-blocking requests" at ~300ms across 4 CSS
+  // chunks — this addresses that directly at build time via Critters.
+  // No component code, styles, or markup changes; purely how the existing
+  // CSS is delivered.
+  experimental: {
+    optimizeCss: true,
+  },
+
   async headers() {
     const csp = [
       "default-src 'self'",
