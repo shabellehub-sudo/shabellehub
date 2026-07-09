@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import { NextSeo } from 'next-seo';
 import { tools, blogPosts, toolsCount, categoriesCount, avgRating } from '../data';
 import { getOrganizationStructuredData, getWebsiteStructuredData } from '../lib/seo';
-import { NewsletterForm, Section } from '../components/ui';
+import { Section } from '../components/ui';
 import { TransparencyNotice } from '../components/compliance';
 import AdSlot from '../components/AdSlot';
 import NewsletterSignupForm from '../components/newsletter/SignupForm';
@@ -142,30 +142,6 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
 
       {/* ── FAQ (Phase 4: schema markup) ── */}
       <FAQ limit={5} />
-
-      {/* ── NEWSLETTER ── */}
-      <section style={{
-        padding: '52px 20px', textAlign: 'center',
-        background: 'linear-gradient(135deg, rgba(20,255,244,0.04), rgba(20,255,244,0.01))',
-        borderTop: '1px solid #1a2d4a', borderBottom: '1px solid #1a2d4a',
-      }}>
-        <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 22, fontWeight: 800, marginBottom: 10 }}>
-          Get the <span style={{ color: '#14FFF4' }}>Weekly AI Digest</span>
-        </h2>
-        <p style={{ color: '#6b82a8', fontSize: 14, maxWidth: 380, margin: '0 auto 26px', lineHeight: 1.6 }}>
-          New tool reviews, exclusive deals, and AI tips — delivered every Tuesday. Free forever.
-        </p>
-        <div style={{ maxWidth: 440, margin: '0 auto' }}>
-          <NewsletterForm />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 16, flexWrap: 'wrap' }}>
-          {['New tool alerts', 'Exclusive discounts', 'No spam, ever'].map(perk => (
-            <span key={perk} style={{ fontSize: 12, color: '#6b82a8', display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ color: '#14FFF4', fontWeight: 800 }} aria-hidden="true">✓</span> {perk}
-            </span>
-          ))}
-        </div>
-      </section>
 
       {/* ── LATEST BLOG ── */}
       <Section surface>
