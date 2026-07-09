@@ -114,3 +114,30 @@ textarea:focus-visible {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* ── Reveal-on-scroll (Phase 5 follow-up) ────────────────────────────────────
+   Replaces framer-motion's whileInView + fadeUp/staggerContainer variants
+   (see lib/motion.js) with plain CSS, driven by the useRevealOnScroll hook
+   (hooks/useRevealOnScroll.js) which just toggles .revealVisible via
+   IntersectionObserver. Used by EditorsChoice and Testimonials.
+   --reveal-delay lets a list stagger children (set inline per item). */
+.revealOnScroll {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+.revealOnScroll.revealVisible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revealOnScroll {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}

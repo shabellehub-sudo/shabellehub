@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import Badge from '../../shared/Badge/Badge';
 import Button from '../../shared/Button/Button';
 import GlassCard from '../../shared/GlassCard/GlassCard';
@@ -6,7 +5,7 @@ import BackgroundGlow from '../../shared/BackgroundGlow/BackgroundGlow';
 import SectionHeader from '../../shared/SectionHeader/SectionHeader';
 import { StarRating } from '../../ui';
 import { openAffiliateLink } from '../../../lib/affiliate';
-import { fadeUp, revealOnScroll } from '../../../lib/motion';
+import { useRevealOnScroll } from '../../../hooks/useRevealOnScroll';
 import styles from './EditorsChoice.module.css';
 
 /**
@@ -17,11 +16,19 @@ import styles from './EditorsChoice.module.css';
  *
  * Deliberately a different visual weight from FeaturedTools' grid —
  * one large asymmetric card, not another card-in-a-grid.
+ *
+ * Framer Motion removed (Phase 5 perf follow-up): this was the only
+ * scroll-triggered reveal on the page still pulling in the animation
+ * library. Same fade-up-on-scroll effect now runs on IntersectionObserver
+ * + CSS — see useRevealOnScroll and the .revealOnScroll rule in
+ * styles/globals.css.
  */
 export default function EditorsChoice({ tools = [] }) {
   const tool =
     tools.find((t) => t.badge === "Editor's Choice") ||
     [...tools].filter((t) => t.featured).sort((a, b) => b.rating - a.rating)[0];
+
+  const [revealRef, isVisible] = useRevealOnScroll();
 
   if (!tool) return null;
 
@@ -37,7 +44,7 @@ export default function EditorsChoice({ tools = [] }) {
       <div className={styles.inner}>
         <SectionHeader icon="🏆" title="Editor's Choice" />
 
-        <motion.div {...revealOnScroll} variants={fadeUp}>
+        <div ref={revealRef} className={`revealOnScroll ${isVisible ? 'revealVisible' : ''}`}>
           <GlassCard className={styles.card}>
             <div className={styles.visual} aria-hidden="true">
               <span className={styles.avatar}>{tool.name.charAt(0)}</span>
@@ -85,7 +92,7 @@ export default function EditorsChoice({ tools = [] }) {
               </div>
             </div>
           </GlassCard>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
