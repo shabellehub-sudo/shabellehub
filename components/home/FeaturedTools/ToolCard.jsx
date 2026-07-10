@@ -4,6 +4,7 @@ import { StarRating } from '../../ui';
 import { openAffiliateLink } from '../../../lib/affiliate';
 import Badge from '../../shared/Badge/Badge';
 import Button from '../../shared/Button/Button';
+import { useTrackEvent } from '../../../hooks/useTrackEvent';
 import styles from './ToolCard.module.css';
 
 /**
@@ -26,6 +27,7 @@ import styles from './ToolCard.module.css';
  */
 function ToolCard({ tool, isFavorite, onToggleFavorite, rank }) {
   const [hovered, setHovered] = useState(false);
+  const trackEvent = useTrackEvent();
 
   const handleFavorite = (e) => {
     e.preventDefault();
@@ -33,9 +35,14 @@ function ToolCard({ tool, isFavorite, onToggleFavorite, rank }) {
     onToggleFavorite?.(tool.id);
   };
 
+  const handleCardClick = () => {
+    trackEvent(tool.id, 'click');
+  };
+
   const handleCta = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    trackEvent(tool.id, 'click');
     openAffiliateLink(tool);
   };
 
@@ -46,6 +53,7 @@ function ToolCard({ tool, isFavorite, onToggleFavorite, rank }) {
       aria-label={`View ${tool.name} review`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={handleCardClick}
     >
       <div className={`${styles.card} ${hovered ? styles.cardHovered : ''}`}>
         {typeof rank === 'number' && <span className={styles.rank}>#{rank}</span>}

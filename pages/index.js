@@ -10,7 +10,9 @@ import { TransparencyNotice } from '../components/compliance';
 import AdSlot from '../components/AdSlot';
 import NewsletterSignupForm from '../components/newsletter/SignupForm';
 import { getHomepageBlogProps } from '../lib/cms/homepageBlog';
+import { getTrendingThisWeek, getFastestGrowing } from '../lib/trending';
 import Hero from '../components/home/Hero/Hero';
+import TrendingSection from '../components/home/TrendingSection/TrendingSection';
 import SectionHeader from '../components/shared/SectionHeader/SectionHeader';
 import FeaturedTools from '../components/home/FeaturedTools/FeaturedTools';
 
@@ -35,14 +37,27 @@ const FAQ = dynamic(() => import('../components/home/FAQ/FAQ'), {
 
 export async function getStaticProps() {
   try {
-    const blogProps = await getHomepageBlogProps();
-    return { props: { ...blogProps }, revalidate: 60 };
+    const [blogProps, trendingThisWeek, fastestGrowing] = await Promise.all([
+      getHomepageBlogProps(),
+      getTrendingThisWeek({ limit: 6 }),
+      getFastestGrowing({ limit: 6 }),
+    ]);
+    return {
+      props: { ...blogProps, trendingThisWeek, fastestGrowing },
+      // Shorter revalidate than the blog content (60s): trending is
+      // meant to feel current. 5 minutes balances that against not
+      // hammering the DB with aggregation queries on every request.
+      revalidate: 300,
+    };
   } catch {
-    return { props: { featuredPosts: [], recentPosts: [] }, revalidate: 30 };
+    return {
+      props: { featuredPosts: [], recentPosts: [], trendingThisWeek: [], fastestGrowing: [] },
+      revalidate: 30,
+    };
   }
 }
 
-export default function HomePage({ favorites = [], toggleFavorite, featuredPosts = [], recentPosts = [] }) {
+export default function HomePage({ favorites = [], toggleFavorite, featuredPosts = [], recentPosts = [], trendingThisWeek = [], fastestGrowing = [] }) {
   // Merge Firestore posts with static fallback — Firestore takes priority
   const livePosts = [...featuredPosts, ...recentPosts];
   const displayPosts = livePosts.length > 0 ? livePosts : blogPosts;
@@ -131,19 +146,14 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
         onToggleFavorite={toggleFavorite}
       />
 
-      {/* ── TRENDING NOW (Phase 3) ── */}
-      {trendingTools.length > 0 && (
-        <FeaturedTools
-          tools={trendingTools}
-          title="Trending Now"
-          icon="🔥"
-          ctaLabel="View all"
-          ctaHref="/tools"
-          favorites={favorites}
-          onToggleFavorite={toggleFavorite}
-          showRank
-        />
-      )}
+      {/* ── TRENDING (real click data, falls back to editor picks) ── */}
+      <TrendingSection
+        trendingThisWeek={trendingThisWeek}
+        fastestGrowing={fastestGrowing}
+        fallbackTools={trendingTools}
+        favorites={favorites}
+        onToggleFavorite={toggleFavorite}
+      />
 
       {/* ── EDITOR'S CHOICE (Phase 4) ── */}
       <EditorsChoice tools={tools} />
