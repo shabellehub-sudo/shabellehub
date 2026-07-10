@@ -32,11 +32,21 @@ export default function HeroSearch({ tools = [] }) {
     }
   }, []);
 
-  // Global "/" shortcut to focus search, unless already typing somewhere.
+  // Global "/" and Cmd+K / Ctrl+K shortcuts to focus search, unless
+  // already typing somewhere. Cmd+K also prevents the browser's default
+  // (e.g. address bar focus in some browsers) since it's a more
+  // "claimed" shortcut than plain "/".
   useEffect(() => {
     const onKeyDown = (e) => {
       const tag = document.activeElement?.tagName;
       const isTyping = tag === 'INPUT' || tag === 'TEXTAREA';
+      const isCmdK = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k';
+
+      if (isCmdK) {
+        e.preventDefault();
+        inputRef.current?.focus();
+        return;
+      }
       if (e.key === '/' && !isTyping) {
         e.preventDefault();
         inputRef.current?.focus();
@@ -141,7 +151,7 @@ export default function HeroSearch({ tools = [] }) {
           className={styles.input}
         />
         {!query && (
-          <kbd className={styles.shortcut} aria-hidden="true">/</kbd>
+          <kbd className={styles.shortcut} aria-hidden="true" title="Press / or ⌘K to search">/</kbd>
         )}
         <button
           onClick={() => runSearch(query)}
