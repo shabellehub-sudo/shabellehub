@@ -5,6 +5,7 @@ import { tools, blogPosts, toolsCount, categoriesCount, avgRating } from '../dat
 import { getOrganizationStructuredData, getWebsiteStructuredData } from '../lib/seo';
 import { Section } from '../components/ui';
 import AnimatedCounter from '../components/shared/AnimatedCounter/AnimatedCounter';
+import BlogCardSkeleton from '../components/shared/BlogCardSkeleton/BlogCardSkeleton';
 import { TransparencyNotice } from '../components/compliance';
 import AdSlot from '../components/AdSlot';
 import NewsletterSignupForm from '../components/newsletter/SignupForm';
@@ -45,6 +46,13 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
   // Merge Firestore posts with static fallback — Firestore takes priority
   const livePosts = [...featuredPosts, ...recentPosts];
   const displayPosts = livePosts.length > 0 ? livePosts : blogPosts;
+  // Always false today: posts arrive via getStaticProps (server-rendered),
+  // so there's no client fetch moment to show a skeleton during. Kept as
+  // a named constant (not just deleting the branch) so BlogCardSkeleton
+  // is a one-line flip away from working once /blog gains client-side
+  // pagination or filtering that re-fetches instead of filtering
+  // already-loaded data.
+  const blogLoading = false;
 
   const featuredTools = tools.filter(t => t.featured);
   const trendingTools = tools.filter(t => t.hot).sort((a, b) => b.rating - a.rating);
@@ -150,7 +158,9 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
       <Section surface>
         <SectionHeader icon="📝" title="Latest AI Reviews" ctaLabel="All posts" ctaHref="/blog" />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-          {displayPosts.slice(0, 3).map(post => (
+          {blogLoading
+            ? Array.from({ length: 3 }).map((_, i) => <BlogCardSkeleton key={i} />)
+            : displayPosts.slice(0, 3).map(post => (
             <Link key={post.id || post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
               <article style={{
                 background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14,
