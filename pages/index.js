@@ -4,6 +4,7 @@ import { NextSeo } from 'next-seo';
 import { tools, blogPosts, toolsCount, categoriesCount, avgRating } from '../data';
 import { getOrganizationStructuredData, getWebsiteStructuredData } from '../lib/seo';
 import { Section } from '../components/ui';
+import AnimatedCounter from '../components/shared/AnimatedCounter/AnimatedCounter';
 import { TransparencyNotice } from '../components/compliance';
 import AdSlot from '../components/AdSlot';
 import NewsletterSignupForm from '../components/newsletter/SignupForm';
@@ -82,13 +83,15 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
       <div id="stats" style={{ background: '#0c1522', borderTop: '1px solid #1a2d4a', borderBottom: '1px solid #1a2d4a', padding: '18px 20px', scrollMarginTop: 20 }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'center', gap: 40, flexWrap: 'wrap' }}>
           {[
-            { num: String(toolsCount),       label: 'Tools Reviewed' },
-            { num: String(categoriesCount),  label: 'Categories' },
-            { num: '100%',                   label: 'Independent' },
-            { num: `${avgRating}★`,          label: 'Avg Rating' },
+            { value: toolsCount,      decimals: 0, suffix: '',  label: 'Tools Reviewed' },
+            { value: categoriesCount, decimals: 0, suffix: '',  label: 'Categories' },
+            { value: 100,             decimals: 0, suffix: '%', label: 'Independent' },
+            { value: avgRating,       decimals: 1, suffix: '★', label: 'Avg Rating' },
           ].map(s => (
             <div key={s.label} style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 22, fontWeight: 800, color: '#14FFF4' }}>{s.num}</div>
+              <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 22, fontWeight: 800, color: '#14FFF4' }}>
+                <AnimatedCounter value={s.value} decimals={s.decimals} suffix={s.suffix} />
+              </div>
               <div style={{ fontSize: 11, color: '#6b82a8', marginTop: 2 }}>{s.label}</div>
             </div>
           ))}
