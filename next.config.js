@@ -52,6 +52,15 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/blog/claude-vs-chatgpt-complete-comparison",
+        destination: "/blog/claude-vs-chatgpt-2026",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
