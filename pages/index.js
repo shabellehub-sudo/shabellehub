@@ -6,9 +6,6 @@ import { getOrganizationStructuredData, getWebsiteStructuredData } from '../lib/
 import { Section } from '../components/ui';
 import AnimatedCounter from '../components/shared/AnimatedCounter/AnimatedCounter';
 import BlogCardSkeleton from '../components/shared/BlogCardSkeleton/BlogCardSkeleton';
-import { TransparencyNotice } from '../components/compliance';
-import AdSlot from '../components/AdSlot';
-import NewsletterSignupForm from '../components/newsletter/SignupForm';
 import { getHomepageBlogProps } from '../lib/cms/homepageBlog';
 import { getTrendingThisWeek, getFastestGrowing } from '../lib/trending';
 import Hero from '../components/home/Hero/Hero';
@@ -22,6 +19,23 @@ import FeaturedTools from '../components/home/FeaturedTools/FeaturedTools';
 // explicit here on purpose — FAQ emits FAQPage JSON-LD that must still be
 // present in the server-rendered HTML for search engines, so we only want
 // to trim the client bundle, not skip server rendering.
+// Below-the-fold, no critical above-the-fold content — trimmed from the
+// initial client bundle same as EditorsChoice/Testimonials/FAQ (Phase 5).
+const TransparencyNotice = dynamic(() => import('../components/compliance').then(mod => mod.TransparencyNotice), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: 120 }} aria-hidden="true" />,
+});
+const NewsletterSignupForm = dynamic(() => import('../components/newsletter/SignupForm'), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: 200 }} aria-hidden="true" />,
+});
+// Ad scripts are third-party/client-only — ssr:false avoids hydration
+// mismatches with injected ad markup.
+const AdSlot = dynamic(() => import('../components/AdSlot'), {
+  ssr: false,
+  loading: () => <div style={{ minHeight: 100 }} aria-hidden="true" />,
+});
+
 const EditorsChoice = dynamic(() => import('../components/home/EditorsChoice/EditorsChoice'), {
   ssr: true,
   loading: () => <div style={{ minHeight: 420 }} aria-hidden="true" />,
