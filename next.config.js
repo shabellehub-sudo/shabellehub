@@ -3,6 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
 
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       { protocol: 'https', hostname: 'shabellehub.com' },
       { protocol: 'https', hostname: '*.supabase.co' },
