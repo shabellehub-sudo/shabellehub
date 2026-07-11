@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { NextSeo } from 'next-seo';
-import { tools, blogPosts, toolsCount, categoriesCount, avgRating } from '../data';
+import { tools as staticTools, blogPosts } from '../data';
+import { listTools } from '../lib/cms/tools';
 import { getOrganizationStructuredData, getWebsiteStructuredData } from '../lib/seo';
 import { Section } from '../components/ui';
 import AnimatedCounter from '../components/shared/AnimatedCounter/AnimatedCounter';
@@ -51,37 +52,42 @@ const FAQ = dynamic(() => import('../components/home/FAQ/FAQ'), {
 
 export async function getStaticProps() {
   try {
-    const [blogProps, trendingThisWeek, fastestGrowing] = await Promise.all([
+    const [blogProps, trendingThisWeek, fastestGrowing, toolsRes] = await Promise.all([
       getHomepageBlogProps(),
       getTrendingThisWeek({ limit: 6 }),
       getFastestGrowing({ limit: 6 }),
+      listTools({ status: 'published', lim: 200 }),
     ]);
     return {
-      props: { ...blogProps, trendingThisWeek, fastestGrowing },
-      // Shorter revalidate than the blog content (60s): trending is
-      // meant to feel current. 5 minutes balances that against not
-      // hammering the DB with aggregation queries on every request.
+      props: {
+        ...blogProps,
+        trendingThisWeek,
+        fastestGrowing,
+        tools: toolsRes.error ? [] : toolsRes.data,
+      },
       revalidate: 300,
     };
   } catch {
     return {
-      props: { featuredPosts: [], recentPosts: [], trendingThisWeek: [], fastestGrowing: [] },
+      props: { featuredPosts: [], recentPosts: [], trendingThisWeek: [], fastestGrowing: [], tools: [] },
       revalidate: 30,
     };
   }
 }
 
-export default function HomePage({ favorites = [], toggleFavorite, featuredPosts = [], recentPosts = [], trendingThisWeek = [], fastestGrowing = [] }) {
+export default function HomePage({ favorites = [], toggleFavorite, featuredPosts = [], recentPosts = [], trendingThisWeek = [], fastestGrowing = [], tools: fetchedTools = [] }) {
   // Merge Firestore posts with static fallback — Firestore takes priority
   const livePosts = [...featuredPosts, ...recentPosts];
   const displayPosts = livePosts.length > 0 ? livePosts : blogPosts;
-  // Always false today: posts arrive via getStaticProps (server-rendered),
-  // so there's no client fetch moment to show a skeleton during. Kept as
-  // a named constant (not just deleting the branch) so BlogCardSkeleton
-  // is a one-line flip away from working once /blog gains client-side
-  // pagination or filtering that re-fetches instead of filtering
-  // already-loaded data.
   const blogLoading = false;
+
+  // Supabase-backed tools list — falls back to the static bundle if the DB
+  // fetch failed or returned nothing, same fail-soft pattern as blogPosts.
+  const tools = fetchedTools.length > 0 ? fetchedTools : staticTools;
+  const toolsCount = tools.length;
+  const categoriesCount = new Set(tools.map(t => t.category).filter(Boolean)).size;
+  const ratings = tools.map(t => t.rating).filter(r => typeof r === 'number');
+  const avgRating = ratings.length ? Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10 : 0;
 
   const featuredTools = tools.filter(t => t.featured);
   const trendingTools = tools.filter(t => t.hot).sort((a, b) => b.rating - a.rating);
