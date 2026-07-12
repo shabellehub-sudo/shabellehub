@@ -1,21 +1,28 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-import { siteConfig, toolsCount } from '../data';
+import { siteConfig, toolsCount as staticToolsCount } from '../data';
 import { teamMembers } from '../data/team';
 import { getOrganizationStructuredData } from '../lib/seo';
 import { formatDate } from '../lib/eeat';
 import { PageTitle } from '../components/ui';
 import { TeamMemberCard } from '../components/eeat';
+import { listTools } from '../lib/cms/tools';
 
-const FACTS = [
-  { label: 'Site name', value: 'Shabelle Hub' },
-  { label: 'Founded', value: formatDate('2024-01-15') },
-  { label: 'Ownership', value: 'Independently owned and operated; founder-led editorial team (see Our Team).' },
-  { label: 'Primary funding sources', value: 'Affiliate commissions from tool sign-ups and, where enabled, display advertising (Google AdSense and similar networks).' },
-  { label: 'Editorial control', value: 'All ratings, rankings, and written content are produced by our editorial team and are not paid for or approved by the companies we review.' },
-  { label: 'Tools currently reviewed', value: `${toolsCount}, each hands-on tested by a named author.` },
-  { label: 'Contact', value: 'Via the Contact page for editorial questions, corrections, and advertising inquiries.' },
-];
+export async function getStaticProps() {
+  try {
+    const toolsRes = await listTools({ status: 'published', lim: 200 });
+    if (toolsRes.error) throw new Error(toolsRes.error);
+    return {
+      props: { toolsCount: toolsRes.data.length },
+      revalidate: 3600,
+    };
+  } catch {
+    return {
+      props: { toolsCount: null },
+      revalidate: 60,
+    };
+  }
+}
 
 const POLICY_LINKS = [
   { href: '/editorial-standards',     label: 'Editorial Standards',     desc: 'How we decide what to publish and how we handle conflicts of interest.' },
@@ -28,7 +35,19 @@ const POLICY_LINKS = [
   { href: '/team',                    label: 'Our Team',                 desc: 'Who writes, reviews, and is accountable for this content.' },
 ];
 
-export default function SiteTransparencyPage() {
+export default function SiteTransparencyPage({ toolsCount: fetchedCount }) {
+  const toolsCount = fetchedCount ?? staticToolsCount;
+
+  const FACTS = [
+    { label: 'Site name', value: 'Shabelle Hub' },
+    { label: 'Founded', value: formatDate('2024-01-15') },
+    { label: 'Ownership', value: 'Independently owned and operated; founder-led editorial team (see Our Team).' },
+    { label: 'Primary funding sources', value: 'Affiliate commissions from tool sign-ups and, where enabled, display advertising (Google AdSense and similar networks).' },
+    { label: 'Editorial control', value: 'All ratings, rankings, and written content are produced by our editorial team and are not paid for or approved by the companies we review.' },
+    { label: 'Tools currently reviewed', value: `${toolsCount}, each hands-on tested by a named author.` },
+    { label: 'Contact', value: 'Via the Contact page for editorial questions, corrections, and advertising inquiries.' },
+  ];
+
   const canonical = `${siteConfig.url}/site-transparency`;
   const title = 'Site Transparency — Ownership, Funding & Editorial Process';
   const description = 'Who owns and runs Shabelle Hub, how the site is funded, who produces our content, and links to every policy that governs how we operate.';
