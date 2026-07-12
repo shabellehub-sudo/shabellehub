@@ -141,6 +141,21 @@
 
 @media (max-width: 480px) {
   .hero {
-    padding: 44px 16px 36px;
+    padding: 40px 16px 24px;
+  }
+
+  .subhead {
+    margin-bottom: 22px;
+  }
+
+  .ctas {
+    margin-top: 18px;
+  }
+
+  /* Decorative "scroll down" hint — useful as a desktop affordance,
+     but on mobile the visitor is already scrolling by default, so this
+     is ~60px of pure dead space pushing Featured Tools further down. */
+  .scrollIndicator {
+    display: none;
   }
 }

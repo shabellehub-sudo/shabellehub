@@ -135,7 +135,7 @@
 
 .desc {
   color: var(--muted);
-  font-size: var(--text-body-sm);
+  font-size: 14px; /* was var(--text-body-sm)/13px — bumped for mobile readability */
   line-height: var(--leading-relaxed);
   flex: 1;
 }

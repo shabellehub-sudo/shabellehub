@@ -1,0 +1,65 @@
+[1mdiff --git a/next.config.js b/next.config.js[m
+[1mindex 75d6c569..84ee3f63 100644[m
+[1m--- a/next.config.js[m
+[1m+++ b/next.config.js[m
+[36m@@ -9,13 +9,6 @@[m [mconst nextConfig = {[m
+     ],[m
+   },[m
+ [m
+[31m-  // Perf (Phase 6): inlines critical, above-the-fold CSS directly into the[m
+[31m-  // HTML response and defers/loads the rest asynchronously, instead of[m
+[31m-  // shipping N render-blocking <link rel="stylesheet"> tags per page.[m
+[31m-  // PageSpeed flagged "Render-blocking requests" at ~300ms across 4 CSS[m
+[31m-  // chunks — this addresses that directly at build time via Critters.[m
+[31m-  // No component code, styles, or markup changes; purely how the existing[m
+[31m-  // CSS is delivered.[m
+   experimental: {[m
+     optimizeCss: true,[m
+   },[m
+[36m@@ -23,14 +16,11 @@[m [mconst nextConfig = {[m
+   async headers() {[m
+     const csp = [[m
+       "default-src 'self'",[m
+[31m-      // Supabase Auth widgets aren't used; AdSense scripts[m
+       "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://adservice.google.com https://www.googleadservices.com https://apis.google.com",[m
+       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",[m
+       "font-src 'self' https://fonts.gstatic.com",[m
+       "img-src 'self' data: https:",[m
+[31m-      // AdSense frames[m
+       "frame-src 'self' https://accounts.google.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.youtube-nocookie.com https://www.youtube.com",[m
+[31m-      // Supabase (Auth, Postgres via PostgREST, Storage) API + realtime + Analytics[m
+       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://api.mailchimp.com https://api.convertkit.com https://pagead2.googlesyndication.com https://api.resend.com",[m
+       "frame-ancestors 'none'",[m
+       "form-action 'self'",[m
+[36m@@ -44,19 +34,25 @@[m [mconst nextConfig = {[m
+         headers: [[m
+           { key: 'X-Content-Type-Options',  value: 'nosniff' },[m
+           { key: 'X-Frame-Options',         value: 'DENY' },[m
+[31m-          { key: 'Referrer-Policy',          value: 'strict-origin-when-cross-origin' },[m
+[31m-          { key: 'X-DNS-Prefetch-Control',   value: 'on' },[m
+[31m-          { key: 'Permissions-Policy',       value: 'camera=(), microphone=(), geolocation=()' },[m
+[31m-          { key: 'Content-Security-Policy',  value: csp },[m
+[32m+[m[32m          { key: 'Referrer-Policy',         value: 'strict-origin-when-cross-origin' },[m
+[32m+[m[32m          { key: 'X-DNS-Prefetch-Control',  value: 'on' },[m
+[32m+[m[32m          { key: 'Permissions-Policy',      value: 'camera=(), microphone=(), geolocation=()' },[m
+[32m+[m[32m          { key: 'Content-Security-Policy', value: csp },[m
+         ],[m
+       },[m
+     ];[m
+   },[m
+[32m+[m
+   async redirects() {[m
+     return [[m
+       {[m
+[31m-        source: "/blog/claude-vs-chatgpt-complete-comparison",[m
+[31m-        destination: "/blog/claude-vs-chatgpt-2026",[m
+[32m+[m[32m        source: '/blog/claude-vs-chatgpt-complete-comparison',[m
+[32m+[m[32m        destination: '/blog/claude-vs-chatgpt-2026',[m
+[32m+[m[32m        permanent: true,[m
+[32m+[m[32m      },[m
+[32m+[m[32m      {[m
+[32m+[m[32m        source: '/blog/how-to-write-better-ai-prompts',[m
+[32m+[m[32m        destination: '/blog/ai-prompt-engineering-guide',[m
+         permanent: true,[m
+       },[m
+     ];[m
