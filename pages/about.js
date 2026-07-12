@@ -1,15 +1,39 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import { TransparencyNotice } from '../components/compliance';
-import { toolsCount, categoriesCount } from '../data';
+import { toolsCount as staticToolsCount, categoriesCount as staticCategoriesCount } from '../data';
+import { listTools } from '../lib/cms/tools';
 
-const VALUES = [
-  { icon: '🛡️', title: 'Editorial Independence',  desc: 'No tool pays to be featured. Our ratings reflect hands-on testing only — see how below.' },
-  { icon: '📊', title: 'Honest Comparisons',        desc: 'Side-by-side pricing, features, and genuine pros & cons for every tool we cover.' },
-  { icon: '📂', title: 'Curated, Not Comprehensive', desc: `We'd rather review ${toolsCount} tools properly than list hundreds we haven't tested.` },
-];
+export async function getStaticProps() {
+  try {
+    const toolsRes = await listTools({ status: 'published', lim: 200 });
+    if (toolsRes.error) throw new Error(toolsRes.error);
+    const tools = toolsRes.data;
+    return {
+      props: {
+        toolsCount: tools.length,
+        categoriesCount: new Set(tools.map(t => t.category).filter(Boolean)).size,
+      },
+      revalidate: 3600,
+    };
+  } catch {
+    return {
+      props: { toolsCount: null, categoriesCount: null },
+      revalidate: 60,
+    };
+  }
+}
 
-export default function AboutPage() {
+export default function AboutPage({ toolsCount: fetchedCount, categoriesCount: fetchedCategories }) {
+  const toolsCount = fetchedCount ?? staticToolsCount;
+  const categoriesCount = fetchedCategories ?? staticCategoriesCount;
+
+  const VALUES = [
+    { icon: '🛡️', title: 'Editorial Independence',  desc: 'No tool pays to be featured. Our ratings reflect hands-on testing only — see how below.' },
+    { icon: '📊', title: 'Honest Comparisons',        desc: 'Side-by-side pricing, features, and genuine pros & cons for every tool we cover.' },
+    { icon: '📂', title: 'Curated, Not Comprehensive', desc: `We'd rather review ${toolsCount} tools properly than list hundreds we haven't tested.` },
+  ];
+
   return (
     <>
       {/* FIX #8/#18: no brand suffix — titleTemplate handles it */}
