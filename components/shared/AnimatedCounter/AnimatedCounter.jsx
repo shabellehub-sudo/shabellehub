@@ -14,7 +14,7 @@ export default function AnimatedCounter({
   decimals = 0,
   suffix = '',
   prefix = '',
-  duration = 1200,
+  duration = 600,
   className,
 }) {
   const [ref, display] = useCountUp(value, { duration, decimals });
