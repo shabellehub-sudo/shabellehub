@@ -1,6 +1,23 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-import { toolsCount } from '../data';
+import { toolsCount as staticToolsCount } from '../data';
+import { listTools } from '../lib/cms/tools';
+
+export async function getStaticProps() {
+  try {
+    const toolsRes = await listTools({ status: 'published', lim: 200 });
+    if (toolsRes.error) throw new Error(toolsRes.error);
+    return {
+      props: { toolsCount: toolsRes.data.length },
+      revalidate: 3600,
+    };
+  } catch {
+    return {
+      props: { toolsCount: null },
+      revalidate: 60,
+    };
+  }
+}
 
 // ─── REVIEW METHODOLOGY ─────────────────────────────────────────────────────
 // E-E-A-T page: explains how tools are selected, how they're tested, and how
@@ -80,7 +97,9 @@ const PRICING_TIERS = [
   { tag: 'paid', label: 'Paid', desc: 'No functional free tier \u2014 a paid plan or trial is required to use the product meaningfully.' },
 ];
 
-export default function ReviewMethodologyPage() {
+export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
+  const toolsCount = fetchedCount ?? staticToolsCount;
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
