@@ -1,12 +1,31 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import { teamMembers } from '../data/team';
-import { siteConfig, toolsCount } from '../data';
+import { siteConfig, toolsCount as staticToolsCount } from '../data';
+import { listTools } from '../lib/cms/tools';
+
+export async function getStaticProps() {
+  try {
+    const toolsRes = await listTools({ status: 'published', lim: 200 });
+    if (toolsRes.error) throw new Error(toolsRes.error);
+    return {
+      props: { toolsCount: toolsRes.data.length },
+      revalidate: 3600,
+    };
+  } catch {
+    return {
+      props: { toolsCount: null },
+      revalidate: 60,
+    };
+  }
+}
 import { getOrganizationStructuredData } from '../lib/seo';
 import { PageTitle } from '../components/ui';
 import { TeamMemberCard } from '../components/eeat';
 
-export default function TeamPage() {
+export default function TeamPage({ toolsCount: fetchedCount }) {
+  const toolsCount = fetchedCount ?? staticToolsCount;
+
   const orgSchema = getOrganizationStructuredData();
 
   const breadcrumbSchema = {
