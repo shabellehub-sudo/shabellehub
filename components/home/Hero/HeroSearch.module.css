@@ -3,7 +3,6 @@
   margin: 0 auto;
   position: relative;
   z-index: 300;
-  isolation: isolate;
 }
 
 .searchBox {
@@ -93,7 +92,8 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   list-style: none;
-  overflow: hidden;
+  max-height: 280px;
+  overflow-y: auto;
   z-index: 9999;
 }
 
