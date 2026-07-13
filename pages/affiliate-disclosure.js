@@ -1,16 +1,19 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-import { siteConfig, tools } from '../data';
+import { siteConfig } from '../data';
 import { PageTitle } from '../components/ui';
+import { listTools } from '../lib/cms/tools';
 
-const SECTIONS = [
+const FALLBACK_TOOL_NAMES = ['ChatGPT', 'Claude', 'Midjourney', 'Notion AI', 'Grammarly', 'Perplexity AI'];
+
+const getSections = (sampleToolNames) => [
   {
     title: 'How Affiliate Links Work on Shabelle Hub',
     body: 'Many of the "Try Free", "Visit", and "Get Started" buttons on this site are affiliate links. When you click one of these links and then sign up for, subscribe to, or purchase a product, Shabelle Hub may receive a commission from the company whose product you chose. This commission comes from the company, not from you — using an affiliate link never increases the price you pay.',
   },
   {
     title: 'Programs We Currently Participate In',
-    body: `Shabelle Hub participates in affiliate or referral programs for some of the tools we cover, including ${tools.slice(0, 6).map(t => t.name).join(', ')}, and others. Not every tool listed on this site has an affiliate relationship attached to it — some links are simply direct, non-monetized links to the provider's site.`,
+    body: `Shabelle Hub participates in affiliate or referral programs for some of the tools we cover, including ${sampleToolNames.join(', ')}, and others. Not every tool listed on this site has an affiliate relationship attached to it — some links are simply direct, non-monetized links to the provider's site.`,
   },
   {
     title: 'Editorial Independence: How We Keep Reviews Honest',
@@ -38,7 +41,24 @@ const SECTIONS = [
   },
 ];
 
-export default function AffiliateDisclosurePage() {
+export async function getStaticProps() {
+  try {
+    const toolsRes = await listTools({ status: 'published', lim: 6 });
+    if (toolsRes.error) throw new Error(toolsRes.error);
+    const names = toolsRes.data.map((t) => t.name).filter(Boolean);
+    return {
+      props: { sampleToolNames: names.length ? names : FALLBACK_TOOL_NAMES },
+      revalidate: 3600,
+    };
+  } catch {
+    return {
+      props: { sampleToolNames: FALLBACK_TOOL_NAMES },
+      revalidate: 60,
+    };
+  }
+}
+
+export default function AffiliateDisclosurePage({ sampleToolNames = FALLBACK_TOOL_NAMES }) {
   const canonical = `${siteConfig.url}/affiliate-disclosure`;
   const title = 'Affiliate Disclosure — How Shabelle Hub Makes Money';
   const description = 'How Shabelle Hub uses affiliate links, which programs we participate in, and how we keep our AI tool reviews editorially independent of any commission.';
@@ -87,7 +107,7 @@ export default function AffiliateDisclosurePage() {
         </PageTitle>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 28, marginBottom: 28 }}>
-          {SECTIONS.map((s, i) => (
+          {getSections(sampleToolNames).map((s, i) => (
             <div key={i}>
               <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, marginBottom: 8, color: '#e8f0ff' }}>
                 {s.title}
