@@ -56,14 +56,17 @@ export default function HeroSearch({ tools = [] }) {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
+  const wordStartMatch = (text, q) =>
+    text.toLowerCase().split(/\s+/).some((word) => word.startsWith(q));
+
   const matches = debouncedQuery.trim()
     ? tools
         .filter((t) => {
           const q = debouncedQuery.toLowerCase();
           return (
             t.name.toLowerCase().includes(q) ||
-            t.category.toLowerCase().includes(q) ||
-            t.tags?.some((tag) => tag.toLowerCase().includes(q))
+            wordStartMatch(t.category, q) ||
+            t.tags?.some((tag) => wordStartMatch(tag, q))
           );
         })
         .slice(0, 5)
