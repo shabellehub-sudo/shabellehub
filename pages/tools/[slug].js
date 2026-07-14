@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-import { tools } from '../../data';
+import { tools as staticTools } from '../../data';
 import { getToolSEO, getToolStructuredData } from '../../lib/seo';
 import { getToolMeta } from '../../data/eeat-meta';
 import { getAuthor, getReviewer } from '../../data/team';
@@ -11,32 +11,47 @@ import { TrustBlock } from '../../components/eeat';
 import { AffiliateDisclosure, AdvertisingNotice } from '../../components/compliance';
 import AdSlot from '../../components/AdSlot';
 import { getAffiliateByToolSlug } from '../../lib/cms/affiliates';
+import { listTools, getToolBySlug } from '../../lib/cms/tools';
 
 export async function getStaticPaths() {
   return {
-    paths: tools.map(t => ({ params: { slug: t.slug } })),
-    fallback: false,
+    paths: staticTools.map(t => ({ params: { slug: t.slug } })),
+    fallback: 'blocking',
   };
 }
 
 export async function getStaticProps({ params }) {
-  const tool = tools.find(t => t.slug === params.slug);
+  let tool = null;
+  try {
+    const toolRes = await getToolBySlug(params.slug);
+    if (!toolRes.error && toolRes.data) tool = toolRes.data;
+  } catch (_) { /* fall through to static lookup */ }
+
+  if (!tool) {
+    tool = staticTools.find(t => t.slug === params.slug) || null;
+  }
+
   if (!tool) return { notFound: true };
+
+  let allTools = staticTools;
+  try {
+    const toolsRes = await listTools({ status: 'published', lim: 200 });
+    if (!toolsRes.error && toolsRes.data?.length > 0) allTools = toolsRes.data;
+  } catch (_) { /* keep staticTools fallback */ }
 
   let related = [];
   if (tool.alternatives && tool.alternatives.length > 0) {
     related = tool.alternatives
-      .map(slug => tools.find(t => t.slug === slug))
+      .map(slug => allTools.find(t => t.slug === slug))
       .filter(Boolean)
       .slice(0, 3);
   }
   if (related.length === 0) {
-    related = tools
+    related = allTools
       .filter(t => t.category === tool.category && t.id !== tool.id)
       .slice(0, 3);
   }
 
-  // Load active affiliate link from Firestore (Phase 5A)
   let affiliateLink = null;
   try {
     const { data } = await getAffiliateByToolSlug(params.slug);
