@@ -24,9 +24,12 @@
   },
   "browserslist": [
     "> 0.5%",
-    "last 2 versions",
-    "Firefox ESR",
+    "last 2 chrome version",
+    "last 2 firefox version",
+    "last 2 safari version",
+    "last 2 edge version",
     "not dead",
-    "not IE 11"
+    "not IE 11",
+    "not op_mini all"
   ]
 }
