@@ -1,7 +1,24 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
-import { tools, categories, toolsCount, categoriesCount } from '../../data';
+import { tools as staticTools, categories } from '../../data';
+import { listTools } from '../../lib/cms/tools';
+
+export async function getStaticProps() {
+  try {
+    const toolsRes = await listTools({ status: 'published', lim: 200 });
+    if (toolsRes.error) throw new Error(toolsRes.error);
+    return {
+      props: { tools: toolsRes.data },
+      revalidate: 300,
+    };
+  } catch {
+    return {
+      props: { tools: [] },
+      revalidate: 60,
+    };
+  }
+}
 import { ToolCard, PageTitle } from '../../components/ui';
 import { EditorialResponsibilityNotice } from '../../components/eeat';
 import { ContentUpdateNotice } from '../../components/compliance';
@@ -15,8 +32,14 @@ import Link from 'next/link';
 //         require a panel-per-tab structure; using aria-label on the grid
 //         is the correct simplified pattern for a filter control).
 
-export default function ToolsPage({ favorites = [], toggleFavorite }) {
+export default function ToolsPage({ favorites = [], toggleFavorite, tools: fetchedTools = [] }) {
   const router = useRouter();
+  // Supabase-backed tools list — falls back to the static bundle if the DB
+  // fetch failed or returned nothing, same fail-soft pattern used site-wide.
+  const tools = fetchedTools.length > 0 ? fetchedTools : staticTools;
+  const toolsCount = tools.length;
+  const categoriesCount = new Set(tools.map(t => t.category).filter(Boolean)).size;
+
   const [search,    setSearch]   = useState('');
   const [activeCat, setActiveCat] = useState('All');
   const [sort,      setSort]      = useState('rating');
@@ -62,7 +85,7 @@ export default function ToolsPage({ favorites = [], toggleFavorite }) {
     ];
 
     return list;
-  }, [debouncedSearch, activeCat, sort, favorites, mounted]);
+  }, [debouncedSearch, activeCat, sort, favorites, mounted, tools]);
 
   // FIX #8/#18: no brand suffix — titleTemplate appends it
   const seoTitle =
