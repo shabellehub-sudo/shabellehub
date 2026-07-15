@@ -1,14 +1,24 @@
 // pages/sitemap.xml.js — merges static tools + Firestore published posts
-import { tools, categories } from '../data';
+import { tools as staticTools, categories } from '../data';
 import { teamMembers } from '../data/team';
 import { generateSitemapEntries } from '../lib/seo';
 import { listPublishedPosts } from '../lib/cms/posts';
+import { listTools } from '../lib/cms/tools';
 
 const BASE_URL = 'https://shabellehub.com';
 
 function SitemapPage() { return null; }
 
 export async function getServerSideProps({ res }) {
+  // Try to get live tools from Supabase (covers tools added after the last
+  // static build); fall back to the static bundle, same fail-soft pattern
+  // used site-wide.
+  let tools = staticTools;
+  try {
+    const toolsRes = await listTools({ status: 'published', lim: 200 });
+    if (!toolsRes.error && toolsRes.data?.length > 0) tools = toolsRes.data;
+  } catch { /* keep staticTools fallback */ }
+
   // Try to get live posts from Firestore; fall back to empty array
   let livePosts = [];
   try {
