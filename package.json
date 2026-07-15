@@ -23,13 +23,9 @@
     "eslint-config-next": "^14.2.35"
   },
   "browserslist": [
-    "> 0.5%",
-    "last 2 chrome version",
-    "last 2 firefox version",
-    "last 2 safari version",
-    "last 2 edge version",
-    "not dead",
-    "not IE 11",
-    "not op_mini all"
+    "chrome >= 91",
+    "edge >= 91",
+    "firefox >= 90",
+    "safari >= 15"
   ]
 }
