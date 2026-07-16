@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ComplianceBanner } from './compliance';
 import { useRouter } from 'next/router';
-import { categories } from '../data';
+import { categories } from '../data/categories';
 import { categoryToSlug } from '../lib/categories';
 import NewsletterSignupForm from './newsletter/SignupForm';
 
