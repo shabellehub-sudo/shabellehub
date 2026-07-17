@@ -1,5 +1,5 @@
 import { useState, useId } from 'react';
-import { FAQS } from '../../../data/faqs';
+import { getFaqs } from '../../../data/faqs';
 import SectionHeader from '../../shared/SectionHeader/SectionHeader';
 import styles from './FAQ.module.css';
 
@@ -10,8 +10,8 @@ import styles from './FAQ.module.css';
  * the structured data always matches what's actually on the page —
  * search engines penalize schema that doesn't match visible content.
  */
-export default function FAQ({ limit = 5 }) {
-  const items = FAQS.slice(0, limit);
+export default function FAQ({ limit = 5, toolsCount, categoriesCount }) {
+  const items = getFaqs({ toolsCount, categoriesCount }).slice(0, limit);
   const [openIndex, setOpenIndex] = useState(null);
   const uid = useId().replace(/:/g, '');
 

@@ -183,7 +183,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
       <Testimonials />
 
       {/* ── FAQ (Phase 4: schema markup) ── */}
-      <FAQ limit={5} />
+      <FAQ limit={5} toolsCount={toolsCount} categoriesCount={categoriesCount} />
 
       {/* ── LATEST BLOG ── */}
       <Section surface>

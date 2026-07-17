@@ -1,7 +1,31 @@
 import { NextSeo } from 'next-seo';
-import { FAQS } from '../data/faqs';
+import { getFaqs } from '../data/faqs';
+import { getToolCounts } from '../lib/cms/tools';
+import { tools as staticTools } from '../data';
 
-export default function FAQPage() {
+// Supabase-backed counts — falls back to the static bundle if the DB
+// fetch failed, same fail-soft pattern used site-wide.
+export async function getStaticProps() {
+  let toolsCount;
+  let categoriesCount;
+  try {
+    const countsRes = await getToolCounts();
+    if (!countsRes.error && countsRes.data.published) {
+      toolsCount = countsRes.data.published;
+    } else {
+      toolsCount = staticTools.length;
+    }
+  } catch {
+    toolsCount = staticTools.length;
+  }
+  categoriesCount = new Set(staticTools.map(t => t.category).filter(Boolean)).size;
+
+  return { props: { toolsCount, categoriesCount }, revalidate: 300 };
+}
+
+export default function FAQPage({ toolsCount, categoriesCount }) {
+  const FAQS = getFaqs({ toolsCount, categoriesCount });
+
   const faqJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
