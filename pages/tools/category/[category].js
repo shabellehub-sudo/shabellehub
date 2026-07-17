@@ -1,6 +1,7 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-import { tools, categories, toolsCount, siteConfig } from '../../../data';
+import { tools, categories, siteConfig } from '../../../data';
+import { listTools, getToolCounts } from '../../../lib/cms/tools';
 import { ToolCard, PageTitle } from '../../../components/ui';
 import { EditorialResponsibilityNotice } from '../../../components/eeat';
 import { ContentUpdateNotice } from '../../../components/compliance';
@@ -15,18 +16,37 @@ export async function getStaticPaths() {
   };
 }
 
+// Supabase-backed category tools + site-wide tool count — falls back to the
+// static bundle if the DB fetch failed or returned nothing, same fail-soft
+// pattern used in pages/tools/index.js. Sorting happens client-side (in this
+// case at build time) because `rating` lives inside the jsonb `doc` column,
+// not as a generated column the query helper can ORDER BY directly.
 export async function getStaticProps({ params }) {
   const category = REAL_CATEGORIES.find(c => categoryToSlug(c.name) === params.category);
   if (!category) return { notFound: true };
 
-  const categoryTools = tools
-    .filter(t => t.category === category.name)
-    .sort((a, b) => b.rating - a.rating);
+  let categoryTools;
+  try {
+    const res = await listTools({ status: 'published', category: category.name, lim: 200 });
+    categoryTools = (!res.error && res.data.length > 0)
+      ? [...res.data].sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      : tools.filter(t => t.category === category.name).sort((a, b) => b.rating - a.rating);
+  } catch {
+    categoryTools = tools.filter(t => t.category === category.name).sort((a, b) => b.rating - a.rating);
+  }
 
-  return { props: { category, categoryTools } };
+  let toolsCount;
+  try {
+    const countsRes = await getToolCounts();
+    toolsCount = (!countsRes.error && countsRes.data.published) ? countsRes.data.published : tools.length;
+  } catch {
+    toolsCount = tools.length;
+  }
+
+  return { props: { category, categoryTools, toolsCount }, revalidate: 300 };
 }
 
-export default function CategoryPage({ category, categoryTools, favorites = [], toggleFavorite }) {
+export default function CategoryPage({ category, categoryTools, toolsCount, favorites = [], toggleFavorite }) {
   const title = `Best ${category.name} AI Tools (${new Date().getFullYear()}) — Reviewed & Ranked`;
   const description = `${category.description} We've reviewed ${categoryTools.length} ${category.name.toLowerCase()} AI tool${categoryTools.length === 1 ? '' : 's'} hands-on — see ratings, pricing, and honest pros & cons.`;
   const canonical = `${siteConfig.url}/tools/category/${categoryToSlug(category.name)}`;
