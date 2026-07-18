@@ -307,7 +307,7 @@ export default function BlogPostPage({ post }) {
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px' }}>
         {/* Breadcrumb */}
-        <nav style={{ fontSize: 12, color: '#6b82a8', marginBottom: 20 }}>
+        <nav style={{ fontSize: 15, color: '#6b82a8', marginBottom: 20 }}>
           <Link href="/" style={{ color: '#6b82a8', textDecoration: 'none' }}>Home</Link>
           <span style={{ margin: '0 6px' }}>›</span>
           <Link href="/blog" style={{ color: '#6b82a8', textDecoration: 'none' }}>Blog</Link>
@@ -322,17 +322,17 @@ export default function BlogPostPage({ post }) {
         {/* Category & tags */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 14 }}>
           {post.category?.name && (
-            <span style={{ color: '#14FFF4', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+            <span style={{ color: '#14FFF4', fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>
               {post.category.name}
             </span>
           )}
           {post.tags?.map(tag => (
-            <span key={tag} style={{ background: 'rgba(20,255,244,0.07)', color: '#14FFF4', fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 20, border: '1px solid rgba(20,255,244,0.15)' }}>
+            <span key={tag} style={{ background: 'rgba(20,255,244,0.07)', color: '#14FFF4', fontSize: 14, fontWeight: 600, padding: '2px 8px', borderRadius: 20, border: '1px solid rgba(20,255,244,0.15)' }}>
               #{tag}
             </span>
           ))}
           {post.featured && (
-            <span style={{ background: '#14FFF4', color: '#080d1a', fontSize: 11, fontWeight: 800, borderRadius: 4, padding: '2px 8px' }}>
+            <span style={{ background: '#14FFF4', color: '#080d1a', fontSize: 14, fontWeight: 800, borderRadius: 4, padding: '2px 8px' }}>
               FEATURED
             </span>
           )}
@@ -344,7 +344,7 @@ export default function BlogPostPage({ post }) {
         </h1>
 
         {/* Byline */}
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 28, paddingBottom: 20, borderBottom: '1px solid #1a2d4a', fontSize: 13, color: '#6b82a8' }}>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 28, paddingBottom: 20, borderBottom: '1px solid #1a2d4a', fontSize: 14, color: '#6b82a8' }}>
           {post.author?.name && (
             <span>By <strong style={{ color: '#9fb3d4' }}>{post.author.name}</strong></span>
           )}
@@ -408,7 +408,7 @@ export default function BlogPostPage({ post }) {
 
         {/* Back link */}
         <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid #1a2d4a' }}>
-          <Link href="/blog" style={{ color: '#14FFF4', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+          <Link href="/blog" style={{ color: '#14FFF4', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>
             ← Back to Blog
           </Link>
         </div>
