@@ -307,7 +307,7 @@ export default function BlogPostPage({ post }) {
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px' }}>
         {/* Breadcrumb */}
-        <nav style={{ fontSize: 15, color: '#6b82a8', marginBottom: 20 }}>
+        <nav style={{ fontSize: 14, color: '#6b82a8', marginBottom: 20 }}>
           <Link href="/" style={{ color: '#6b82a8', textDecoration: 'none' }}>Home</Link>
           <span style={{ margin: '0 6px' }}>›</span>
           <Link href="/blog" style={{ color: '#6b82a8', textDecoration: 'none' }}>Blog</Link>
