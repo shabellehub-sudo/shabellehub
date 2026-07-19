@@ -96,7 +96,7 @@ function renderMarkdown(md) {
         inCodeBlock = false;
         const codeHtml = escapeHtml(codeBuffer.join('\n'));
         html.push(
-          `<pre style="background:#0a0e16;border:1px solid #1a2d4a;border-radius:10px;padding:16px 18px;overflow-x:auto;margin:20px 0"><code style="font-family:Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6;color:#c5d3ea;white-space:pre">${codeHtml}</code></pre>`
+          `<pre style="background:#0a0e16;border:1px solid #1a2d4a;border-radius:10px;padding:16px 18px;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;margin:20px 0"><code style="font-family:Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6;color:#c5d3ea;white-space:pre">${codeHtml}</code></pre>`
         );
         codeBuffer = [];
       }
