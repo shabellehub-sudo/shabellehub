@@ -96,7 +96,7 @@ function renderMarkdown(md) {
         inCodeBlock = false;
         const codeHtml = escapeHtml(codeBuffer.join('\n'));
         html.push(
-          `<pre style="background:#0a0e16;border:1px solid #1a2d4a;border-radius:10px;padding:16px 18px;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;margin:20px 0"><code style="font-family:Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6;color:#c5d3ea;white-space:pre;overflow-wrap:normal">${codeHtml}</code></pre>`
+          `<pre style="background:#0a0e16;border:1px solid #1a2d4a;border-radius:10px;padding:16px 18px;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;margin:20px 0"><code style="font-family:Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6;color:#c5d3ea;white-space:pre">${codeHtml}</code></pre>`
         );
         codeBuffer = [];
       }
@@ -305,7 +305,7 @@ export default function BlogPostPage({ post }) {
 
       <FAQSchema faqs={post.faqs} />
 
-      <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px', overflowX: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px' }}>
         {/* Breadcrumb */}
         <nav style={{ fontSize: 14, color: '#6b82a8', marginBottom: 20 }}>
           <Link href="/" style={{ color: '#6b82a8', textDecoration: 'none' }}>Home</Link>
