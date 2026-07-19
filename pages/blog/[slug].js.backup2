@@ -114,11 +114,11 @@ function renderMarkdown(md) {
     }
 
     if (/^### (.+)$/.test(line)) {
-      html.push(`<h3 style="font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:700;margin:25px 0 11px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^### /, '')))}</h3>`);
+      html.push(`<h3 style="font-family:Space Grotesk,sans-serif;font-size:17px;font-weight:700;margin:20px 0 10px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^### /, '')))}</h3>`);
       continue;
     }
     if (/^## (.+)$/.test(line)) {
-      html.push(`<h2 style="font-family:Space Grotesk,sans-serif;font-size:22px;font-weight:700;margin:31px 0 13px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^## /, '')))}</h2>`);
+      html.push(`<h2 style="font-family:Space Grotesk,sans-serif;font-size:20px;font-weight:700;margin:24px 0 12px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^## /, '')))}</h2>`);
       continue;
     }
     if (/^# (.+)$/.test(line)) {
@@ -152,7 +152,7 @@ function renderMarkdown(md) {
       continue;
     }
 
-    html.push(`<p style="color:#9fb3d4;font-size:15px;line-height:1.8;margin-bottom:20px">${inlineFormat(escapeHtml(line))}</p>`);
+    html.push(`<p style="color:#9fb3d4;font-size:15px;line-height:1.8;margin-bottom:16px">${inlineFormat(escapeHtml(line))}</p>`);
   }
 
   return html.join('\n')

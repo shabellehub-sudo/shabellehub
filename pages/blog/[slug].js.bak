@@ -96,7 +96,7 @@ function renderMarkdown(md) {
         inCodeBlock = false;
         const codeHtml = escapeHtml(codeBuffer.join('\n'));
         html.push(
-          `<pre style="background:#0a0e16;border:1px solid #1a2d4a;border-radius:10px;padding:16px 18px;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;margin:20px 0"><code style="font-family:Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6;color:#c5d3ea;white-space:pre">${codeHtml}</code></pre>`
+          `<pre style="background:#0a0e16;border:1px solid #1a2d4a;border-radius:10px;padding:16px 18px;overflow-x:auto;margin:20px 0"><code style="font-family:Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6;color:#c5d3ea;white-space:pre">${codeHtml}</code></pre>`
         );
         codeBuffer = [];
       }
@@ -114,11 +114,11 @@ function renderMarkdown(md) {
     }
 
     if (/^### (.+)$/.test(line)) {
-      html.push(`<h3 style="font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:700;margin:25px 0 11px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^### /, '')))}</h3>`);
+      html.push(`<h3 style="font-family:Space Grotesk,sans-serif;font-size:17px;font-weight:700;margin:20px 0 10px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^### /, '')))}</h3>`);
       continue;
     }
     if (/^## (.+)$/.test(line)) {
-      html.push(`<h2 style="font-family:Space Grotesk,sans-serif;font-size:22px;font-weight:700;margin:31px 0 13px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^## /, '')))}</h2>`);
+      html.push(`<h2 style="font-family:Space Grotesk,sans-serif;font-size:20px;font-weight:700;margin:24px 0 12px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^## /, '')))}</h2>`);
       continue;
     }
     if (/^# (.+)$/.test(line)) {
@@ -152,7 +152,7 @@ function renderMarkdown(md) {
       continue;
     }
 
-    html.push(`<p style="color:#9fb3d4;font-size:15px;line-height:1.8;margin-bottom:20px">${inlineFormat(escapeHtml(line))}</p>`);
+    html.push(`<p style="color:#9fb3d4;font-size:15px;line-height:1.8;margin-bottom:16px">${inlineFormat(escapeHtml(line))}</p>`);
   }
 
   return html.join('\n')
@@ -307,7 +307,7 @@ export default function BlogPostPage({ post }) {
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px' }}>
         {/* Breadcrumb */}
-        <nav style={{ fontSize: 14, color: '#6b82a8', marginBottom: 20 }}>
+        <nav style={{ fontSize: 15, color: '#6b82a8', marginBottom: 20 }}>
           <Link href="/" style={{ color: '#6b82a8', textDecoration: 'none' }}>Home</Link>
           <span style={{ margin: '0 6px' }}>›</span>
           <Link href="/blog" style={{ color: '#6b82a8', textDecoration: 'none' }}>Blog</Link>
