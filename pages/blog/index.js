@@ -37,7 +37,8 @@ export async function getStaticProps() {
   }
 }
 
-function PostCard({ post, featured = false }) {
+function PostCard({ post, featured = false, categories = [] }) {
+  const categoryName = categories.find(c => c.id === post.category_id)?.name || null;
   const pubDate = post.published_at
     ? new Date(post.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
     : '';
@@ -60,9 +61,9 @@ function PostCard({ post, featured = false }) {
               FEATURED
             </span>
           )}
-          {post.category_name && (
+          {categoryName && (
             <span style={{ color: '#14FFF4', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', opacity: featured ? 0.8 : 1 }}>
-              {post.category_name}
+              {categoryName}
             </span>
           )}
           {pubDate && (
@@ -128,7 +129,7 @@ export default function BlogPage({ posts = [], tags = [], categories = [], debug
     return true;
   });
 
-  const featured = filtered.find(p => p.featured);
+  const featured = filtered.find(p => p.featured && p.category_id !== '9da37474-fd0e-4fff-8931-d0d4afef7ece');
   const rest     = filtered.filter(p => !p.featured);
 
   return (
@@ -191,7 +192,7 @@ export default function BlogPage({ posts = [], tags = [], categories = [], debug
         {/* ── Featured ── */}
         {featured && (
           <div style={{ marginBottom: 24 }}>
-            <PostCard post={featured} featured />
+            <PostCard post={featured} featured categories={categories} />
           </div>
         )}
 
@@ -202,7 +203,7 @@ export default function BlogPage({ posts = [], tags = [], categories = [], debug
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {rest.map(post => <PostCard key={post.id} post={post} />)}
+            {rest.map(post => <PostCard key={post.id} post={post} categories={categories} />)}
           </div>
         )}
       </div>
