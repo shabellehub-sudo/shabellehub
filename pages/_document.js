@@ -21,6 +21,31 @@ export default function Document() {
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <meta name="theme-color"     content="#080d1a" />
         <meta name="viewport"        content="width=device-width, initial-scale=1" />
+
+        {/* Google Translate widget (Somali support) */}
+        <script
+          type="text/javascript"
+          dangerouslySetInnerHTML={{
+            __html: `
+              function googleTranslateElementInit() {
+                new google.translate.TranslateElement(
+                  {
+                    pageLanguage: 'en',
+                    includedLanguages: 'so,en',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false,
+                  },
+                  'google_translate_element'
+                );
+              }
+            `,
+          }}
+        />
+        <script
+          type="text/javascript"
+          src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          async
+        />
       </Head>
       <body>
         {/*
