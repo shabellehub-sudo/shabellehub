@@ -98,7 +98,7 @@ function ToolCardBase({ tool, isFavorite, onToggleFavorite }) {
       <Link
         href={`/tools/${tool.slug}`}
         style={{ display: 'block', textDecoration: 'none' }}
-        aria-label={`View $<span className="notranslate">{tool.name}</span> review`}
+        aria-label={`View ${tool.name} review`}
       >
         <div style={{
           background: '#0f1829',
@@ -139,7 +139,7 @@ function ToolCardBase({ tool, isFavorite, onToggleFavorite }) {
             <button
               onClick={e => { e.preventDefault(); e.stopPropagation(); onToggleFavorite?.(tool.id); }}
               style={{ background: 'none', border: 'none', padding: 4, cursor: 'pointer', color: isFavorite ? '#ff4d6d' : '#6b82a8', flexShrink: 0 }}
-              aria-label={isFavorite ? `Unsave $<span className="notranslate">{tool.name}</span>` : `Save $<span className="notranslate">{tool.name}</span>`}
+              aria-label={isFavorite ? `Unsave ${tool.name}` : `Save ${tool.name}`}
             >
               <svg width="17" height="17" viewBox="0 0 24 24"
                 fill={isFavorite ? '#ff4d6d' : 'none'}
@@ -174,7 +174,7 @@ function ToolCardBase({ tool, isFavorite, onToggleFavorite }) {
             {/* Affiliate CTA — stops propagation so it opens external URL, not the detail page */}
             <button
               onClick={e => { e.preventDefault(); e.stopPropagation(); openAffiliateLink(tool); }}
-              aria-label={tool.priceTier === 'paid' ? `Visit $<span className="notranslate">{tool.name}</span>` : `Try $<span className="notranslate">{tool.name}</span> free`}
+              aria-label={tool.priceTier === 'paid' ? `Visit ${tool.name}` : `Try ${tool.name} free`}
               style={{
                 background: '#14FFF4', color: '#080d1a', border: 'none',
                 borderRadius: 9, padding: '7px 16px', fontSize: 12, fontWeight: 800,

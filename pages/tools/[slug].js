@@ -96,11 +96,11 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
 
   // CTA label — "Try Free" is only accurate for free/freemium tools
   const ctaLabel = tool.priceTier === 'paid'
-    ? `Visit $<span className="notranslate">{tool.name}</span> →`
-    : `Try $<span className="notranslate">{tool.name}</span> Free →`;
+    ? `Visit ${tool.name} →`
+    : `Try ${tool.name} Free →`;
   const ctaAriaLabel = tool.priceTier === 'paid'
-    ? `Visit $<span className="notranslate">{tool.name}</span> website`
-    : `Try $<span className="notranslate">{tool.name}</span> for free`;
+    ? `Visit ${tool.name} website`
+    : `Try ${tool.name} for free`;
 
   return (
     <>
@@ -161,7 +161,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
               </button>
               <button
                 onClick={() => toggleFavorite && toggleFavorite(tool.id)}
-                aria-label={isSaved ? `Unsave $<span className="notranslate">{tool.name}</span>` : `Save $<span className="notranslate">{tool.name}</span>`}
+                aria-label={isSaved ? `Unsave ${tool.name}` : `Save ${tool.name}`}
                 aria-pressed={isSaved}
                 style={{
                   background: 'none', border: '1px solid #1a2d4a', borderRadius: 10,
@@ -292,10 +292,10 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
 
         {/* Related tools */}
         {related.length > 0 && (
-          <section aria-label={`Alternatives to $<span className="notranslate">{tool.name}</span>`}>
+          <section aria-label={`Alternatives to ${tool.name}`}>
             <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 16 }}>
               {tool.alternatives && tool.alternatives.length > 0
-                ? `Popular Alternatives to $<span className="notranslate">{tool.name}</span>`
+                ? `Popular Alternatives to ${tool.name}`
                 : `Similar Tools in ${tool.category}`}
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14 }}>
