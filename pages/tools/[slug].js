@@ -96,11 +96,11 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
 
   // CTA label — "Try Free" is only accurate for free/freemium tools
   const ctaLabel = tool.priceTier === 'paid'
-    ? `Visit ${tool.name} →`
-    : `Try ${tool.name} Free →`;
+    ? `Visit $<span className="notranslate">{tool.name}</span> →`
+    : `Try $<span className="notranslate">{tool.name}</span> Free →`;
   const ctaAriaLabel = tool.priceTier === 'paid'
-    ? `Visit ${tool.name} website`
-    : `Try ${tool.name} for free`;
+    ? `Visit $<span className="notranslate">{tool.name}</span> website`
+    : `Try $<span className="notranslate">{tool.name}</span> for free`;
 
   return (
     <>
@@ -117,7 +117,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
             <li aria-hidden="true"  style={{ margin: '0 4px' }}>›</li>
             <li><Link href="/tools" style={{ color: '#6b82a8' }}>Directory</Link></li>
             <li aria-hidden="true"  style={{ margin: '0 4px' }}>›</li>
-            <li><span style={{ color: '#e8f0ff' }} aria-current="page">{tool.name}</span></li>
+            <li><span style={{ color: '#e8f0ff' }} aria-current="page"><span className="notranslate">{tool.name}</span></span></li>
           </ol>
         </nav>
 
@@ -133,12 +133,12 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 26, fontWeight: 800, color: '#14FFF4', fontFamily: 'Space Grotesk, sans-serif',
               }}>
-                {tool.name[0]}
+                <span className="notranslate">{tool.name[0]}</span>
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
                   <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(22px, 5vw, 30px)', fontWeight: 800, color: '#e8f0ff' }}>
-                    {tool.name}
+                    <span className="notranslate">{tool.name}</span>
                   </h1>
                   {tool.hot   && <Badge text="HOT"        variant="hot" />}
                   {tool.badge && <Badge text={tool.badge} />}
@@ -161,7 +161,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
               </button>
               <button
                 onClick={() => toggleFavorite && toggleFavorite(tool.id)}
-                aria-label={isSaved ? `Unsave ${tool.name}` : `Save ${tool.name}`}
+                aria-label={isSaved ? `Unsave $<span className="notranslate">{tool.name}</span>` : `Save $<span className="notranslate">{tool.name}</span>`}
                 aria-pressed={isSaved}
                 style={{
                   background: 'none', border: '1px solid #1a2d4a', borderRadius: 10,
@@ -263,7 +263,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           textAlign: 'center', marginBottom: 28,
         }}>
           <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 20, fontWeight: 800, marginBottom: 10 }}>
-            Ready to try {tool.name}?
+            Ready to try <span className="notranslate">{tool.name}</span>?
           </h3>
           <p style={{ color: '#6b82a8', fontSize: 14, marginBottom: 22 }}>
             {tool.priceTier === 'freemium'
@@ -292,10 +292,10 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
 
         {/* Related tools */}
         {related.length > 0 && (
-          <section aria-label={`Alternatives to ${tool.name}`}>
+          <section aria-label={`Alternatives to $<span className="notranslate">{tool.name}</span>`}>
             <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 16 }}>
               {tool.alternatives && tool.alternatives.length > 0
-                ? `Popular Alternatives to ${tool.name}`
+                ? `Popular Alternatives to $<span className="notranslate">{tool.name}</span>`
                 : `Similar Tools in ${tool.category}`}
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14 }}>
