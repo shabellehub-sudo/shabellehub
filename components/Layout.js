@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { categories } from '../data/categories';
 import { categoryToSlug } from '../lib/categories';
 import NewsletterSignupForm from './newsletter/SignupForm';
-import LanguageSwitcher from './LanguageSwitcher';
 
 // ─── NAVBAR ───────────────────────────────────────────────────────────────────
 // FIX #12: removed redundant role="navigation" — <nav> element implies it.
@@ -82,7 +81,6 @@ export function Navbar({ favoriteCount = 0 }) {
           >
             ❤️{favoriteCount > 0 ? ` Saved (${favoriteCount})` : ' Saved'}
           </Link>
-          <LanguageSwitcher />
         </div>
 
         {/* Hamburger — .nav-hamburger shown on mobile via globals.css */}
@@ -142,9 +140,6 @@ export function Navbar({ favoriteCount = 0 }) {
           >
             ❤️ Saved Tools ({favoriteCount})
           </Link>
-          <div style={{ margin: '12px 20px 0' }}>
-            <LanguageSwitcher />
-          </div>
         </div>
       )}
     </nav>
