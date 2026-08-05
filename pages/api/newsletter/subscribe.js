@@ -1,6 +1,6 @@
 // pages/api/newsletter/subscribe.js — Phase 7A
 // Public endpoint: POST /api/newsletter/subscribe
-// Stores subscriber in Firestore. Rate-limited.
+// Stores subscriber in Supabase. Rate-limited.
 
 import { getAdminDb } from '../../../lib/supabaseAdmin';
 
@@ -53,42 +53,55 @@ export default async function handler(req, res) {
 
   const db = getAdminDb();
   if (!db) {
-    // Firebase not configured — still succeed silently in dev
+    // Supabase not configured — still succeed silently in dev
     console.log(`[Newsletter] Subscriber (no-supabase): ${safeEmail}`);
     return res.status(200).json({ success: true });
   }
 
   try {
     // Check for duplicate
-    const existing = await db.collection('subscribers')
-      .where('email', '==', safeEmail)
+    const { data: existing, error: findErr } = await db
+      .from('subscribers')
+      .select('id, doc')
+      .eq('email', safeEmail)
       .limit(1)
-      .get();
+      .maybeSingle();
 
-    if (!existing.empty) {
-      const sub = existing.docs[0].data();
-      if (sub.status === 'unsubscribed') {
+    if (findErr) throw findErr;
+
+    if (existing) {
+      if (existing.doc?.status === 'unsubscribed') {
         // Re-activate
-        await existing.docs[0].ref.update({
-          status:     'active',
-          source:     safeSource,
-          updated_at: new Date().toISOString(),
-        });
+        const { error: updErr } = await db
+          .from('subscribers')
+          .update({
+            doc: {
+              ...existing.doc,
+              status:     'active',
+              source:     safeSource,
+              updated_at: new Date().toISOString(),
+            },
+          })
+          .eq('id', existing.id);
+        if (updErr) throw updErr;
         return res.status(200).json({ success: true });
       }
       // Already active — return success silently (no info leak)
       return res.status(200).json({ success: true });
     }
 
-    await db.collection('subscribers').add({
-      email:      safeEmail,
-      status:     'active',
-      source:     safeSource,
-      tags:       [],
-      confirmed:  true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+    const { error: insErr } = await db.from('subscribers').insert({
+      doc: {
+        email:      safeEmail,
+        status:     'active',
+        source:     safeSource,
+        tags:       [],
+        confirmed:  true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
     });
+    if (insErr) throw insErr;
 
     return res.status(200).json({ success: true });
   } catch (err) {

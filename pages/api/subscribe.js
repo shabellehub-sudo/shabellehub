@@ -1,5 +1,5 @@
 // pages/api/subscribe.js — Newsletter subscription endpoint
-// Writes subscribers to Firestore `subscribers` collection (Phase 7A).
+// Writes subscribers to Supabase `subscribers` table (Phase 7A).
 // Backward-compatible: still returns { success: true } on 200.
 
 import { getAdminDb } from '../../lib/supabaseAdmin';
@@ -48,39 +48,53 @@ export default async function handler(req, res) {
   const safeEmail  = email.trim().toLowerCase();
   const safeSource = ['homepage', 'footer', 'blog', 'popup', 'other'].includes(source) ? source : 'homepage';
 
-  // Try to write to Firestore — gracefully degrade if not configured
+  // Try to write to Supabase — gracefully degrade if not configured
   const db = getAdminDb();
   if (db) {
     try {
-      const existing = await db.collection('subscribers')
-        .where('email', '==', safeEmail)
+      const { data: existing, error: findErr } = await db
+        .from('subscribers')
+        .select('id, doc')
+        .eq('email', safeEmail)
         .limit(1)
-        .get();
+        .maybeSingle();
 
-      if (existing.empty) {
-        await db.collection('subscribers').add({
-          email:      safeEmail,
-          status:     'active',
-          source:     safeSource,
-          tags:       [],
-          confirmed:  true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+      if (findErr) throw findErr;
+
+      if (!existing) {
+        const { error: insErr } = await db.from('subscribers').insert({
+          doc: {
+            email:      safeEmail,
+            status:     'active',
+            source:     safeSource,
+            tags:       [],
+            confirmed:  true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
         });
-      } else if (existing.docs[0].data().status === 'unsubscribed') {
-        await existing.docs[0].ref.update({
-          status:     'active',
-          source:     safeSource,
-          updated_at: new Date().toISOString(),
-        });
+        if (insErr) throw insErr;
+      } else if (existing.doc?.status === 'unsubscribed') {
+        const { error: updErr } = await db
+          .from('subscribers')
+          .update({
+            doc: {
+              ...existing.doc,
+              status:     'active',
+              source:     safeSource,
+              updated_at: new Date().toISOString(),
+            },
+          })
+          .eq('id', existing.id);
+        if (updErr) throw updErr;
       }
       // Already subscribed — silent success
     } catch (err) {
-      console.error('[Shabelle Hub] Subscribe Firestore error:', err);
+      console.error('[Shabelle Hub] Subscribe Supabase error:', err);
       // Still succeed — don't block the user
     }
   } else {
-    console.log(`[Shabelle Hub] New subscriber (Firebase not configured): ${safeEmail}`);
+    console.log(`[Shabelle Hub] New subscriber (Supabase not configured): ${safeEmail}`);
   }
 
   return res.status(200).json({ success: true });

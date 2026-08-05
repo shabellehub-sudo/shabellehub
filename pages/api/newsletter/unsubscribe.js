@@ -24,20 +24,31 @@ export default async function handler(req, res) {
   }
 
   try {
-    const snap = await db.collection('subscribers')
-      .where('email', '==', safeEmail)
+    const { data: existing, error: findErr } = await db
+      .from('subscribers')
+      .select('id, doc')
+      .eq('email', safeEmail)
       .limit(1)
-      .get();
+      .maybeSingle();
 
-    if (snap.empty) {
+    if (findErr) throw findErr;
+
+    if (!existing) {
       // Silent success — don't reveal whether email exists
       return res.status(200).json({ success: true });
     }
 
-    await snap.docs[0].ref.update({
-      status:     'unsubscribed',
-      updated_at: new Date().toISOString(),
-    });
+    const { error: updErr } = await db
+      .from('subscribers')
+      .update({
+        doc: {
+          ...existing.doc,
+          status:     'unsubscribed',
+          updated_at: new Date().toISOString(),
+        },
+      })
+      .eq('id', existing.id);
+    if (updErr) throw updErr;
 
     return res.status(200).json({ success: true });
   } catch (err) {
