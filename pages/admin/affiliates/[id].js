@@ -6,6 +6,7 @@ import AdminLayout from '../../../components/admin/AdminLayout';
 import AffiliateForm from '../../../components/admin/AffiliateForm';
 import { Button, ErrorBanner } from '../../../components/admin/ui';
 import { useAuth } from '../../../lib/cms/useAuth';
+import { getToken } from '../../../lib/cms/apiHelpers';
 
 export default function EditAffiliate() {
   const router  = useRouter();
@@ -25,7 +26,7 @@ export default function EditAffiliate() {
     async function load() {
       setLoading(true); setError(null);
       try {
-        const token = await auth.user.getIdToken();
+        const token = await getToken();
         const res   = await fetch(`/api/admin/affiliates/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -60,7 +61,7 @@ export default function EditAffiliate() {
     if (!form.affiliateUrl.trim()) { setError('Affiliate URL is required.'); return; }
     setSaving(true); setError(null); setSuccess(false);
     try {
-      const token = await auth.user?.getIdToken();
+      const token = await getToken();
       const res   = await fetch(`/api/admin/affiliates/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -80,7 +81,7 @@ export default function EditAffiliate() {
     if (!window.confirm(`Delete "${form?.programName}"? This cannot be undone.`)) return;
     setDeleting(true); setError(null);
     try {
-      const token = await auth.user?.getIdToken();
+      const token = await getToken();
       const res   = await fetch(`/api/admin/affiliates/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },

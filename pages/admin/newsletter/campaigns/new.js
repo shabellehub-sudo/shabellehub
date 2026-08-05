@@ -7,6 +7,7 @@ import Link from 'next/link';
 import AdminLayout from '../../../../components/admin/AdminLayout';
 import { AdminCard, Button, TextInput, TextArea, ErrorBanner } from '../../../../components/admin/ui';
 import { useAuth } from '../../../../lib/cms/useAuth';
+import { getToken } from '../../../../lib/cms/apiHelpers';
 
 function fmtDate(iso) {
   if (!iso) return '—';
@@ -31,7 +32,7 @@ export default function NewCampaignPage() {
   useEffect(() => {
     if (step !== 'newsletter' || !auth.user) return;
     setNlLoading(true);
-    auth.user.getIdToken().then(token =>
+    getToken().then(token =>
       fetch('/api/admin/newsletter/newsletters', { headers: { Authorization: `Bearer ${token}` } })
     ).then(r => r.json()).then(body => {
       setNewsletters(body.data || []);
@@ -44,7 +45,7 @@ export default function NewCampaignPage() {
     if (!selectedNl)      { setError('Please select a newsletter template.'); return; }
     setSaving(true); setError(null);
     try {
-      const token  = await auth.user.getIdToken();
+      const token  = await getToken();
       const res    = await fetch('/api/admin/newsletter/campaigns', {
         method:  'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },

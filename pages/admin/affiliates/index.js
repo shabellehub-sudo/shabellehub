@@ -4,6 +4,7 @@ import Link from 'next/link';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import { StatCard, AdminCard, Button, ErrorBanner } from '../../../components/admin/ui';
 import { useAuth } from '../../../lib/cms/useAuth';
+import { getToken } from '../../../lib/cms/apiHelpers';
 
 const STATUS_COLORS = {
   active: '#00d084',
@@ -17,13 +18,6 @@ const COMMISSION_LABELS = {
   variable: '~',
 };
 
-// Helper: get a fresh ID token, throws if user not ready
-async function getToken(user) {
-  if (!user) throw new Error('Not authenticated.');
-  const token = await user.getIdToken(/* forceRefresh */ false);
-  if (!token) throw new Error('Could not retrieve auth token. Please refresh the page.');
-  return token;
-}
 
 // Helper: parse API response — always returns { ok, data, error }
 async function parseResponse(res) {
@@ -53,7 +47,7 @@ export default function AffiliatesIndex() {
   async function load() {
     setLoading(true); setError(null);
     try {
-      const token = await getToken(auth.user);
+      const token = await getToken();
       const res   = await fetch('/api/admin/affiliates', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -81,7 +75,7 @@ export default function AffiliatesIndex() {
     if (!window.confirm(`Delete affiliate link for "${name}"? This cannot be undone.`)) return;
     setDeleting(id);
     try {
-      const token = await getToken(auth.user);
+      const token = await getToken();
       const res   = await fetch(`/api/admin/affiliates/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
@@ -102,7 +96,7 @@ export default function AffiliatesIndex() {
   async function handleStatusToggle(affiliate) {
     const newStatus = affiliate.status === 'active' ? 'paused' : 'active';
     try {
-      const token = await getToken(auth.user);
+      const token = await getToken();
       const res   = await fetch(`/api/admin/affiliates/${affiliate.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },

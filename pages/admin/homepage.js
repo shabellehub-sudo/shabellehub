@@ -4,6 +4,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { AdminCard, Button, TextInput, TextArea, ErrorBanner } from '../../components/admin/ui';
 import { getHomepage, updateHomepage, HOMEPAGE_DEFAULTS } from '../../lib/cms/homepage';
 import { useAuth } from '../../lib/cms/useAuth';
+import { getToken } from '../../lib/cms/apiHelpers';
 
 const SECTION_LABELS = ['Hero', 'Featured Tools', 'Featured Articles', 'Statistics', 'Banners'];
 
@@ -24,7 +25,7 @@ export default function HomepageCMS() {
 
   async function save() {
     setSaving(true); setSaved(false); setError(null);
-    const token = await auth.user?.getIdToken();
+    const token = await getToken();
     // We use the direct Firestore write via lib
     const r = await updateHomepage(data, auth.user?.uid);
     setSaving(false);

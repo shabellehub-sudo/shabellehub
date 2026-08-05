@@ -5,6 +5,7 @@ import Link from 'next/link';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import AffiliateForm from '../../../components/admin/AffiliateForm';
 import { useAuth } from '../../../lib/cms/useAuth';
+import { getToken } from '../../../lib/cms/apiHelpers';
 
 const EMPTY = {
   programName:    '',
@@ -32,7 +33,7 @@ export default function NewAffiliate() {
     if (!form.affiliateUrl.trim()) { setError('Affiliate URL is required.'); return; }
     setSaving(true); setError(null);
     try {
-      const token = await auth.user?.getIdToken();
+      const token = await getToken();
       const res   = await fetch('/api/admin/affiliates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },

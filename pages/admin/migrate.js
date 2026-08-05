@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../lib/cms/useAuth';
+import { getToken } from '../../lib/cms/apiHelpers';
 
 const categories = [
   { name: "Chatbots", icon: "💬", description: "General-purpose AI chat assistants for everyday questions, writing, brainstorming, and research." },
@@ -42,7 +43,7 @@ export default function MigratePage() {
     setLog([]);
 
     try {
-      const token = await auth.user.getIdToken();
+      const token = await getToken();
 
       // ── 1. Tools ──────────────────────────────────────────────────────────
       addLog('⏳ Tools migrate billaabmaya (64 tools)...');
@@ -94,7 +95,7 @@ export default function MigratePage() {
     setStatus('running');
 
     try {
-      const token = await auth.user.getIdToken();
+      const token = await getToken();
 
       addLog('⏳ Blog posts migrate billaabmaya (24 articles)...');
       const r = await fetch('/api/admin/posts/seed', {
@@ -125,7 +126,7 @@ export default function MigratePage() {
     setStatus('running');
 
     try {
-      const token = await auth.user.getIdToken();
+      const token = await getToken();
 
       addLog('⏳ Blog posts resync billaabmaya (dib-u-qorista 24 articles)...');
       const r = await fetch('/api/admin/posts/resync', {
@@ -154,7 +155,7 @@ export default function MigratePage() {
   async function runDebug() {
     if (!auth.user) { addLog('❌ Not logged in.'); return; }
     try {
-      const token = await auth.user.getIdToken();
+      const token = await getToken();
       const r = await fetch('/api/admin/posts/debug', {
         headers: { Authorization: `Bearer ${token}` },
       });

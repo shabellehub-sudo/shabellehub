@@ -9,6 +9,7 @@ import {
   AdminCard, Button, ErrorBanner, StatCard,
 } from '../../../../components/admin/ui';
 import { useAuth } from '../../../../lib/cms/useAuth';
+import { getToken } from '../../../../lib/cms/apiHelpers';
 
 const STATUS_STYLE = {
   draft:     { color: '#9fb3d4', bg: 'rgba(155,179,212,0.1)' },
@@ -57,7 +58,7 @@ export default function CampaignDetailPage() {
   async function load() {
     setLoading(true); setError(null);
     try {
-      const token = await auth.user.getIdToken();
+      const token = await getToken();
       const res   = await fetch(`/api/admin/newsletter/campaigns/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -85,7 +86,7 @@ export default function CampaignDetailPage() {
     if (!subject.trim()) return;
     setSaving(true); setError(null);
     try {
-      const token = await auth.user.getIdToken();
+      const token = await getToken();
       const res   = await fetch(`/api/admin/newsletter/campaigns/${id}`, {
         method:  'PUT',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -101,7 +102,7 @@ export default function CampaignDetailPage() {
   async function handleAction(action) {
     setSaving(true); setError(null); setActionMsg(null);
     try {
-      const token   = await auth.user.getIdToken();
+      const token   = await getToken();
       const payload = { campaignId: id, action };
       if (action === 'schedule') {
         if (!scheduleAt) { setError('Please pick a date/time.'); setSaving(false); return; }
