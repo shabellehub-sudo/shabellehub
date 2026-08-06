@@ -24,7 +24,7 @@
   transition: border-color var(--duration-base) var(--ease-standard);
 }
 
-.item:has(.answer:not([hidden])) {
+.item:has(.answerOuter[data-open="true"]) {
   border-color: rgba(20, 255, 244, 0.3);
 }
 
@@ -46,20 +46,76 @@
   font-size: var(--text-body-md);
   font-weight: 700;
   color: var(--text);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-standard, ease);
 }
 
+.question:hover {
+  background: rgba(20, 255, 244, 0.03);
+}
+
+.question:focus-visible {
+  outline: 2px solid var(--accent, #14FFF4);
+  outline-offset: -2px;
+  border-radius: var(--radius-lg);
+}
+
+/* Animated plus/minus icon — two bars that morph via rotation + fade.
+   Collapsed = "+" (both bars visible). Expanded = "−" (vertical bar
+   fades out and rotates away, leaving the horizontal bar). */
 .icon {
+  position: relative;
   flex-shrink: 0;
   width: 26px;
   height: 26px;
   border-radius: 50%;
   background: rgba(20, 255, 244, 0.08);
   color: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 800;
+}
+
+.icon::before,
+.icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: currentColor;
+  transition: transform 220ms var(--ease-standard, ease), opacity 220ms var(--ease-standard, ease);
+}
+
+.icon::before {
+  width: 10px;
+  height: 2px;
+  transform: translate(-50%, -50%);
+}
+
+.icon::after {
+  width: 2px;
+  height: 10px;
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 1;
+}
+
+.iconOpen::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+
+/* Smooth expand/collapse without measuring heights in JS.
+   grid-template-rows: 0fr -> 1fr animates smoothly and never causes
+   layout shift outside the accordion item itself. */
+.answerOuter {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms var(--ease-standard, ease);
+}
+
+.answerOuter[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.answerInner {
+  overflow: hidden;
 }
 
 .answer {

@@ -59,10 +59,38 @@ export default function NewsletterSignupForm({
     }
   }
 
+  // Shared, scoped hover/focus polish — no color, padding, radius, or
+  // spacing changes. Just adds a subtle lift on hover and a visible
+  // focus-visible ring (in addition to the browser default) so keyboard
+  // focus is never in doubt.
+  const microInteractions = (
+    <style jsx global>{`
+      .nl-input,
+      .nl-button {
+        transition: transform 150ms ease, opacity 150ms ease, box-shadow 150ms ease;
+      }
+      .nl-button {
+        min-height: 44px;
+      }
+      .nl-button:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+      .nl-button:active:not(:disabled) {
+        transform: translateY(0);
+      }
+      .nl-input:focus-visible,
+      .nl-button:focus-visible {
+        outline: 2px solid #14FFF4;
+        outline-offset: 2px;
+      }
+    `}</style>
+  );
+
   // ── Compact (footer row) ──────────────────────────────────────────────────
   if (isCompact) {
     return (
       <div>
+        {microInteractions}
         {status === 'success' ? (
           <p style={{ color: '#00d084', fontSize: 13, lineHeight: 1.5 }}>{message}</p>
         ) : (
@@ -74,6 +102,7 @@ export default function NewsletterSignupForm({
               placeholder="Your email"
               required
               aria-label="Email address"
+              className="nl-input"
               style={{
                 flex: '1 1 180px', minWidth: 0,
                 background: '#080d1a', border: '1px solid #2a3d5c',
@@ -84,6 +113,8 @@ export default function NewsletterSignupForm({
             <button
               type="submit"
               disabled={status === 'loading'}
+              aria-label={status === 'loading' ? 'Subscribing…' : 'Subscribe to newsletter'}
+              className="nl-button"
               style={{
                 background: '#14FFF4', color: '#080d1a',
                 border: 'none', borderRadius: 8,
@@ -112,6 +143,7 @@ export default function NewsletterSignupForm({
         borderRadius: 14, padding: '24px 28px',
         marginTop: 40, marginBottom: 40,
       }}>
+        {microInteractions}
         <p style={{
           fontFamily: 'Space Grotesk, sans-serif',
           fontSize: 17, fontWeight: 800, color: '#e8f0ff',
@@ -129,9 +161,10 @@ export default function NewsletterSignupForm({
               type="email"
               value={email}
               onChange={e => { setEmail(e.target.value); if (status === 'error') setStatus('idle'); }}
-              placeholder="your@email.com"
+              placeholder="Enter your email"
               required
               aria-label="Email address"
+              className="nl-input"
               style={{
                 flex: '1 1 220px', minWidth: 0,
                 background: '#080d1a', border: `1px solid ${status === 'error' ? 'rgba(255,80,80,0.5)' : '#2a3d5c'}`,
@@ -142,6 +175,8 @@ export default function NewsletterSignupForm({
             <button
               type="submit"
               disabled={status === 'loading'}
+              aria-label={status === 'loading' ? 'Subscribing…' : 'Subscribe for free'}
+              className="nl-button"
               style={{
                 background: '#14FFF4', color: '#080d1a',
                 border: 'none', borderRadius: 8,
@@ -150,7 +185,7 @@ export default function NewsletterSignupForm({
                 flexShrink: 0,
               }}
             >
-              {status === 'loading' ? 'Subscribing…' : 'Subscribe free →'}
+              {status === 'loading' ? 'Subscribing…' : 'Subscribe for free →'}
             </button>
           </form>
         )}
@@ -164,6 +199,7 @@ export default function NewsletterSignupForm({
   // ── Default (homepage section) ────────────────────────────────────────────
   return (
     <div style={{ textAlign: 'center' }}>
+      {microInteractions}
       <h2 style={{
         fontFamily: 'Space Grotesk, sans-serif',
         fontSize: 'clamp(20px, 3.5vw, 26px)', fontWeight: 800,
@@ -198,6 +234,7 @@ export default function NewsletterSignupForm({
             placeholder="Enter your email address"
             required
             aria-label="Email address"
+            className="nl-input"
             style={{
               flex: '1 1 260px', minWidth: 0,
               background: '#0f1829',
@@ -209,6 +246,8 @@ export default function NewsletterSignupForm({
           <button
             type="submit"
             disabled={status === 'loading'}
+            aria-label={status === 'loading' ? 'Subscribing…' : 'Subscribe for free'}
+            className="nl-button"
             style={{
               background: '#14FFF4', color: '#080d1a',
               border: 'none', borderRadius: 10,

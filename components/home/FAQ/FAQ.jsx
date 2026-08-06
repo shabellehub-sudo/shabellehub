@@ -52,17 +52,25 @@ export default function FAQ({ limit = 5, toolsCount, categoriesCount }) {
                     onClick={() => setOpenIndex(isOpen ? null : i)}
                   >
                     <span>{f.q}</span>
-                    <span className={styles.icon} aria-hidden="true">{isOpen ? '−' : '+'}</span>
+                    <span
+                      className={`${styles.icon} ${isOpen ? styles.iconOpen : ''}`}
+                      aria-hidden="true"
+                    />
                   </button>
                 </h3>
                 <div
                   id={panelId}
                   role="region"
                   aria-labelledby={buttonId}
-                  className={styles.answer}
-                  hidden={!isOpen}
+                  aria-hidden={!isOpen}
+                  className={styles.answerOuter}
+                  data-open={isOpen}
                 >
-                  <p>{f.a}</p>
+                  <div className={styles.answerInner}>
+                    <div className={styles.answer}>
+                      <p>{f.a}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             );
