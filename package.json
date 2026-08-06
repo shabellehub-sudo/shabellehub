@@ -7,7 +7,8 @@
     "prebuild": "node scripts/check-env-leakage.js",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
