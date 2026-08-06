@@ -3,7 +3,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { AdminCard, Button, TextInput, TextArea, ErrorBanner, EmptyState } from '../../components/admin/ui';
 import { getSettings, updateSettings } from '../../lib/cms/settings';
 import { useAuth } from '../../lib/cms/useAuth';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../lib/supabase';
+import { isSupabaseConfigured } from '../../lib/supabase';
 
 const emptyForm = {
   site_title: '', site_description: '', ga_measurement_id: '', adsense_client_id: '',
@@ -18,7 +18,7 @@ export default function AdminSettingsPage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!isFirebaseConfigured()) { setLoading(false); return; }
+    if (!isSupabaseConfigured()) { setLoading(false); return; }
     (async () => {
       const { data, error } = await getSettings();
       if (data) {
@@ -56,8 +56,8 @@ export default function AdminSettingsPage() {
         Analytics/AdSense infrastructure isn&rsquo;t altered as a side effect of this panel.
       </div>
 
-      {!isFirebaseConfigured() ? (
-        <EmptyState message="No database connection." sub="Configure Firebase to manage settings." />
+      {!isSupabaseConfigured() ? (
+        <EmptyState message="No database connection." sub="Configure Supabase to manage settings." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
       ) : (

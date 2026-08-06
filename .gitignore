@@ -28,3 +28,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*
+
+# temp/debug files
+build_output.txt
+firestore_audit*.txt
+*.zip

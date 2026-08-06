@@ -10,19 +10,19 @@ export default async function handler(req, res) {
     return res.status(auth.error.includes('configured') ? 503 : 401).json({ error: auth.error });
   }
 
-  const col = auth.db.collection('affiliate_links');
+  const db = auth.db;
 
   // ── GET ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET') {
     try {
-      let q = col.orderBy('updated_at', 'desc').limit(500);
       const { status, toolSlug } = req.query;
-      // Firestore Admin SDK chained where clauses
-      if (status)   q = col.where('status',   '==', status).orderBy('updated_at', 'desc');
-      if (toolSlug) q = col.where('toolSlug', '==', toolSlug).orderBy('updated_at', 'desc');
+      let q = db.from('affiliate_links').select('id, doc').order('updated_at', { ascending: false }).limit(500);
+      if (status)   q = q.eq('status', status);
+      if (toolSlug) q = q.eq('tool_slug', toolSlug);
 
-      const snap = await q.get();
-      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const { data: rows, error } = await q;
+      if (error) throw new Error(error.message);
+      const data = (rows || []).map(row => ({ id: row.id, ...row.doc }));
       return res.status(200).json({ data });
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       if (!body.programName) return res.status(400).json({ error: 'programName is required.' });
       if (!body.affiliateUrl) return res.status(400).json({ error: 'affiliateUrl is required.' });
 
-      const ref  = await col.add({
+      const doc = {
         toolId:         body.toolId         || null,
         toolSlug:       body.toolSlug       || null,
         programName:    body.programName,
@@ -54,9 +54,11 @@ export default async function handler(req, res) {
         updated_by:     auth.uid,
         created_at:     now,
         updated_at:     now,
-      });
-      const snap = await ref.get();
-      return res.status(201).json({ data: { id: snap.id, ...snap.data() } });
+      };
+
+      const { data: row, error } = await db.from('affiliate_links').insert({ doc }).select('id, doc').single();
+      if (error) throw new Error(error.message);
+      return res.status(201).json({ data: { id: row.id, ...row.doc } });
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }

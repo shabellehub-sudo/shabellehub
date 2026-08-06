@@ -97,12 +97,12 @@ export default function AffiliateForm({ form, onChange, onSubmit, saving, error,
             Tool Association
           </h3>
 
-          <FIELD label="Tool Slug" hint="Matches the tool's slug in Firestore/data/index.js. Leave blank for a program-level link.">
+          <FIELD label="Tool Slug" hint="Matches the tool's slug in Supabase/data/index.js. Leave blank for a program-level link.">
             <INPUT value={form.toolSlug} onChange={set('toolSlug')} placeholder="jasper-ai" />
           </FIELD>
 
-          <FIELD label="Tool ID" hint="Optional Firestore document ID of the tool.">
-            <INPUT value={form.toolId} onChange={set('toolId')} placeholder="Firestore doc ID" />
+          <FIELD label="Tool ID" hint="Optional Supabase document ID of the tool.">
+            <INPUT value={form.toolId} onChange={set('toolId')} placeholder="Supabase doc ID" />
           </FIELD>
         </AdminCard>
 

@@ -1,6 +1,6 @@
 // pages/blog/[slug].js — Phase 6B: Rich Block Renderer + Legacy Markdown fallback
-// FIXED: getStaticPaths and getStaticProps now use Firebase Admin SDK so that
-// ISR/SSG reads bypass Firestore security rules (unauthenticated client SDK
+// FIXED: getStaticPaths and getStaticProps now use Supabase Admin SDK so that
+// ISR/SSG reads bypass Supabase security rules (unauthenticated client SDK
 // list queries were being denied by the "Missing or insufficient permissions" error).
 import { NextSeo, ArticleJsonLd } from 'next-seo';
 import Link from 'next/link';

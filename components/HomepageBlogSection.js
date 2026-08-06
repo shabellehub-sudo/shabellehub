@@ -1,5 +1,5 @@
 // components/HomepageBlogSection.js
-// Drop-in component for pages/index.js — shows featured + recent blog posts from Firestore.
+// Drop-in component for pages/index.js — shows featured + recent blog posts from Supabase.
 // Usage in getStaticProps: import { getHomepageBlogProps } from '../lib/cms/posts'
 // Then pass { featuredPosts, recentPosts } as props to your page.
 

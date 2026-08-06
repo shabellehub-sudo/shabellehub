@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useRequireAuth } from '../../lib/cms/useAuth';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../lib/supabase';
+import { isSupabaseConfigured as isSupabaseConfigured } from '../../lib/supabase';
 
 const NAV_SECTIONS = [
   {
@@ -302,13 +302,13 @@ export default function AdminLayout({ children, title, requiredRole = 'editor' }
 
           {/* Page content */}
           <main className="admin-main" style={{ flex: 1, padding: '28px 32px', overflowY: 'auto' }}>
-            {!isFirebaseConfigured() && (
+            {!isSupabaseConfigured() && (
               <div style={{
                 background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.3)',
                 borderRadius: 10, padding: '12px 16px', fontSize: 13, color: '#ff8080',
                 lineHeight: 1.6, marginBottom: 24,
               }}>
-                <strong>Firebase not configured.</strong> Add environment variables to Vercel and redeploy.
+                <strong>Supabase not configured.</strong> Add environment variables to Vercel and redeploy.
               </div>
             )}
 
@@ -324,7 +324,7 @@ export default function AdminLayout({ children, title, requiredRole = 'editor' }
             {auth.status === 'no-role' ? (
               <div style={{ background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.3)', borderRadius: 10, padding: 24, color: '#ff8080', fontSize: 13, lineHeight: 1.7 }}>
                 <strong style={{ display: 'block', marginBottom: 8 }}>No role assigned.</strong>
-                Your account (<code>{auth.user?.uid}</code>) has no role in Firestore.
+                Your account (<code>{auth.user?.uid}</code>) has no role in Supabase.
                 Create a document at <code>users/{auth.user?.uid}</code> and set <code>role</code> to <code>&quot;admin&quot;</code> or <code>&quot;editor&quot;</code>.
               </div>
             ) : children}

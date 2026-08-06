@@ -1,6 +1,6 @@
 // components/admin/MediaPicker.js
 // Modal picker: browse existing media, search, upload new, return selected URL.
-// Reuses lib/cms/media.js — no new Firebase calls.
+// Reuses lib/cms/media.js — no new Supabase calls.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { listMedia, uploadMedia } from '../../lib/cms/media';

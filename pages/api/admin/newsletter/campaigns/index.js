@@ -3,6 +3,16 @@
 // POST — create campaign
 import { requireAuth } from '../../../../../lib/supabaseAdmin';
 
+function serialize(id, raw) {
+  return {
+    id, ...raw,
+    scheduledAt: raw.scheduledAt ?? null,
+    sentAt:      raw.sentAt ?? null,
+    created_at:  raw.created_at ?? null,
+    updated_at:  raw.updated_at ?? null,
+  };
+}
+
 export default async function handler(req, res) {
   const auth = await requireAuth(req);
   if (auth.error) return res.status(401).json({ error: auth.error });
@@ -12,21 +22,12 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const { status } = req.query;
-      let q = db.collection('newsletter_campaigns').orderBy('created_at', 'desc').limit(200);
-      if (status && status !== 'all') {
-        q = db.collection('newsletter_campaigns').where('status', '==', status).orderBy('created_at', 'desc').limit(200);
-      }
-      const snap = await q.get();
-      const data = snap.docs.map(d => {
-        const raw = d.data();
-        return {
-          id: d.id, ...raw,
-          scheduledAt: raw.scheduledAt?.toDate?.()?.toISOString() ?? raw.scheduledAt ?? null,
-          sentAt:      raw.sentAt?.toDate?.()?.toISOString()      ?? raw.sentAt      ?? null,
-          created_at:  raw.created_at?.toDate?.()?.toISOString()  ?? raw.created_at ?? null,
-          updated_at:  raw.updated_at?.toDate?.()?.toISOString()  ?? raw.updated_at ?? null,
-        };
-      });
+      let q = db.from('newsletter_campaigns').select('id, doc').order('created_at', { ascending: false }).limit(200);
+      if (status && status !== 'all') q = q.eq('status', status);
+
+      const { data: rows, error } = await q;
+      if (error) throw new Error(error.message);
+      const data = (rows || []).map(row => serialize(row.id, row.doc));
       return res.status(200).json({ data });
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -41,7 +42,7 @@ export default async function handler(req, res) {
       if (!body.subject)      return res.status(400).json({ error: 'subject is required.' });
 
       const now = new Date();
-      const ref = await db.collection('newsletter_campaigns').add({
+      const doc = {
         newsletterId:   body.newsletterId,
         subject:        body.subject,
         status:         'draft',
@@ -54,16 +55,11 @@ export default async function handler(req, res) {
         updated_by:     auth.uid,
         created_at:     now,
         updated_at:     now,
-      });
-      const snap = await ref.get();
-      const raw  = snap.data();
-      return res.status(201).json({
-        data: {
-          id: snap.id, ...raw,
-          scheduledAt: raw.scheduledAt?.toDate?.()?.toISOString() ?? raw.scheduledAt ?? null,
-          created_at:  raw.created_at?.toDate?.()?.toISOString()  ?? raw.created_at ?? null,
-        },
-      });
+      };
+
+      const { data: row, error } = await db.from('newsletter_campaigns').insert({ doc }).select('id, doc').single();
+      if (error) throw new Error(error.message);
+      return res.status(201).json({ data: serialize(row.id, row.doc) });
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }

@@ -10,7 +10,7 @@ import {
   listTools, bulkDeleteTools, bulkUpdateTools, getToolCounts,
 } from '../../../lib/cms/tools';
 import { useAuth } from '../../../lib/cms/useAuth';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../../lib/supabase';
+import { isSupabaseConfigured as isSupabaseConfigured } from '../../../lib/supabase';
 
 const CATEGORIES = [
   'All', 'Chatbots', 'Coding', 'Image Generation', 'Video Generation',
@@ -32,7 +32,7 @@ export default function AdminToolsPage() {
   const [bulkWorking, setBulkWorking]   = useState(false);
 
   const load = useCallback(async () => {
-    if (!isFirebaseConfigured()) { setLoading(false); return; }
+    if (!isSupabaseConfigured()) { setLoading(false); return; }
     setLoading(true);
     const [toolsRes, countsRes] = await Promise.all([
       listTools({
@@ -172,8 +172,8 @@ export default function AdminToolsPage() {
 
       <ErrorBanner message={error} />
 
-      {!isFirebaseConfigured() ? (
-        <EmptyState message="Firebase not configured." sub="Add environment variables to manage tools via Firestore." />
+      {!isSupabaseConfigured() ? (
+        <EmptyState message="Supabase not configured." sub="Add environment variables to manage tools via Supabase." />
       ) : loading ? (
         <p style={{ color: '#6b82a8', fontSize: 13 }}>Loading…</p>
       ) : tools.length === 0 ? (

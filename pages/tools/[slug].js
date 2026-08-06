@@ -67,7 +67,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
 
   const isSaved = mounted && favorites.includes(tool.id);
 
-  // Phase 5A: resolve CTA URL — Firestore record takes priority over static data
+  // Phase 5A: resolve CTA URL — Supabase record takes priority over static data
   const resolvedAffiliateUrl = affiliateLink?.affiliateUrl
     ? buildAffiliateUrl(affiliateLink.affiliateUrl, tool.slug)
     : tool.affiliateLink || tool.website;

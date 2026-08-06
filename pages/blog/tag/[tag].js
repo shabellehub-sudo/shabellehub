@@ -1,6 +1,6 @@
 // pages/blog/tag/[tag].js — Public tag archive page
-// FIXED: Uses Firebase Admin SDK in getStaticProps/getStaticPaths to bypass
-// Firestore security rules (unauthenticated client-SDK queries were denied).
+// FIXED: Uses Supabase Admin SDK in getStaticProps/getStaticPaths to bypass
+// Supabase security rules (unauthenticated client-SDK queries were denied).
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import {

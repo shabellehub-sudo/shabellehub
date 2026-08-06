@@ -3,7 +3,7 @@ import AdminLayout from '../../../components/admin/AdminLayout';
 import { AdminCard, Button, TextInput, ErrorBanner, EmptyState } from '../../../components/admin/ui';
 import { listMedia, uploadMedia, deleteMedia, replaceMedia, updateMediaAltText } from '../../../lib/cms/media';
 import { useAuth } from '../../../lib/cms/useAuth';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../../lib/supabase';
+import { isSupabaseConfigured } from '../../../lib/supabase';
 
 export default function AdminMediaPage() {
   const auth = useAuth();
@@ -17,7 +17,7 @@ export default function AdminMediaPage() {
   const replaceTargetRef = useRef(null);
 
   const load = useCallback(async () => {
-    if (!isFirebaseConfigured()) { setLoading(false); return; }
+    if (!isSupabaseConfigured()) { setLoading(false); return; }
     setLoading(true);
     const { data, error } = await listMedia({ search: search || undefined });
     setMedia(data);
@@ -77,15 +77,15 @@ export default function AdminMediaPage() {
 
       <div style={{ display: 'flex', gap: 12, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         <TextInput placeholder="Search by file name…" value={search} onChange={(e) => setSearch(e.target.value)} style={{ marginBottom: 0, minWidth: 260 }} />
-        <Button onClick={() => fileInputRef.current?.click()} disabled={uploading || !isFirebaseConfigured()}>
+        <Button onClick={() => fileInputRef.current?.click()} disabled={uploading || !isSupabaseConfigured()}>
           {uploading ? 'Uploading…' : '+ Upload Image'}
         </Button>
         <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} style={{ display: 'none' }} />
         <input ref={replaceInputRef} type="file" accept="image/*" onChange={handleReplaceFile} style={{ display: 'none' }} />
       </div>
 
-      {!isFirebaseConfigured() ? (
-        <EmptyState message="No database connection." sub="Configure Firebase and Firebase Storage to upload files." />
+      {!isSupabaseConfigured() ? (
+        <EmptyState message="No database connection." sub="Configure Supabase and Supabase Storage to upload files." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
       ) : media.length === 0 ? (

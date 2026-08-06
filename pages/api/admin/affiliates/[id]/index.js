@@ -13,7 +13,8 @@ export default async function handler(req, res) {
     const auth = await requireAdmin(req);
     if (auth.error) return res.status(401).json({ error: auth.error });
     try {
-      await auth.db.collection('affiliate_links').doc(id).delete();
+      const { error } = await auth.db.from('affiliate_links').delete().eq('id', id);
+      if (error) throw new Error(error.message);
       return res.status(200).json({ data: { deleted: true } });
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -23,13 +24,14 @@ export default async function handler(req, res) {
   // ── GET / PATCH (editor+) ─────────────────────────────────────────────────
   const auth = await requireAuth(req);
   if (auth.error) return res.status(auth.error.includes('configured') ? 503 : 401).json({ error: auth.error });
-  const col = auth.db.collection('affiliate_links');
+  const db = auth.db;
 
   if (req.method === 'GET') {
     try {
-      const snap = await col.doc(id).get();
-      if (!snap.exists) return res.status(404).json({ error: 'Affiliate link not found.' });
-      return res.status(200).json({ data: { id: snap.id, ...snap.data() } });
+      const { data: row, error } = await db.from('affiliate_links').select('id, doc').eq('id', id).maybeSingle();
+      if (error) throw new Error(error.message);
+      if (!row) return res.status(404).json({ error: 'Affiliate link not found.' });
+      return res.status(200).json({ data: { id: row.id, ...row.doc } });
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -48,9 +50,17 @@ export default async function handler(req, res) {
       if (body.commissionValue != null) body.commissionValue = Number(body.commissionValue);
       if (body.cookieDays      != null) body.cookieDays      = Number(body.cookieDays);
 
-      await col.doc(id).update({ ...body, updated_by: auth.uid, updated_at: now });
-      const snap = await col.doc(id).get();
-      return res.status(200).json({ data: { id: snap.id, ...snap.data() } });
+      const { data: existing, error: getErr } = await db.from('affiliate_links').select('doc').eq('id', id).maybeSingle();
+      if (getErr) throw new Error(getErr.message);
+      if (!existing) return res.status(404).json({ error: 'Affiliate link not found.' });
+
+      const merged = { ...existing.doc, ...body, updated_by: auth.uid, updated_at: now };
+      const { error: updErr } = await db.from('affiliate_links').update({ doc: merged }).eq('id', id);
+      if (updErr) throw new Error(updErr.message);
+
+      const { data: row, error: finalErr } = await db.from('affiliate_links').select('id, doc').eq('id', id).maybeSingle();
+      if (finalErr) throw new Error(finalErr.message);
+      return res.status(200).json({ data: { id: row.id, ...row.doc } });
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }

@@ -88,41 +88,46 @@ export default async function handler(req, res) {
   const { campaignId, action = 'send', scheduledAt } = req.body || {};
   if (!campaignId) return res.status(400).json({ error: 'campaignId is required.' });
 
-  const campaignRef  = db.collection('newsletter_campaigns').doc(campaignId);
-  const campaignSnap = await campaignRef.get();
-  if (!campaignSnap.exists) return res.status(404).json({ error: 'Campaign not found.' });
-  const campaign = campaignSnap.data();
+  const { data: campaignRow, error: campErr } = await db.from('newsletter_campaigns').select('id, doc').eq('id', campaignId).maybeSingle();
+  if (campErr) return res.status(500).json({ error: campErr.message });
+  if (!campaignRow) return res.status(404).json({ error: 'Campaign not found.' });
+  const campaign = campaignRow.doc;
 
   if (campaign.status === 'sent')      return res.status(400).json({ error: 'Campaign already sent.' });
   if (campaign.status === 'cancelled') return res.status(400).json({ error: 'Campaign is cancelled.' });
 
-  const newsletterSnap = await db.collection('newsletters').doc(campaign.newsletterId).get();
-  if (!newsletterSnap.exists) return res.status(404).json({ error: 'Newsletter content not found.' });
-  const newsletter = newsletterSnap.data();
+  const { data: newsletterRow, error: newsErr } = await db.from('newsletters').select('id, doc').eq('id', campaign.newsletterId).maybeSingle();
+  if (newsErr) return res.status(500).json({ error: newsErr.message });
+  if (!newsletterRow) return res.status(404).json({ error: 'Newsletter content not found.' });
+  const newsletter = newsletterRow.doc;
 
   // ── Schedule ──────────────────────────────────────────────────────────────
   if (action === 'schedule') {
     if (!scheduledAt) return res.status(400).json({ error: 'scheduledAt is required.' });
-    await campaignRef.update({
+    const merged = {
+      ...campaign,
       status: 'scheduled', scheduledAt: new Date(scheduledAt),
       updated_by: auth.uid, updated_at: new Date(),
-    });
+    };
+    const { error } = await db.from('newsletter_campaigns').update({ doc: merged }).eq('id', campaignId);
+    if (error) return res.status(500).json({ error: error.message });
     return res.status(200).json({ data: { campaignId, status: 'scheduled', scheduledAt } });
   }
 
   // ── Cancel ────────────────────────────────────────────────────────────────
   if (action === 'cancel') {
-    await campaignRef.update({
-      status: 'cancelled', updated_by: auth.uid, updated_at: new Date(),
-    });
+    const merged = { ...campaign, status: 'cancelled', updated_by: auth.uid, updated_at: new Date() };
+    const { error } = await db.from('newsletter_campaigns').update({ doc: merged }).eq('id', campaignId);
+    if (error) return res.status(500).json({ error: error.message });
     return res.status(200).json({ data: { campaignId, status: 'cancelled' } });
   }
 
   // ── Send ──────────────────────────────────────────────────────────────────
   if (action === 'send') {
     try {
-      const subSnap = await db.collection('subscribers').where('status', '==', 'active').get();
-      const subscribers    = subSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const { data: subRows, error: subErr } = await db.from('subscribers').select('id, doc').eq('status', 'active');
+      if (subErr) throw new Error(subErr.message);
+      const subscribers    = (subRows || []).map(row => ({ id: row.id, ...row.doc }));
       const recipientCount = subscribers.length;
 
       if (recipientCount === 0) {
@@ -162,14 +167,17 @@ export default async function handler(req, res) {
         unsubscribeUrl: `${siteUrl}/api/newsletter/unsubscribe`,
       });
 
-      await campaignRef.update({
+      const mergedCampaign = {
+        ...campaign,
         status: 'sent', sentAt: new Date(), recipientCount,
         opens: 0, clicks: 0, updated_by: auth.uid, updated_at: new Date(),
-      });
+      };
+      const { error: updCampErr } = await db.from('newsletter_campaigns').update({ doc: mergedCampaign }).eq('id', campaignId);
+      if (updCampErr) throw new Error(updCampErr.message);
 
-      await db.collection('newsletters').doc(campaign.newsletterId).update({
-        status: 'sent', updated_at: new Date(),
-      });
+      const mergedNewsletter = { ...newsletter, status: 'sent', updated_at: new Date() };
+      const { error: updNewsErr } = await db.from('newsletters').update({ doc: mergedNewsletter }).eq('id', campaign.newsletterId);
+      if (updNewsErr) throw new Error(updNewsErr.message);
 
       return res.status(200).json({
         data: { campaignId, status: 'sent', recipientCount, sentAt: new Date().toISOString(), deliveryNote, previewHtml },

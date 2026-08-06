@@ -1,5 +1,5 @@
-// pages/blog/index.js — uses Firebase Admin SDK in getStaticProps
-// so ISR/SSG reads bypass Firestore security rules (which block unauthenticated
+// pages/blog/index.js — uses Supabase Admin SDK in getStaticProps
+// so ISR/SSG reads bypass Supabase security rules (which block unauthenticated
 // client-SDK list queries).  The public-facing React component is unchanged.
 import { useState } from 'react';
 import { NextSeo } from 'next-seo';

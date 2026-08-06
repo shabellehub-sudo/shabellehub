@@ -1,5 +1,5 @@
 // pages/api/admin/users/index.js
-// GET — list all admin users from Firestore
+// GET — list all admin users from profiles
 
 import { requireAdmin } from '../../../../lib/supabaseAdmin';
 
@@ -15,9 +15,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const snap = await auth.db.collection('users').orderBy('created_at', 'asc').get();
-    const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    return res.status(200).json({ data });
+    const { data, error } = await auth.db.from('profiles').select('*').order('created_at', { ascending: true });
+    if (error) throw new Error(error.message);
+    return res.status(200).json({ data: data || [] });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

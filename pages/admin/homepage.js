@@ -26,7 +26,7 @@ export default function HomepageCMS() {
   async function save() {
     setSaving(true); setSaved(false); setError(null);
     const token = await getToken();
-    // We use the direct Firestore write via lib
+    // We use the direct Supabase write via lib
     const r = await updateHomepage(data, auth.user?.uid);
     setSaving(false);
     if (r.error) { setError(r.error); return; }
@@ -114,7 +114,7 @@ export default function HomepageCMS() {
               <input type="number" min={1} max={24} value={data.featuredTools?.limit ?? 6} onChange={e => set('featuredTools.limit', parseInt(e.target.value) || 6)}
                 style={{ background: '#080d1a', border: '1px solid #2a3d5c', borderRadius: 8, padding: '10px 12px', color: '#e8f0ff', fontSize: 14, width: 120 }} />
             </label>
-            <InfoBox>Tools are pulled automatically from Firestore (featured=true, status=published), ordered by date.</InfoBox>
+            <InfoBox>Tools are pulled automatically from Supabase (featured=true, status=published), ordered by date.</InfoBox>
           </AdminCard>
         </div>
       )}
@@ -131,7 +131,7 @@ export default function HomepageCMS() {
               <input type="number" min={1} max={12} value={data.featuredArticles?.limit ?? 3} onChange={e => set('featuredArticles.limit', parseInt(e.target.value) || 3)}
                 style={{ background: '#080d1a', border: '1px solid #2a3d5c', borderRadius: 8, padding: '10px 12px', color: '#e8f0ff', fontSize: 14, width: 120 }} />
             </label>
-            <InfoBox>Articles are pulled from Firestore (featured=true or most recent, status=published).</InfoBox>
+            <InfoBox>Articles are pulled from Supabase (featured=true or most recent, status=published).</InfoBox>
           </AdminCard>
         </div>
       )}

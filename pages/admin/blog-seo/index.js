@@ -4,7 +4,7 @@ import Link from 'next/link';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import { AdminCard, Button, ErrorBanner, EmptyState } from '../../../components/admin/ui';
 import { listPostsSEOSummary, updatePostSEO } from '../../../lib/cms/posts';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../../lib/supabase';
+import { isSupabaseConfigured } from '../../../lib/supabase';
 import { useAuth } from '../../../lib/cms/useAuth';
 
 function CharCount({ value, max }) {
@@ -129,8 +129,8 @@ export default function BlogSEOPage() {
         </div>
       </div>
 
-      {!isFirebaseConfigured() ? (
-        <EmptyState message="Firebase not configured." sub="Add environment variables to get started." />
+      {!isSupabaseConfigured() ? (
+        <EmptyState message="Supabase not configured." sub="Add environment variables to get started." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
       ) : filtered.length === 0 ? (

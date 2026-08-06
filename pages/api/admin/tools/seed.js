@@ -1,5 +1,5 @@
 // pages/api/admin/tools/seed.js
-// POST — Admin-only. Migrates static data/index.js tools into Firestore.
+// POST — Admin-only. Migrates static data/index.js tools into the tools table.
 // Uses slug as dedup key — safe to call multiple times.
 
 import { requireAdmin } from '../../../../lib/supabaseAdmin';
@@ -18,16 +18,16 @@ export default async function handler(req, res) {
 
   try {
     const db      = auth.db;
-    const col     = db.collection('tools');
     const now     = new Date();
     let created   = 0;
     let skipped   = 0;
 
     for (const tool of staticTools) {
-      const snap = await col.where('slug', '==', tool.slug).limit(1).get();
-      if (!snap.empty) { skipped++; continue; }
+      const { data: rows, error: findErr } = await db.from('tools').select('id').eq('slug', tool.slug).limit(1);
+      if (findErr) throw new Error(findErr.message);
+      if (rows && rows.length > 0) { skipped++; continue; }
 
-      await col.add({
+      const doc = {
         name:              tool.name,
         slug:              tool.slug,
         status:            'published',
@@ -60,7 +60,10 @@ export default async function handler(req, res) {
         updated_at:        now,
         created_by:        auth.uid,
         updated_by:        auth.uid,
-      });
+      };
+
+      const { error: insErr } = await db.from('tools').insert({ doc });
+      if (insErr) throw new Error(insErr.message);
       created++;
     }
 

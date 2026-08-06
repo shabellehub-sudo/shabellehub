@@ -5,7 +5,7 @@ import {
   AdminCard, Button, TextInput, ErrorBanner, EmptyState,
 } from '../../../components/admin/ui';
 import { listTags, createTag, updateTag, deleteTag } from '../../../lib/cms/tags';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../../lib/supabase';
+import { isSupabaseConfigured } from '../../../lib/supabase';
 
 function slugify(str) {
   return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -109,8 +109,8 @@ export default function AdminTagsPage() {
       </AdminCard>
 
       {/* ── Tag list ── */}
-      {!isFirebaseConfigured() ? (
-        <EmptyState message="No database connection." sub="Configure Firebase to manage tags." />
+      {!isSupabaseConfigured() ? (
+        <EmptyState message="No database connection." sub="Configure Supabase to manage tags." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
       ) : tags.length === 0 ? (

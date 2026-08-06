@@ -15,35 +15,35 @@ export default async function handler(req, res) {
   const db = auth.db;
 
   try {
-    const [subSnap, sentSnap, recentSnap, draftSnap, scheduledSnap] = await Promise.all([
-      db.collection('subscribers').where('status', '==', 'active').get(),
-      db.collection('newsletter_campaigns').where('status', '==', 'sent').get(),
-      db.collection('newsletter_campaigns').where('status', '==', 'sent').orderBy('sentAt', 'desc').limit(5).get(),
-      db.collection('newsletter_campaigns').where('status', '==', 'draft').get(),
-      db.collection('newsletter_campaigns').where('status', '==', 'scheduled').get(),
+    const [subRes, sentRes, recentRes, draftRes, scheduledRes] = await Promise.all([
+      db.from('subscribers').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+      db.from('newsletter_campaigns').select('id, doc').eq('status', 'sent'),
+      db.from('newsletter_campaigns').select('id, doc').eq('status', 'sent').order('sent_at', { ascending: false }).limit(5),
+      db.from('newsletter_campaigns').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
+      db.from('newsletter_campaigns').select('id', { count: 'exact', head: true }).eq('status', 'scheduled'),
     ]);
 
-    const sentCampaigns = sentSnap.docs.map(d => {
-      const raw = d.data();
-      return {
-        id: d.id, ...raw,
-        sentAt: raw.sentAt?.toDate?.()?.toISOString() ?? raw.sentAt ?? null,
-      };
-    });
+    if (subRes.error) throw new Error(subRes.error.message);
+    if (sentRes.error) throw new Error(sentRes.error.message);
+    if (recentRes.error) throw new Error(recentRes.error.message);
+    if (draftRes.error) throw new Error(draftRes.error.message);
+    if (scheduledRes.error) throw new Error(scheduledRes.error.message);
+
+    const sentCampaigns = (sentRes.data || []).map(row => ({ id: row.id, ...row.doc }));
 
     const totalSent   = sentCampaigns.reduce((s, c) => s + (c.recipientCount || 0), 0);
     const totalOpens  = sentCampaigns.reduce((s, c) => s + (c.opens  || 0), 0);
     const totalClicks = sentCampaigns.reduce((s, c) => s + (c.clicks || 0), 0);
 
-    const recentCampaigns = recentSnap.docs.map(d => {
-      const raw = d.data();
+    const recentCampaigns = (recentRes.data || []).map(row => {
+      const raw = row.doc || {};
       return {
-        id:            d.id,
+        id:            row.id,
         subject:       raw.subject || '',
         recipientCount: raw.recipientCount || 0,
         opens:          raw.opens  || 0,
         clicks:         raw.clicks || 0,
-        sentAt:         raw.sentAt?.toDate?.()?.toISOString() ?? raw.sentAt ?? null,
+        sentAt:         raw.sentAt ?? null,
         openRate:       raw.recipientCount > 0 ? ((raw.opens  / raw.recipientCount) * 100).toFixed(1) : '0.0',
         clickRate:      raw.recipientCount > 0 ? ((raw.clicks / raw.recipientCount) * 100).toFixed(1) : '0.0',
       };
@@ -51,10 +51,10 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       data: {
-        activeSubscribers: subSnap.size,
-        campaignsSent:     sentSnap.size,
-        draftCampaigns:    draftSnap.size,
-        scheduledCampaigns: scheduledSnap.size,
+        activeSubscribers: subRes.count || 0,
+        campaignsSent:     sentCampaigns.length,
+        draftCampaigns:    draftRes.count || 0,
+        scheduledCampaigns: scheduledRes.count || 0,
         totalSent,
         openRate:   totalSent > 0 ? ((totalOpens  / totalSent) * 100).toFixed(1) : '0.0',
         clickRate:  totalSent > 0 ? ((totalClicks / totalSent) * 100).toFixed(1) : '0.0',

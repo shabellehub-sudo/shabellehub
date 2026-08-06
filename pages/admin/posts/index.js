@@ -3,7 +3,7 @@ import Link from 'next/link';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import { AdminCard, Button, StatusBadge, EmptyState, ErrorBanner, TextInput, Select } from '../../../components/admin/ui';
 import { listPosts, deletePost } from '../../../lib/cms/posts';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../../lib/supabase';
+import { isSupabaseConfigured } from '../../../lib/supabase';
 
 export default function AdminPostsPage() {
   const [posts, setPosts] = useState([]);
@@ -13,7 +13,7 @@ export default function AdminPostsPage() {
   const [search, setSearch] = useState('');
 
   const load = useCallback(async () => {
-    if (!isFirebaseConfigured()) {
+    if (!isSupabaseConfigured()) {
       setLoading(false);
       return;
     }
@@ -51,8 +51,8 @@ export default function AdminPostsPage() {
 
       <ErrorBanner message={error} />
 
-      {!isFirebaseConfigured() ? (
-        <EmptyState message="No database connection." sub="Configure Firebase to manage posts here." />
+      {!isSupabaseConfigured() ? (
+        <EmptyState message="No database connection." sub="Configure Supabase to manage posts here." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
       ) : posts.length === 0 ? (

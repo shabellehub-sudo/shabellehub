@@ -1,5 +1,5 @@
 // pages/api/admin/users/[id]/role.js
-// PATCH — update a user's role in Firestore
+// PATCH — update a user's role in profiles
 
 import { requireAdmin } from '../../../../../lib/supabaseAdmin';
 
@@ -29,13 +29,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const ref = auth.db.collection('users').doc(id);
-    const snap = await ref.get();
-    if (!snap.exists) return res.status(404).json({ error: 'User not found.' });
+    const { data: existing, error: getErr } = await auth.db.from('profiles').select('id').eq('id', id).maybeSingle();
+    if (getErr) throw new Error(getErr.message);
+    if (!existing) return res.status(404).json({ error: 'User not found.' });
 
-    await ref.update({ role, updated_at: new Date() });
-    const updated = await ref.get();
-    return res.status(200).json({ data: { id: updated.id, ...updated.data() } });
+    const { error: updErr } = await auth.db.from('profiles').update({ role, updated_at: new Date() }).eq('id', id);
+    if (updErr) throw new Error(updErr.message);
+
+    const { data: updated, error: finalErr } = await auth.db.from('profiles').select('*').eq('id', id).maybeSingle();
+    if (finalErr) throw new Error(finalErr.message);
+    return res.status(200).json({ data: updated });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

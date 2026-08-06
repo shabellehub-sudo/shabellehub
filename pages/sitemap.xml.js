@@ -1,4 +1,4 @@
-// pages/sitemap.xml.js — merges static tools + Firestore published posts
+// pages/sitemap.xml.js — merges static tools + Supabase published posts
 import { tools as staticTools, categories } from '../data';
 import { teamMembers } from '../data/team';
 import { generateSitemapEntries } from '../lib/seo';
@@ -19,7 +19,7 @@ export async function getServerSideProps({ res }) {
     if (!toolsRes.error && toolsRes.data?.length > 0) tools = toolsRes.data;
   } catch { /* keep staticTools fallback */ }
 
-  // Try to get live posts from Firestore; fall back to empty array
+  // Try to get live posts from Supabase; fall back to empty array
   let livePosts = [];
   try {
     const { data } = await listPublishedPosts({ limit: 500 });
@@ -30,7 +30,7 @@ export async function getServerSideProps({ res }) {
         date: p.published_at ? new Date(p.published_at).toISOString().split('T')[0] : '',
       }));
     }
-  } catch { /* Firestore not configured — sitemap still works */ }
+  } catch { /* Supabase not configured — sitemap still works */ }
 
   const entries = generateSitemapEntries(tools, livePosts, categories, teamMembers);
   const today   = new Date().toISOString().split('T')[0];

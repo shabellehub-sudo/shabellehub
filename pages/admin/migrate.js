@@ -1,5 +1,5 @@
 // pages/admin/migrate.js
-// One-click migration: seeds Tools + Categories from data/index.js into Firestore
+// One-click migration: seeds Tools + Categories from data/index.js into Supabase
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -199,7 +199,7 @@ export default function MigratePage() {
     <div style={s.page}>
       <div style={s.card}>
         <h1 style={s.h1}>🚀 Migration Tool</h1>
-        <p style={s.sub}>64 Tools + 14 Categories → Firestore. Hal mar ku orod.</p>
+        <p style={s.sub}>64 Tools + 14 Categories → Supabase. Hal mar ku orod.</p>
 
         <div style={{ ...s.stat }}>
           <span style={{ color: '#6b82a8' }}>Tools</span>
@@ -249,7 +249,7 @@ export default function MigratePage() {
           style={{ ...s.btn, marginTop: 12, background: '#9d4edd' }}
           onClick={runDebug}
         >
-          🔍 Debug Posts Data (Eeg Raw Firestore)
+          🔍 Debug Posts Data (Eeg Raw Supabase)
         </button>
 
         {log.length > 0 && (

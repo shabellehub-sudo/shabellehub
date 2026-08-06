@@ -9,8 +9,8 @@ function serialize(id, raw) {
   return {
     id, ...raw,
     content_blocks: raw.content_blocks || [],
-    created_at: raw.created_at?.toDate?.()?.toISOString() ?? raw.created_at ?? null,
-    updated_at: raw.updated_at?.toDate?.()?.toISOString() ?? raw.updated_at ?? null,
+    created_at: raw.created_at ?? null,
+    updated_at: raw.updated_at ?? null,
   };
 }
 
@@ -19,14 +19,14 @@ export default async function handler(req, res) {
   if (auth.error) return res.status(401).json({ error: auth.error });
 
   const { id } = req.query;
-  const db  = auth.db;
-  const ref = db.collection('newsletters').doc(id);
+  const db = auth.db;
 
   if (req.method === 'GET') {
     try {
-      const snap = await ref.get();
-      if (!snap.exists) return res.status(404).json({ error: 'Newsletter not found.' });
-      return res.status(200).json({ data: serialize(snap.id, snap.data()) });
+      const { data: row, error } = await db.from('newsletters').select('id, doc').eq('id', id).maybeSingle();
+      if (error) throw new Error(error.message);
+      if (!row) return res.status(404).json({ error: 'Newsletter not found.' });
+      return res.status(200).json({ data: serialize(row.id, row.doc) });
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -42,9 +42,18 @@ export default async function handler(req, res) {
       }
       payload.updated_by = auth.uid;
       payload.updated_at = new Date();
-      await ref.update(payload);
-      const snap = await ref.get();
-      return res.status(200).json({ data: serialize(snap.id, snap.data()) });
+
+      const { data: existing, error: getErr } = await db.from('newsletters').select('doc').eq('id', id).maybeSingle();
+      if (getErr) throw new Error(getErr.message);
+      if (!existing) return res.status(404).json({ error: 'Newsletter not found.' });
+
+      const merged = { ...existing.doc, ...payload };
+      const { error: updErr } = await db.from('newsletters').update({ doc: merged }).eq('id', id);
+      if (updErr) throw new Error(updErr.message);
+
+      const { data: row, error: finalErr } = await db.from('newsletters').select('id, doc').eq('id', id).maybeSingle();
+      if (finalErr) throw new Error(finalErr.message);
+      return res.status(200).json({ data: serialize(row.id, row.doc) });
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -53,7 +62,8 @@ export default async function handler(req, res) {
   if (req.method === 'DELETE') {
     if (auth.role !== 'admin') return res.status(403).json({ error: 'Admin role required.' });
     try {
-      await ref.delete();
+      const { error } = await db.from('newsletters').delete().eq('id', id);
+      if (error) throw new Error(error.message);
       return res.status(200).json({ data: { id } });
     } catch (err) {
       return res.status(500).json({ error: err.message });

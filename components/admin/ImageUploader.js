@@ -1,6 +1,6 @@
 // components/admin/ImageUploader.js
 // Drag-and-drop / click upload with preview and progress.
-// Calls uploadMedia() from lib/cms/media.js — no new Firebase logic.
+// Calls uploadMedia() from lib/cms/media.js — no new Supabase logic.
 
 import { useState, useRef, useCallback } from 'react';
 import { uploadMedia } from '../../lib/cms/media';

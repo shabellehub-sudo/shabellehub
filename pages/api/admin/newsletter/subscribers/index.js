@@ -16,28 +16,18 @@ export default async function handler(req, res) {
     try {
       const { status, source, limit: lim = '500' } = req.query;
 
-      let q = db.collection('subscribers').orderBy('created_at', 'desc').limit(parseInt(lim, 10));
-      if (status && status !== 'all') q = db.collection('subscribers').where('status', '==', status).orderBy('created_at', 'desc').limit(parseInt(lim, 10));
-      if (source && source !== 'all') q = db.collection('subscribers').where('source', '==', source).orderBy('created_at', 'desc').limit(parseInt(lim, 10));
-      // combined filters
-      if (status && status !== 'all' && source && source !== 'all') {
-        q = db.collection('subscribers')
-          .where('status', '==', status)
-          .where('source', '==', source)
-          .orderBy('created_at', 'desc')
-          .limit(parseInt(lim, 10));
-      }
+      let q = db.from('subscribers').select('id, doc').order('created_at', { ascending: false }).limit(parseInt(lim, 10));
+      if (status && status !== 'all') q = q.eq('status', status);
+      if (source && source !== 'all') q = q.eq('source', source);
 
-      const snap = await q.get();
-      const subscribers = snap.docs.map(d => {
-        const data = d.data();
-        return {
-          id: d.id,
-          ...data,
-          created_at: data.created_at ?? null,
-          updated_at: data.updated_at ?? null,
-        };
-      });
+      const { data: rows, error } = await q;
+      if (error) throw new Error(error.message);
+      const subscribers = (rows || []).map(row => ({
+        id: row.id,
+        ...row.doc,
+        created_at: row.doc?.created_at ?? null,
+        updated_at: row.doc?.updated_at ?? null,
+      }));
 
       return res.status(200).json({ data: subscribers, count: subscribers.length });
     } catch (err) {
@@ -54,7 +44,8 @@ export default async function handler(req, res) {
     if (!id) return res.status(400).json({ error: 'Missing id query parameter.' });
 
     try {
-      await db.collection('subscribers').doc(id).delete();
+      const { error } = await db.from('subscribers').delete().eq('id', id);
+      if (error) throw new Error(error.message);
       return res.status(200).json({ data: { id } });
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -71,9 +62,8 @@ export default async function handler(req, res) {
     if (ids.length > 100) return res.status(400).json({ error: 'Max 100 ids per bulk delete.' });
 
     try {
-      const batch = db.batch();
-      ids.forEach(id => batch.delete(db.collection('subscribers').doc(id)));
-      await batch.commit();
+      const { error } = await db.from('subscribers').delete().in('id', ids);
+      if (error) throw new Error(error.message);
       return res.status(200).json({ data: { deleted: ids.length } });
     } catch (err) {
       return res.status(500).json({ error: err.message });

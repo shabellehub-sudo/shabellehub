@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import { AdminCard, Button, TextInput, TextArea, Select, ErrorBanner, EmptyState } from '../../../components/admin/ui';
 import { listAuthors, createAuthor, updateAuthor, deleteAuthor } from '../../../lib/cms/authors';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../../lib/supabase';
+import { isSupabaseConfigured } from '../../../lib/supabase';
 
 const emptyForm = {
   id: null, slug: '', name: '', title: '', roles: ['author'],
@@ -23,7 +23,7 @@ export default function AdminAuthorsPage() {
   const [slugTouched, setSlugTouched] = useState(false);
 
   const load = useCallback(async () => {
-    if (!isFirebaseConfigured()) { setLoading(false); return; }
+    if (!isSupabaseConfigured()) { setLoading(false); return; }
     setLoading(true);
     const { data, error } = await listAuthors();
     setAuthors(data);
@@ -121,8 +121,8 @@ export default function AdminAuthorsPage() {
         <Button onClick={startCreate} style={{ marginBottom: 16 }}>+ New Author</Button>
       )}
 
-      {!isFirebaseConfigured() ? (
-        <EmptyState message="No database connection." sub="Configure Firebase to manage authors." />
+      {!isSupabaseConfigured() ? (
+        <EmptyState message="No database connection." sub="Configure Supabase to manage authors." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
       ) : authors.length === 0 ? (

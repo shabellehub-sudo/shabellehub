@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import { AdminCard, Button, TextInput, TextArea, ErrorBanner, EmptyState } from '../../../components/admin/ui';
 import { listCategories, createCategory, updateCategory, deleteCategory } from '../../../lib/cms/categories';
-import { isSupabaseConfigured as isFirebaseConfigured } from '../../../lib/supabase';
+import { isSupabaseConfigured } from '../../../lib/supabase';
 
 const emptyForm = { id: null, slug: '', name: '', icon: '', description: '', seo_title: '', seo_description: '' };
 
@@ -19,7 +19,7 @@ export default function AdminCategoriesPage() {
   const [slugTouched, setSlugTouched] = useState(false);
 
   const load = useCallback(async () => {
-    if (!isFirebaseConfigured()) { setLoading(false); return; }
+    if (!isSupabaseConfigured()) { setLoading(false); return; }
     setLoading(true);
     const { data, error } = await listCategories();
     setCategories(data);
@@ -88,8 +88,8 @@ export default function AdminCategoriesPage() {
         <Button onClick={startCreate} style={{ marginBottom: 16 }}>+ New Category</Button>
       )}
 
-      {!isFirebaseConfigured() ? (
-        <EmptyState message="No database connection." sub="Configure Firebase to manage categories." />
+      {!isSupabaseConfigured() ? (
+        <EmptyState message="No database connection." sub="Configure Supabase to manage categories." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
       ) : categories.length === 0 ? (
