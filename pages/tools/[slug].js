@@ -94,11 +94,16 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
     ],
   };
 
-  // CTA label — "Try Free" is only accurate for free/freemium tools
-  const ctaLabel = tool.priceTier === 'paid'
+  // CTA label — discontinued tools take priority, then paid vs free/freemium
+  const isDiscontinued = tool.badge === 'Discontinued';
+  const ctaLabel = isDiscontinued
+    ? `See Alternatives →`
+    : tool.priceTier === 'paid'
     ? `Visit ${tool.name} →`
     : `Try ${tool.name} Free →`;
-  const ctaAriaLabel = tool.priceTier === 'paid'
+  const ctaAriaLabel = isDiscontinued
+    ? `See alternatives to ${tool.name}`
+    : tool.priceTier === 'paid'
     ? `Visit ${tool.name} website`
     : `Try ${tool.name} for free`;
 
