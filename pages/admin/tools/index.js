@@ -43,7 +43,7 @@ export default function AdminToolsPage() {
       getToolCounts(),
     ]);
     setTools(toolsRes.data);
-    setCounts(countsRes.data || counts);
+    setCounts(c => countsRes.data || c);
     setError(toolsRes.error);
     setLoading(false);
     setSelected(new Set());
