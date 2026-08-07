@@ -204,10 +204,33 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
           </div>
         </section>
 
-        {/* Rating factors */}
+        {/* Comparison articles methodology */}
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{
+          fontFamily: 'Space Grotesk, sans-serif',
+          fontSize: 18,
+          fontWeight: 700,
+          marginBottom: 16,
+          color: '#e8f0ff'
+        }}>
+          3. How Comparison Articles Differ from Tool Reviews
+        </h2>
+        <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7 }}>
+          Individual tool pages in our directory go through the hands-on
+          testing process described above. Multi-tool comparison articles
+          on our blog synthesize official documentation, published pricing,
+          and feature information for each tool rather than running an
+          identical task across every tool — this is disclosed at the
+          end of each comparison article. Where a comparison references a
+          specific tool's rating, that rating reflects the tool's
+          individual hands-on review.
+        </p>
+      </section>
+
+      {/* Rating factors */}
         <section style={{ marginBottom: 32 }}>
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 8, color: '#e8f0ff' }}>
-            3. How the Star Rating Is Calculated
+            4. How the Star Rating Is Calculated
           </h2>
           <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
             Every tool receives a rating out of 5, weighted across five factors observed during testing:
@@ -240,7 +263,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
         {/* Rating scale */}
         <section style={{ marginBottom: 32 }}>
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 16, color: '#e8f0ff' }}>
-            4. What the Score Means
+            5. What the Score Means
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {RATING_SCALE.map(r => (
@@ -263,7 +286,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
         {/* Pricing tiers */}
         <section style={{ marginBottom: 32 }}>
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 16, color: '#e8f0ff' }}>
-            5. What &quot;Free&quot;, &quot;Freemium&quot;, and &quot;Paid&quot; Mean
+            6. What &quot;Free&quot;, &quot;Freemium&quot;, and &quot;Paid&quot; Mean
           </h2>
           <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
             Each tool is tagged with one of three pricing labels, used consistently across the directory,
