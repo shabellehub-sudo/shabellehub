@@ -11,7 +11,7 @@ export function AffiliateDisclosure({ compact = false }) {
       <p style={{ color: '#8ba3ca', fontSize: 11, marginTop: 10, opacity: 0.75, lineHeight: 1.5 }}>
         ℹ️ This is an affiliate link. If you sign up through it, Shabelle Hub may earn a commission at no
         extra cost to you. This never affects our ratings — see our{' '}
-        <Link href="/affiliate-disclosure" style={{ color: '#14FFF4' }}>Affiliate Disclosure</Link>.
+        <Link href="/affiliate-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Affiliate Disclosure</Link>.
       </p>
     );
   }
@@ -26,7 +26,7 @@ export function AffiliateDisclosure({ compact = false }) {
         affiliate links. If you sign up or make a purchase through one, Shabelle Hub may receive a
         commission at no extra cost to you. Commission potential is never a factor in how we score or rank
         a tool — see our{' '}
-        <Link href="/affiliate-disclosure" style={{ color: '#14FFF4' }}>Affiliate Disclosure</Link>{' '}
+        <Link href="/affiliate-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Affiliate Disclosure</Link>{' '}
         for the full policy.
       </p>
     </div>
@@ -42,7 +42,7 @@ export function AdvertisingNotice({ compact = false }) {
       <p style={{ color: '#8ba3ca', fontSize: 11, opacity: 0.7, lineHeight: 1.5 }}>
         This page may display ads served by Google AdSense and other third-party networks. Ads are
         labeled and never written or endorsed by our editorial team. See our{' '}
-        <Link href="/advertising-disclosure" style={{ color: '#14FFF4' }}>Advertising Disclosure</Link>.
+        <Link href="/advertising-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Advertising Disclosure</Link>.
       </p>
     );
   }
@@ -57,7 +57,7 @@ export function AdvertisingNotice({ compact = false }) {
         AdSense and other third-party advertising networks. Advertisements are visually separated from and
         clearly distinguishable from our editorial content, and advertisers have no influence over our
         reviews, ratings, or rankings. Read our{' '}
-        <Link href="/advertising-disclosure" style={{ color: '#14FFF4' }}>Advertising Disclosure</Link>{' '}
+        <Link href="/advertising-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Advertising Disclosure</Link>{' '}
         for details, including how ad personalization works and how to opt out.
       </p>
     </div>
@@ -82,9 +82,9 @@ export function ContentUpdateNotice({ lastUpdated, frequency = 'monthly' }) {
         ) : null}
         Rankings, pricing, and feature details are checked on a {frequency} basis and corrected as soon as
         we identify a change. See our{' '}
-        <Link href="/content-policy" style={{ color: '#14FFF4' }}>Content Policy</Link>{' '}
+        <Link href="/content-policy" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Content Policy</Link>{' '}
         for our update process, or{' '}
-        <Link href="/contact" style={{ color: '#14FFF4' }}>report outdated information</Link>.
+        <Link href="/contact" style={{ color: '#14FFF4', textDecoration: 'underline' }}>report outdated information</Link>.
       </p>
     </div>
   );
@@ -98,7 +98,7 @@ export function TransparencyNotice({ variant = 'default' }) {
     return (
       <p style={{ color: '#8ba3ca', fontSize: 12, lineHeight: 1.6 }}>
         For information on who runs this site, how it&rsquo;s funded, and how content is produced, see our{' '}
-        <Link href="/site-transparency" style={{ color: '#14FFF4' }}>Site Transparency</Link> page.
+        <Link href="/site-transparency" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Site Transparency</Link> page.
       </p>
     );
   }
@@ -112,7 +112,7 @@ export function TransparencyNotice({ variant = 'default' }) {
         <strong style={{ color: '#e8f0ff' }}>Site transparency:</strong> Shabelle Hub publishes who owns and
         runs this site, how we&rsquo;re funded, who writes and reviews our content, and how to reach us — all
         in one place. Visit{' '}
-        <Link href="/site-transparency" style={{ color: '#14FFF4' }}>Site Transparency</Link>{' '}
+        <Link href="/site-transparency" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Site Transparency</Link>{' '}
         for the full picture.
       </p>
     </div>
@@ -134,11 +134,11 @@ export function ComplianceBanner() {
         Shabelle Hub is reader-supported. We may earn an affiliate commission when you sign up for a tool
         through our links, and this site may display ads served by Google AdSense and other networks.
         Neither affects our editorial ratings.{' '}
-        <Link href="/affiliate-disclosure" style={{ color: '#14FFF4' }}>Affiliate Disclosure</Link>{' '}
+        <Link href="/affiliate-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Affiliate Disclosure</Link>{' '}
         ·{' '}
-        <Link href="/advertising-disclosure" style={{ color: '#14FFF4' }}>Advertising Disclosure</Link>{' '}
+        <Link href="/advertising-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Advertising Disclosure</Link>{' '}
         ·{' '}
-        <Link href="/site-transparency" style={{ color: '#14FFF4' }}>Site Transparency</Link>
+        <Link href="/site-transparency" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Site Transparency</Link>
       </p>
     </div>
   );

@@ -29,7 +29,7 @@
 }
 
 .violet {
-  color: var(--accent-2);
+  color: #a8a0ff;
   background: rgba(108,92,255,0.1);
   border-color: rgba(108,92,255,0.28);
 }
