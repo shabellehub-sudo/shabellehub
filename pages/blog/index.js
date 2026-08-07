@@ -22,9 +22,22 @@ export async function getStaticProps() {
       console.error('[blog/index.js] adminListPublishedPosts failed:', postsRes.error);
     }
 
+    const CATEGORY_PRIORITY = {
+      '1ef1ed63-d007-4ba4-a586-e87ec1cd5bb8': 0, // Guide
+      '7a17df93-1153-4ee2-8b37-4e2d2d252888': 0, // Comparison
+      '9da37474-fd0e-4fff-8931-d0d4afef7ece': 1, // Building in Public — pushed down
+    };
+
+    const sortedPosts = [...(postsRes.data || [])].sort((a, b) => {
+      const pa = CATEGORY_PRIORITY[a.category_id] ?? 0;
+      const pb = CATEGORY_PRIORITY[b.category_id] ?? 0;
+      if (pa !== pb) return pa - pb;
+      return new Date(b.published_at) - new Date(a.published_at);
+    });
+
     return {
       props: {
-        posts:      postsRes.data  || [],
+        posts:      sortedPosts,
         tags:       tagsRes.data   || [],
         categories: catsRes.data   || [],
         debugError: postsRes.error || null,
