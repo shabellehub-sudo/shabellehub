@@ -8,7 +8,7 @@
 // lastReviewed -> last time an editor/fact-checker verified the content
 
 const DEFAULT_META = {
-  authorSlug: 'amara-haile',
+  authorSlug: 'mohamed-abdi-guled',
   reviewerSlug: 'sara-noor',
   lastUpdated: '2026-06-01',
   lastReviewed: '2026-05-30',
@@ -16,7 +16,7 @@ const DEFAULT_META = {
 
 export const toolReviewMeta = {
   claude: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-12',
     lastReviewed: '2026-06-10',
@@ -28,19 +28,19 @@ export const toolReviewMeta = {
     lastReviewed: '2026-06-09',
   },
   midjourney: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-08',
     lastReviewed: '2026-06-05',
   },
   cursor: {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-06-10',
     lastReviewed: '2026-06-07',
   },
   'runway-gen3': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-02',
     lastReviewed: '2026-05-30',
@@ -59,12 +59,12 @@ export const toolReviewMeta = {
   },
   'notion-ai': {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-05-25',
     lastReviewed: '2026-05-22',
   },
   'jasper-ai': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-20',
     lastReviewed: '2026-05-18',
@@ -76,31 +76,31 @@ export const toolReviewMeta = {
     lastReviewed: '2026-06-11',
   },
   deepseek: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-12',
     lastReviewed: '2026-06-10',
   },
   bolt: {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-06-09',
     lastReviewed: '2026-06-07',
   },
   lovable: {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-06-08',
     lastReviewed: '2026-06-06',
   },
   heygen: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-07',
     lastReviewed: '2026-06-05',
   },
   synthesia: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-06',
     lastReviewed: '2026-06-04',
@@ -119,7 +119,7 @@ export const toolReviewMeta = {
   },
   gamma: {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-05-31',
     lastReviewed: '2026-05-29',
   },
@@ -130,13 +130,13 @@ export const toolReviewMeta = {
     lastReviewed: '2026-06-08',
   },
   fireflies: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-27',
     lastReviewed: '2026-05-25',
   },
   otter: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-26',
     lastReviewed: '2026-05-24',
@@ -148,20 +148,20 @@ export const toolReviewMeta = {
     lastReviewed: '2026-05-22',
   },
   murf: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-23',
     lastReviewed: '2026-05-21',
   },
   writesonic: {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-05-19',
     lastReviewed: '2026-05-17',
   },
   'copy-ai': {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-05-18',
     lastReviewed: '2026-05-16',
   },
@@ -172,32 +172,32 @@ export const toolReviewMeta = {
     lastReviewed: '2026-05-15',
   },
   make: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-11',
     lastReviewed: '2026-06-09',
   },
   'zapier-ai': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-09',
     lastReviewed: '2026-06-07',
   },
   'replit-ai': {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-06-13',
     lastReviewed: '2026-06-11',
   },
   devin: {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-12',
     lastReviewed: '2026-06-10',
   },
   windsurf: {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-06-10',
     lastReviewed: '2026-06-08',
   },
@@ -214,14 +214,14 @@ export const toolReviewMeta = {
     lastReviewed: '2026-06-02',
   },
   'suno-ai': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-05',
     lastReviewed: '2026-06-03',
   },
   'github-copilot': {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-06-11',
     lastReviewed: '2026-06-09',
   },
@@ -229,7 +229,7 @@ export const toolReviewMeta = {
 
 export const blogReviewMeta = {
   'claude-vs-chatgpt-2026': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-05',
     lastReviewed: '2026-06-04',
@@ -241,7 +241,7 @@ export const blogReviewMeta = {
     lastReviewed: '2026-05-31',
   },
   'freelancers-earning-more-ai-2026': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-28',
     lastReviewed: '2026-05-27',
@@ -259,13 +259,13 @@ export const blogReviewMeta = {
     lastReviewed: '2026-06-08',
   },
   'how-to-use-chatgpt-for-productivity': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-08',
     lastReviewed: '2026-06-07',
   },
   'claude-vs-chatgpt-complete-comparison': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-07',
     lastReviewed: '2026-06-06',
@@ -277,13 +277,13 @@ export const blogReviewMeta = {
     lastReviewed: '2026-06-05',
   },
   'best-ai-writing-tools-bloggers': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-05',
     lastReviewed: '2026-06-04',
   },
   'best-ai-coding-assistants-2026': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-04',
     lastReviewed: '2026-06-03',
@@ -295,7 +295,7 @@ export const blogReviewMeta = {
     lastReviewed: '2026-06-02',
   },
   'best-ai-tools-for-small-businesses': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-06-02',
     lastReviewed: '2026-06-01',
@@ -307,13 +307,13 @@ export const blogReviewMeta = {
     lastReviewed: '2026-05-31',
   },
   'chatgpt-prompt-engineering-guide': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-30',
     lastReviewed: '2026-05-29',
   },
   'claude-prompt-engineering-guide': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-29',
     lastReviewed: '2026-05-28',
@@ -332,18 +332,18 @@ export const blogReviewMeta = {
   },
   '100-best-chatgpt-prompts': {
     authorSlug: 'mohamed-abdi-guled',
-    reviewerSlug: 'amara-haile',
+    reviewerSlug: 'mohamed-abdi-guled',
     lastUpdated: '2026-05-26',
     lastReviewed: '2026-05-25',
   },
   '100-best-claude-prompts': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-25',
     lastReviewed: '2026-05-24',
   },
   'chatgpt-vs-claude-vs-gemini-2026': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-24',
     lastReviewed: '2026-05-23',
@@ -367,7 +367,7 @@ export const blogReviewMeta = {
     lastReviewed: '2026-05-20',
   },
   'best-ai-workflow-guide': {
-    authorSlug: 'amara-haile',
+    authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'sara-noor',
     lastUpdated: '2026-05-20',
     lastReviewed: '2026-05-19',
