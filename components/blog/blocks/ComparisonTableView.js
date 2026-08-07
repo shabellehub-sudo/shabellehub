@@ -17,7 +17,7 @@ export default function ComparisonTableView({ block }) {
         <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 14 }}>
           <thead>
             <tr>
-              <th style={{ padding: '12px 16px', textAlign: 'left', background: '#080d1a', color: '#6b82a8', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid #1a2d4a' }}>
+              <th style={{ padding: '12px 16px', textAlign: 'left', background: '#080d1a', color: '#8ba3ca', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid #1a2d4a' }}>
                 —
               </th>
               {columns.map((col, i) => (

@@ -60,11 +60,11 @@ export default function AuthorProfilePage({ person, authoredTools, authoredPosts
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
       <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 20px' }}>
-        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#6b82a8', marginBottom: 24 }}>
+        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#8ba3ca', marginBottom: 24 }}>
           <ol style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <li><Link href="/" style={{ color: '#6b82a8' }}>Home</Link></li>
+            <li><Link href="/" style={{ color: '#8ba3ca' }}>Home</Link></li>
             <li aria-hidden="true" style={{ margin: '0 4px' }}>›</li>
-            <li><Link href="/authors" style={{ color: '#6b82a8' }}>Authors</Link></li>
+            <li><Link href="/authors" style={{ color: '#8ba3ca' }}>Authors</Link></li>
             <li aria-hidden="true" style={{ margin: '0 4px' }}>›</li>
             <li><span style={{ color: '#e8f0ff' }} aria-current="page">{person.name}</span></li>
           </ol>
@@ -78,7 +78,7 @@ export default function AuthorProfilePage({ person, authoredTools, authoredPosts
               {person.name}
             </h1>
             <div style={{ color: '#14FFF4', fontSize: 14, fontWeight: 700 }}>{person.title}</div>
-            <div style={{ color: '#6b82a8', fontSize: 13, marginTop: 4 }}>
+            <div style={{ color: '#8ba3ca', fontSize: 13, marginTop: 4 }}>
               📍 {person.location} · At Shabelle Hub since {formatDate(person.joined)}
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function AuthorProfilePage({ person, authoredTools, authoredPosts
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 17, fontWeight: 700, color: '#e8f0ff', marginBottom: 12 }}>
             About {person.name}
           </h2>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.8, marginBottom: 16 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.8, marginBottom: 16 }}>
             {person.bio}
           </p>
 
@@ -105,7 +105,7 @@ export default function AuthorProfilePage({ person, authoredTools, authoredPosts
           </h3>
           <ul style={{ listStyle: 'none' }}>
             {person.credentials.map((c, i) => (
-              <li key={i} style={{ color: '#6b82a8', fontSize: 14, display: 'flex', gap: 8, marginBottom: 6 }}>
+              <li key={i} style={{ color: '#8ba3ca', fontSize: 14, display: 'flex', gap: 8, marginBottom: 6 }}>
                 <span aria-hidden="true" style={{ color: '#14FFF4', flexShrink: 0 }}>✓</span>{c}
               </li>
             ))}
@@ -132,7 +132,7 @@ export default function AuthorProfilePage({ person, authoredTools, authoredPosts
                       </div>
                       <StarRating rating={tool.rating} size={12} />
                     </div>
-                    <span style={{ color: '#6b82a8', fontSize: 12 }}>
+                    <span style={{ color: '#8ba3ca', fontSize: 12 }}>
                       Updated <time dateTime={tool.meta.lastUpdated}>{formatDate(tool.meta.lastUpdated)}</time>
                     </span>
                   </div>
@@ -164,7 +164,7 @@ export default function AuthorProfilePage({ person, authoredTools, authoredPosts
         )}
 
         <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14, padding: '16px 20px' }}>
-          <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
             All content by {person.name} is fact-checked against primary sources by our editorial team before
             and after publication. Read our{' '}
             <Link href="/editorial-standards" style={{ color: '#14FFF4' }}>Editorial Standards</Link>{' '}

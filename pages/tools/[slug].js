@@ -111,11 +111,11 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px 20px' }}>
 
         {/* Breadcrumb — semantic ol/li for screen readers + schema */}
-        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#6b82a8', marginBottom: 24 }}>
+        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#8ba3ca', marginBottom: 24 }}>
           <ol style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <li><Link href="/"      style={{ color: '#6b82a8' }}>Home</Link></li>
+            <li><Link href="/"      style={{ color: '#8ba3ca' }}>Home</Link></li>
             <li aria-hidden="true"  style={{ margin: '0 4px' }}>›</li>
-            <li><Link href="/tools" style={{ color: '#6b82a8' }}>Directory</Link></li>
+            <li><Link href="/tools" style={{ color: '#8ba3ca' }}>Directory</Link></li>
             <li aria-hidden="true"  style={{ margin: '0 4px' }}>›</li>
             <li><span style={{ color: '#e8f0ff' }} aria-current="page"><span className="notranslate">{tool.name}</span></span></li>
           </ol>
@@ -143,7 +143,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
                   {tool.hot   && <Badge text="HOT"        variant="hot" />}
                   {tool.badge && <Badge text={tool.badge} />}
                 </div>
-                <div style={{ color: '#6b82a8', fontSize: 13 }}>{tool.category}</div>
+                <div style={{ color: '#8ba3ca', fontSize: 13 }}>{tool.category}</div>
               </div>
             </div>
 
@@ -166,7 +166,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
                 style={{
                   background: 'none', border: '1px solid #1a2d4a', borderRadius: 10,
                   padding: '8px 16px', fontSize: 13, cursor: 'pointer',
-                  color: isSaved ? '#ff4d6d' : '#6b82a8',
+                  color: isSaved ? '#ff4d6d' : '#8ba3ca',
                 }}
               >
                 {isSaved ? '❤️ Saved' : '🤍 Save Tool'}
@@ -177,7 +177,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           {/* Rating row */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 20, flexWrap: 'wrap' }}>
             <StarRating rating={tool.rating} size={16} />
-            <span style={{ color: '#6b82a8', fontSize: 13 }}>Shabelle Hub Rating</span>
+            <span style={{ color: '#8ba3ca', fontSize: 13 }}>Shabelle Hub Rating</span>
             <span style={{
               background: 'rgba(20,255,244,0.1)', color: '#14FFF4',
               border: '1px solid rgba(20,255,244,0.2)', borderRadius: 6,
@@ -185,7 +185,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
             }}>
               {tool.price}
             </span>
-            <span style={{ color: '#6b82a8', fontSize: 12 }}>
+            <span style={{ color: '#8ba3ca', fontSize: 12 }}>
               Last updated <time dateTime={meta.lastUpdated}>{new Date(meta.lastUpdated).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</time>
             </span>
           </div>
@@ -199,7 +199,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
         {/* Overview */}
         <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 24, marginBottom: 20 }}>
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 14 }}>Overview</h2>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75 }}>{tool.longDesc}</p>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75 }}>{tool.longDesc}</p>
         </div>
 
         {/* Pros & Cons */}
@@ -248,7 +248,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           padding: 18, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12,
         }}>
           <span aria-hidden="true" style={{ fontSize: 22 }}>🛡️</span>
-          <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.6 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>
             <strong style={{ color: '#e8f0ff' }}>Independently reviewed by {author ? author.name : 'Shabelle Hub'}.</strong>{' '}
             Our ratings are based on hands-on testing and are never influenced by affiliate relationships.
             Meet the{' '}
@@ -265,7 +265,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 20, fontWeight: 800, marginBottom: 10 }}>
             Ready to try <span className="notranslate">{tool.name}</span>?
           </h3>
-          <p style={{ color: '#6b82a8', fontSize: 14, marginBottom: 22 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, marginBottom: 22 }}>
             {tool.priceTier === 'freemium'
               ? 'Start for free — no credit card required.'
               : tool.priceTier === 'free'
@@ -283,7 +283,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
             {ctaLabel}
           </button>
           {customDisclosure
-            ? <p style={{ fontSize: 12, color: '#6b82a8', marginTop: 8, lineHeight: 1.6 }}>{customDisclosure}</p>
+            ? <p style={{ fontSize: 12, color: '#8ba3ca', marginTop: 8, lineHeight: 1.6 }}>{customDisclosure}</p>
             : <AffiliateDisclosure compact />
           }
         </div>
@@ -304,7 +304,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
                   <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 12, padding: 16 }}>
                     <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, color: '#e8f0ff', marginBottom: 6 }}>{t.name}</div>
                     <StarRating rating={t.rating} size={12} />
-                    <div style={{ color: '#6b82a8', fontSize: 12, marginTop: 6 }}>{t.price}</div>
+                    <div style={{ color: '#8ba3ca', fontSize: 12, marginTop: 6 }}>{t.price}</div>
                   </div>
                 </Link>
               ))}

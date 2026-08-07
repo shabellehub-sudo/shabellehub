@@ -11,7 +11,7 @@ export default function QuoteBlockView({ block }) {
         &ldquo;{block.text}&rdquo;
       </p>
       {block.author && (
-        <footer style={{ fontSize: 13, color: '#6b82a8' }}>
+        <footer style={{ fontSize: 13, color: '#8ba3ca' }}>
           <strong style={{ color: '#e8f0ff' }}>{block.author}</strong>
           {block.source && (
             <>

@@ -151,7 +151,7 @@ export default function NewsletterSignupForm({
         }}>
           📬 {heading}
         </p>
-        <p style={{ color: '#6b82a8', fontSize: 13, marginBottom: 16 }}>{subheading}</p>
+        <p style={{ color: '#8ba3ca', fontSize: 13, marginBottom: 16 }}>{subheading}</p>
 
         {status === 'success' ? (
           <p style={{ color: '#00d084', fontWeight: 600, fontSize: 14 }}>{message}</p>
@@ -207,7 +207,7 @@ export default function NewsletterSignupForm({
       }}>
         {heading}
       </h2>
-      <p style={{ color: '#6b82a8', fontSize: 14, marginBottom: 28, maxWidth: 460, margin: '0 auto 28px' }}>
+      <p style={{ color: '#8ba3ca', fontSize: 14, marginBottom: 28, maxWidth: 460, margin: '0 auto 28px' }}>
         {subheading}
       </p>
 

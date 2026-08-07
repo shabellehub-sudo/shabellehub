@@ -55,7 +55,7 @@ export default function GalleryBlockView({ block }) {
               />
             </button>
             {img.caption && (
-              <figcaption style={{ fontSize: 11, color: '#6b82a8', marginTop: 4, textAlign: 'center' }}>{img.caption}</figcaption>
+              <figcaption style={{ fontSize: 11, color: '#8ba3ca', marginTop: 4, textAlign: 'center' }}>{img.caption}</figcaption>
             )}
           </figure>
         ))}

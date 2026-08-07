@@ -67,7 +67,7 @@ export default function ContactPage() {
         <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 28, fontWeight: 800, marginBottom: 8 }}>
           Get In Touch
         </h1>
-        <p style={{ color: '#6b82a8', fontSize: 14, marginBottom: 28 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 14, marginBottom: 28 }}>
           Submit a tool, discuss a partnership, or share feedback with the Shabelle Hub team.
         </p>
 
@@ -90,7 +90,7 @@ export default function ContactPage() {
               <div key={f.key} style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                 <label
                   htmlFor={`contact-${f.key}`}
-                  style={{ fontSize: 12, fontWeight: 600, color: '#6b82a8', textTransform: 'uppercase', letterSpacing: '0.5px' }}
+                  style={{ fontSize: 12, fontWeight: 600, color: '#8ba3ca', textTransform: 'uppercase', letterSpacing: '0.5px' }}
                 >
                   {f.label}
                   {f.required && <span aria-hidden="true" style={{ color: '#ff4d6d', marginLeft: 2 }}>*</span>}
@@ -112,7 +112,7 @@ export default function ContactPage() {
             ))}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-              <label htmlFor="contact-reason" style={{ fontSize: 12, fontWeight: 600, color: '#6b82a8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <label htmlFor="contact-reason" style={{ fontSize: 12, fontWeight: 600, color: '#8ba3ca', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Reason
               </label>
               <select
@@ -121,7 +121,7 @@ export default function ContactPage() {
                 onChange={e => setForm(p => ({ ...p, reason: e.target.value }))}
                 style={{
                   background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 10,
-                  padding: '13px 14px', color: form.reason ? '#e8f0ff' : '#6b82a8',
+                  padding: '13px 14px', color: form.reason ? '#e8f0ff' : '#8ba3ca',
                   fontSize: 14, outline: 'none', cursor: 'pointer',
                 }}
               >
@@ -134,7 +134,7 @@ export default function ContactPage() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-              <label htmlFor="contact-message" style={{ fontSize: 12, fontWeight: 600, color: '#6b82a8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <label htmlFor="contact-message" style={{ fontSize: 12, fontWeight: 600, color: '#8ba3ca', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Message <span aria-hidden="true" style={{ color: '#ff4d6d' }}>*</span>
               </label>
               <textarea

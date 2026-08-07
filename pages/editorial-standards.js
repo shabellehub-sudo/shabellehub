@@ -136,9 +136,9 @@ export default function EditorialStandardsPage({ toolsCount: fetchedCount }) {
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '36px 20px' }}>
 
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#6b82a8', marginBottom: 20 }}>
+        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#8ba3ca', marginBottom: 20 }}>
           <ol style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <li><Link href="/" style={{ color: '#6b82a8' }}>Home</Link></li>
+            <li><Link href="/" style={{ color: '#8ba3ca' }}>Home</Link></li>
             <li aria-hidden="true" style={{ margin: '0 4px' }}>›</li>
             <li><span style={{ color: '#e8f0ff' }} aria-current="page">Editorial Standards</span></li>
           </ol>
@@ -147,7 +147,7 @@ export default function EditorialStandardsPage({ toolsCount: fetchedCount }) {
         <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 30, fontWeight: 800, marginBottom: 16 }}>
           Editorial Standards
         </h1>
-        <p style={{ color: '#6b82a8', fontSize: 15, lineHeight: 1.75, marginBottom: 28 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 15, lineHeight: 1.75, marginBottom: 28 }}>
           Shabelle Hub publishes independent reviews and comparisons of AI tools. This page explains the
           standards every piece of content on this site is held to \u2014 how we research, who is
           accountable for accuracy, how we use AI tools in our own production process, and what happens
@@ -170,7 +170,7 @@ export default function EditorialStandardsPage({ toolsCount: fetchedCount }) {
                   <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 15, fontWeight: 700, color: '#e8f0ff', marginBottom: 6 }}>
                     {p.title}
                   </h3>
-                  <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.7 }}>{p.body}</p>
+                  <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7 }}>{p.body}</p>
                 </div>
               </div>
             ))}
@@ -183,13 +183,13 @@ export default function EditorialStandardsPage({ toolsCount: fetchedCount }) {
             Sourcing & Fact-Checking
           </h2>
           <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14, padding: 22 }}>
-            <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75, marginBottom: 12 }}>
+            <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75, marginBottom: 12 }}>
               Claims about pricing, plan limits, supported integrations, and headline features are checked
               against each provider\u2019s own pricing page, product documentation, or official changelog
               at the time a page is written or updated. Where a provider\u2019s own materials are ambiguous
               or conflicting, we note the ambiguity rather than guess.
             </p>
-            <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75 }}>
+            <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75 }}>
               Opinions, ratings, and \u201cpros and cons\u201d sections reflect direct use of each tool
               covered on this site \u2014 see our{' '}
               <Link href="/review-methodology" style={{ color: '#14FFF4' }}>Review Methodology</Link> for
@@ -204,7 +204,7 @@ export default function EditorialStandardsPage({ toolsCount: fetchedCount }) {
             Use of AI Tools in Our Content Process
           </h2>
           <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14, padding: 22 }}>
-            <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75, marginBottom: 14 }}>
+            <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75, marginBottom: 14 }}>
               Because Shabelle Hub reviews AI tools, transparency about our own use of AI is part of being
               trustworthy. Here is exactly where AI fits into our process and where it does not:
             </p>
@@ -230,7 +230,7 @@ export default function EditorialStandardsPage({ toolsCount: fetchedCount }) {
                 <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 15, fontWeight: 700, color: '#e8f0ff', marginBottom: 6 }}>
                   {c.title}
                 </h3>
-                <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.7 }}>{c.body}</p>
+                <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7 }}>{c.body}</p>
               </div>
             ))}
           </div>
@@ -244,12 +244,12 @@ export default function EditorialStandardsPage({ toolsCount: fetchedCount }) {
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 17, fontWeight: 800, marginBottom: 10, color: '#e8f0ff' }}>
             Accountability
           </h2>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75, marginBottom: 14 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75, marginBottom: 14 }}>
             Shabelle Hub currently covers {toolsCount} AI tools, each reviewed under the standards on this
             page. As we expand coverage, every new page is held to the same bar before it is published \u2014
             no exceptions for content that is faster to produce but lower quality.
           </p>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75 }}>
             Spotted something that doesn\u2019t meet these standards?{' '}
             <Link href="/contact" style={{ color: '#14FFF4', fontWeight: 700 }}>Let us know</Link> \u2014
             we take it seriously.

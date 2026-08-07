@@ -29,7 +29,7 @@ export function ExpertiseTags({ items, size = 11 }) {
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
       {items.map(item => (
         <span key={item} style={{
-          fontSize: size, color: '#6b82a8',
+          fontSize: size, color: '#8ba3ca',
           background: 'rgba(26,45,74,0.5)', border: '1px solid #1a2d4a',
           borderRadius: 5, padding: '2px 8px',
         }}>
@@ -64,7 +64,7 @@ export function AuthorCard({ person, compact = false }) {
             {person.title}
           </div>
           {!compact && (
-            <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>
+            <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>
               {person.shortBio}
             </p>
           )}
@@ -102,7 +102,7 @@ export function ReviewerCard({ person, compact = false }) {
             {person.title}
           </div>
           {!compact && (
-            <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>
+            <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>
               {person.shortBio}
             </p>
           )}
@@ -137,7 +137,7 @@ export function TeamMemberCard({ person }) {
         </div>
       </div>
 
-      <p style={{ color: '#6b82a8', fontSize: 13.5, lineHeight: 1.65, marginBottom: 14 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 13.5, lineHeight: 1.65, marginBottom: 14 }}>
         {person.shortBio}
       </p>
 
@@ -202,7 +202,7 @@ export function TrustBlock({ author, reviewer, lastUpdated, lastReviewed, type =
 
       <div style={{
         display: 'flex', flexWrap: 'wrap', gap: 16, borderTop: '1px solid rgba(26,45,74,0.6)',
-        paddingTop: 14, marginBottom: 14, fontSize: 13, color: '#6b82a8',
+        paddingTop: 14, marginBottom: 14, fontSize: 13, color: '#8ba3ca',
       }}>
         {lastUpdated && (
           <div>
@@ -218,7 +218,7 @@ export function TrustBlock({ author, reviewer, lastUpdated, lastReviewed, type =
         )}
       </div>
 
-      <p style={{ color: '#6b82a8', fontSize: 12.5, lineHeight: 1.6 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 12.5, lineHeight: 1.6 }}>
         This {subjectLabel} is owned and maintained by {author ? author.name : 'the Shabelle Hub editorial team'}.
         Every factual claim is independently verified by our editorial team before publishing and on a recurring
         schedule afterward. Read our{' '}
@@ -249,7 +249,7 @@ export function CompactByline({ author, reviewer, lastUpdated, linked = true }) 
     : <span style={{ color: '#00d084', fontWeight: 600 }}>{reviewer?.name}</span>;
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center', color: '#6b82a8', fontSize: 12 }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center', color: '#8ba3ca', fontSize: 12 }}>
       {author && <span>By {AuthorEl}</span>}
       {author && reviewer && <span aria-hidden="true" style={{ opacity: 0.4 }}>·</span>}
       {reviewer && <span>Reviewed by {ReviewerEl}</span>}
@@ -273,7 +273,7 @@ export function EditorialResponsibilityNotice() {
       padding: '16px 20px', marginBottom: 24, display: 'flex', gap: 12, alignItems: 'flex-start',
     }}>
       <span aria-hidden="true" style={{ fontSize: 18 }}>🧾</span>
-      <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
         <strong style={{ color: '#e8f0ff' }}>Editorial responsibility:</strong>{' '}
         Every rating and ranking on this page is produced and checked by Shabelle Hub&rsquo;s
         editorial team — see our{' '}

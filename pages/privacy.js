@@ -49,12 +49,12 @@ export default function PrivacyPage() {
               <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, marginBottom: 8, color: '#e8f0ff' }}>
                 {s.title}
               </h2>
-              <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.7 }}>{s.body}</p>
+              <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7 }}>{s.body}</p>
             </div>
           ))}
         </div>
         <div style={{ marginTop: 32, paddingTop: 24, borderTop: '1px solid #1a2d4a' }}>
-          <p style={{ color: '#6b82a8', fontSize: 13 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 13 }}>
             See also:{' '}
             <Link href="/affiliate-disclosure" style={{ color: '#14FFF4' }}>Affiliate Disclosure</Link>
           </p>

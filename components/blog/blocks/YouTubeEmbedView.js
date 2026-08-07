@@ -19,7 +19,7 @@ export default function YouTubeEmbedView({ block }) {
         />
       </div>
       {block?.title && (
-        <p style={{ fontSize: 12, color: '#6b82a8', marginTop: 8, textAlign: 'center', fontStyle: 'italic' }}>
+        <p style={{ fontSize: 12, color: '#8ba3ca', marginTop: 8, textAlign: 'center', fontStyle: 'italic' }}>
           {block.title}
         </p>
       )}

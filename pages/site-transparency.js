@@ -85,9 +85,9 @@ export default function SiteTransparencyPage({ toolsCount: fetchedCount }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 20px' }}>
-        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#6b82a8', marginBottom: 16 }}>
+        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#8ba3ca', marginBottom: 16 }}>
           <ol style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <li><Link href="/" style={{ color: '#6b82a8' }}>Home</Link></li>
+            <li><Link href="/" style={{ color: '#8ba3ca' }}>Home</Link></li>
             <li aria-hidden="true" style={{ margin: '0 4px' }}>›</li>
             <li><span style={{ color: '#e8f0ff' }} aria-current="page">Site Transparency</span></li>
           </ol>
@@ -111,7 +111,7 @@ export default function SiteTransparencyPage({ toolsCount: fetchedCount }) {
                 <dt style={{ color: '#14FFF4', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                   {f.label}
                 </dt>
-                <dd style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.65 }}>{f.value}</dd>
+                <dd style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.65 }}>{f.value}</dd>
               </div>
             ))}
           </dl>
@@ -122,7 +122,7 @@ export default function SiteTransparencyPage({ toolsCount: fetchedCount }) {
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 17, fontWeight: 700, color: '#e8f0ff', marginBottom: 14 }}>
             Who Produces This Content
           </h2>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75, marginBottom: 16 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75, marginBottom: 16 }}>
             Every page on Shabelle Hub is owned by a named author and checked by a named editor. Read full
             profiles on our{' '}
             <Link href="/team" style={{ color: '#14FFF4' }}>Team page</Link>, or browse{' '}
@@ -148,7 +148,7 @@ export default function SiteTransparencyPage({ toolsCount: fetchedCount }) {
                   <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, color: '#e8f0ff', marginBottom: 6, fontSize: 14 }}>
                     {p.label} →
                   </div>
-                  <p style={{ color: '#6b82a8', fontSize: 12.5, lineHeight: 1.6 }}>{p.desc}</p>
+                  <p style={{ color: '#8ba3ca', fontSize: 12.5, lineHeight: 1.6 }}>{p.desc}</p>
                 </div>
               </Link>
             ))}

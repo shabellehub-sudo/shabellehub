@@ -56,16 +56,16 @@ export default function AboutPage({ toolsCount: fetchedCount, categoriesCount: f
         <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 30, fontWeight: 800, marginBottom: 20 }}>
           About Shabelle Hub
         </h1>
-        <p style={{ color: '#6b82a8', fontSize: 15, lineHeight: 1.75, marginBottom: 16 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 15, lineHeight: 1.75, marginBottom: 16 }}>
           Shabelle Hub is an independent AI tool review and comparison site built to cut through the
           noise of the fast-moving AI landscape. Every tool listed is tested hands-on and evaluated
           on technical merit, real-world utility, and honest pricing.
         </p>
-        <p style={{ color: '#6b82a8', fontSize: 15, lineHeight: 1.75, marginBottom: 16 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 15, lineHeight: 1.75, marginBottom: 16 }}>
           Our goal is simple: help individuals and teams find the right AI tool for their needs
           without wading through sponsored content or inflated rankings.
         </p>
-        <p style={{ color: '#6b82a8', fontSize: 15, lineHeight: 1.75, marginBottom: 28 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 15, lineHeight: 1.75, marginBottom: 28 }}>
           Some links on this site are affiliate links. When you click and sign up, we may earn a small
           commission at no cost to you. This is how we keep the site running while staying editorially
           independent. See our{' '}
@@ -82,7 +82,7 @@ export default function AboutPage({ toolsCount: fetchedCount, categoriesCount: f
           ].map(s => (
             <div key={s.label} style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 12, padding: 20, textAlign: 'center' }}>
               <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 26, fontWeight: 800, color: '#14FFF4' }}>{s.num}</div>
-              <div style={{ color: '#6b82a8', fontSize: 13, marginTop: 4 }}>{s.label}</div>
+              <div style={{ color: '#8ba3ca', fontSize: 13, marginTop: 4 }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -92,7 +92,7 @@ export default function AboutPage({ toolsCount: fetchedCount, categoriesCount: f
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 12, color: '#e8f0ff' }}>
             How We Review AI Tools
           </h2>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75 }}>
             Every tool on Shabelle Hub is signed up for and used hands-on across realistic tasks —
             writing, coding, research, or creative work depending on the category. We test the free
             tier where one exists, then the paid tier, and document specific strengths and limitations
@@ -113,7 +113,7 @@ export default function AboutPage({ toolsCount: fetchedCount, categoriesCount: f
                 <span aria-hidden="true" style={{ fontSize: 20, flexShrink: 0 }}>{v.icon}</span>
                 <div>
                   <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, color: '#e8f0ff', fontSize: 14, marginBottom: 2 }}>{v.title}</div>
-                  <div style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.55 }}>{v.desc}</div>
+                  <div style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.55 }}>{v.desc}</div>
                 </div>
               </div>
             ))}
@@ -125,7 +125,7 @@ export default function AboutPage({ toolsCount: fetchedCount, categoriesCount: f
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 12, color: '#e8f0ff' }}>
             Who&rsquo;s Behind Shabelle Hub
           </h2>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75, marginBottom: 14 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75, marginBottom: 14 }}>
             Every review and article on this site has a named author with disclosed experience and expertise,
             and is independently fact-checked by a named editor before and after publication. We publish that
             ownership openly because it&rsquo;s core to how we maintain editorial independence.
@@ -142,7 +142,7 @@ export default function AboutPage({ toolsCount: fetchedCount, categoriesCount: f
           <TransparencyNotice />
         </div>
 
-        <p style={{ color: '#6b82a8', fontSize: 15, lineHeight: 1.75 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 15, lineHeight: 1.75 }}>
           Want a tool reviewed?{' '}
           <Link href="/contact" style={{ color: '#14FFF4' }}>Contact us</Link>.
         </p>

@@ -135,9 +135,9 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '36px 20px' }}>
 
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#6b82a8', marginBottom: 20 }}>
+        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#8ba3ca', marginBottom: 20 }}>
           <ol style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <li><Link href="/" style={{ color: '#6b82a8' }}>Home</Link></li>
+            <li><Link href="/" style={{ color: '#8ba3ca' }}>Home</Link></li>
             <li aria-hidden="true" style={{ margin: '0 4px' }}>›</li>
             <li><span style={{ color: '#e8f0ff' }} aria-current="page">Review Methodology</span></li>
           </ol>
@@ -146,7 +146,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
         <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 30, fontWeight: 800, marginBottom: 16 }}>
           Review Methodology
         </h1>
-        <p style={{ color: '#6b82a8', fontSize: 15, lineHeight: 1.75, marginBottom: 28 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 15, lineHeight: 1.75, marginBottom: 28 }}>
           This page explains exactly how a tool ends up on Shabelle Hub, how it\u2019s tested, and how the
           star rating and pricing tier shown on every review are determined. For our broader editorial
           principles \u2014 sourcing, corrections, and use of AI in our process \u2014 see our{' '}
@@ -165,11 +165,11 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
                 <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 15, fontWeight: 700, color: '#e8f0ff', marginBottom: 6 }}>
                   {c.title}
                 </h3>
-                <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>{c.body}</p>
+                <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>{c.body}</p>
               </div>
             ))}
           </div>
-          <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.7, marginTop: 14, opacity: 0.85 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.7, marginTop: 14, opacity: 0.85 }}>
             We currently cover {toolsCount} tools under these criteria. Curated coverage means some popular
             tools may not yet have a page \u2014 not because they failed testing, but because we haven\u2019t
             tested them yet. See our{' '}
@@ -197,7 +197,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
                   <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 15, fontWeight: 700, color: '#e8f0ff', marginBottom: 6 }}>
                     {s.title}
                   </h3>
-                  <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.7 }}>{s.body}</p>
+                  <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7 }}>{s.body}</p>
                 </div>
               </div>
             ))}
@@ -209,7 +209,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 8, color: '#e8f0ff' }}>
             3. How the Star Rating Is Calculated
           </h2>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
             Every tool receives a rating out of 5, weighted across five factors observed during testing:
           </p>
           <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14, padding: 4, overflow: 'hidden' }}>
@@ -223,7 +223,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
                   <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, color: '#e8f0ff', fontSize: 14, marginBottom: 4 }}>
                     {f.label}
                   </div>
-                  <div style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.6 }}>{f.desc}</div>
+                  <div style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>{f.desc}</div>
                 </div>
                 <span style={{
                   background: 'rgba(20,255,244,0.08)', color: '#14FFF4',
@@ -253,7 +253,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
                 </span>
                 <div>
                   <div style={{ fontWeight: 700, color: '#e8f0ff', fontSize: 14, marginBottom: 2 }}>{r.label}</div>
-                  <div style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.6 }}>{r.desc}</div>
+                  <div style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>{r.desc}</div>
                 </div>
               </div>
             ))}
@@ -265,7 +265,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 16, color: '#e8f0ff' }}>
             5. What &quot;Free&quot;, &quot;Freemium&quot;, and &quot;Paid&quot; Mean
           </h2>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
             Each tool is tagged with one of three pricing labels, used consistently across the directory,
             category pages, and individual reviews:
           </p>
@@ -280,7 +280,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
                 }}>
                   {t.label}
                 </span>
-                <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>{t.desc}</p>
+                <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>{t.desc}</p>
               </div>
             ))}
           </div>
@@ -294,14 +294,14 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 17, fontWeight: 800, marginBottom: 10, color: '#e8f0ff' }}>
             Updates & Limitations
           </h2>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75, marginBottom: 12 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75, marginBottom: 12 }}>
             AI tools change pricing, features, and limits frequently \u2014 sometimes within weeks of a
             review going live. We periodically re-test listed tools and update ratings and pricing when
             something has materially changed, but a published date does not guarantee every detail is
             current at the moment you read it. Always confirm current pricing on the provider\u2019s own
             site before subscribing.
           </p>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75 }}>
             Ratings reflect our team\u2019s testing and judgment and are inherently subjective \u2014 a tool
             scored 4.5 here may suit your specific workflow better than one scored 4.8, or vice versa.
             Use our reviews as one input alongside free trials and your own testing.

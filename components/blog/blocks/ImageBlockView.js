@@ -20,7 +20,7 @@ export default function ImageBlockView({ block }) {
         style={{ maxWidth: '100%', width: maxWidth, borderRadius: 10, display: 'block' }}
       />
       {block.caption && (
-        <figcaption style={{ fontSize: 12, color: '#6b82a8', marginTop: 8, textAlign: 'center', fontStyle: 'italic' }}>
+        <figcaption style={{ fontSize: 12, color: '#8ba3ca', marginTop: 8, textAlign: 'center', fontStyle: 'italic' }}>
           {block.caption}
         </figcaption>
       )}

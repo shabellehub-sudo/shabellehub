@@ -54,10 +54,10 @@ export default function TagArchivePage({ tag, posts }) {
 
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px 20px' }}>
         {/* Breadcrumb */}
-        <nav style={{ fontSize: 12, color: '#6b82a8', marginBottom: 20 }}>
-          <Link href="/" style={{ color: '#6b82a8', textDecoration: 'none' }}>Home</Link>
+        <nav style={{ fontSize: 12, color: '#8ba3ca', marginBottom: 20 }}>
+          <Link href="/" style={{ color: '#8ba3ca', textDecoration: 'none' }}>Home</Link>
           <span style={{ margin: '0 6px' }}>›</span>
-          <Link href="/blog" style={{ color: '#6b82a8', textDecoration: 'none' }}>Blog</Link>
+          <Link href="/blog" style={{ color: '#8ba3ca', textDecoration: 'none' }}>Blog</Link>
           <span style={{ margin: '0 6px' }}>›</span>
           <span>#{tag.name}</span>
         </nav>
@@ -71,12 +71,12 @@ export default function TagArchivePage({ tag, posts }) {
         <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(22px,5vw,32px)', fontWeight: 800, marginBottom: 8, color: '#e8f0ff' }}>
           Posts tagged &quot;{tag.name}&quot;
         </h1>
-        <p style={{ color: '#6b82a8', fontSize: 14, marginBottom: 32 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 14, marginBottom: 32 }}>
           {posts.length} {posts.length === 1 ? 'post' : 'posts'} found
         </p>
 
         {posts.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px 0', color: '#6b82a8' }}>
+          <div style={{ textAlign: 'center', padding: '48px 0', color: '#8ba3ca' }}>
             No posts with this tag yet.
           </div>
         ) : (
@@ -89,7 +89,7 @@ export default function TagArchivePage({ tag, posts }) {
                 <Link key={post.id} href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
                   <article style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14, padding: 22, transition: 'border-color 0.2s' }}>
                     {pubDate && (
-                      <time dateTime={post.published_at} style={{ fontSize: 11, color: '#6b82a8', display: 'block', marginBottom: 8 }}>
+                      <time dateTime={post.published_at} style={{ fontSize: 11, color: '#8ba3ca', display: 'block', marginBottom: 8 }}>
                         {pubDate}
                       </time>
                     )}
@@ -97,7 +97,7 @@ export default function TagArchivePage({ tag, posts }) {
                       {post.title}
                     </h2>
                     {post.excerpt && (
-                      <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>
+                      <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>
                         {post.excerpt}
                       </p>
                     )}

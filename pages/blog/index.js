@@ -69,13 +69,13 @@ function PostCard({ post, featured = false, categories = [] }) {
           {pubDate && (
             <>
               <span style={{ opacity: 0.4, fontSize: 11 }} aria-hidden="true">·</span>
-              <time dateTime={post.published_at} style={{ color: '#6b82a8', fontSize: 11 }}>{pubDate}</time>
+              <time dateTime={post.published_at} style={{ color: '#8ba3ca', fontSize: 11 }}>{pubDate}</time>
             </>
           )}
           {post.read_time && (
             <>
               <span style={{ opacity: 0.4, fontSize: 11 }} aria-hidden="true">·</span>
-              <span style={{ color: '#6b82a8', fontSize: 11 }}>{post.read_time} read</span>
+              <span style={{ color: '#8ba3ca', fontSize: 11 }}>{post.read_time} read</span>
             </>
           )}
         </div>
@@ -90,7 +90,7 @@ function PostCard({ post, featured = false, categories = [] }) {
         </h2>
 
         {post.excerpt && (
-          <p style={{ color: '#6b82a8', fontSize: featured ? 14 : 13, lineHeight: 1.65, marginBottom: 12 }}>
+          <p style={{ color: '#8ba3ca', fontSize: featured ? 14 : 13, lineHeight: 1.65, marginBottom: 12 }}>
             {post.excerpt}
           </p>
         )}
@@ -108,7 +108,7 @@ function PostCard({ post, featured = false, categories = [] }) {
 
         {/* Author */}
         {post.author_name && (
-          <p style={{ fontSize: 12, color: '#6b82a8', marginBottom: 8 }}>
+          <p style={{ fontSize: 12, color: '#8ba3ca', marginBottom: 8 }}>
             By <span style={{ color: '#9fb3d4', fontWeight: 600 }}>{post.author_name}</span>
           </p>
         )}
@@ -153,7 +153,7 @@ export default function BlogPage({ posts = [], tags = [], categories = [], debug
         <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(24px,5vw,34px)', fontWeight: 800, marginBottom: 8 }}>
           AI Insights &amp; Reviews
         </h1>
-        <p style={{ color: '#6b82a8', fontSize: 15, marginBottom: 28 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 15, marginBottom: 28 }}>
           Independent AI tool reviews, comparisons, and guides from Shabelle Hub.
         </p>
 
@@ -198,7 +198,7 @@ export default function BlogPage({ posts = [], tags = [], categories = [], debug
 
         {/* ── Post list ── */}
         {rest.length === 0 && !featured ? (
-          <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b82a8' }}>
+          <div style={{ textAlign: 'center', padding: '60px 0', color: '#8ba3ca' }}>
             {activeTag || activeCat ? 'No posts match this filter.' : 'No posts published yet.'}
           </div>
         ) : (

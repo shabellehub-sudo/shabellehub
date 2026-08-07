@@ -307,10 +307,10 @@ export default function BlogPostPage({ post }) {
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px', overflowX: 'hidden', width: '100%', boxSizing: 'border-box' }}>
         {/* Breadcrumb */}
-        <nav style={{ fontSize: 14, color: '#6b82a8', marginBottom: 20 }}>
-          <Link href="/" style={{ color: '#6b82a8', textDecoration: 'none' }}>Home</Link>
+        <nav style={{ fontSize: 14, color: '#8ba3ca', marginBottom: 20 }}>
+          <Link href="/" style={{ color: '#8ba3ca', textDecoration: 'none' }}>Home</Link>
           <span style={{ margin: '0 6px' }}>›</span>
-          <Link href="/blog" style={{ color: '#6b82a8', textDecoration: 'none' }}>Blog</Link>
+          <Link href="/blog" style={{ color: '#8ba3ca', textDecoration: 'none' }}>Blog</Link>
           {post.category && (
             <>
               <span style={{ margin: '0 6px' }}>›</span>
@@ -344,7 +344,7 @@ export default function BlogPostPage({ post }) {
         </h1>
 
         {/* Byline */}
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 28, paddingBottom: 20, borderBottom: '1px solid #1a2d4a', fontSize: 14, color: '#6b82a8' }}>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 28, paddingBottom: 20, borderBottom: '1px solid #1a2d4a', fontSize: 14, color: '#8ba3ca' }}>
           {post.author?.name && (
             <span>By <strong style={{ color: '#9fb3d4' }}>{post.author.name}</strong></span>
           )}

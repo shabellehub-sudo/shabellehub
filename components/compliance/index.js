@@ -8,7 +8,7 @@ import { formatDate } from '../../lib/eeat';
 export function AffiliateDisclosure({ compact = false }) {
   if (compact) {
     return (
-      <p style={{ color: '#6b82a8', fontSize: 11, marginTop: 10, opacity: 0.75, lineHeight: 1.5 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 11, marginTop: 10, opacity: 0.75, lineHeight: 1.5 }}>
         ℹ️ This is an affiliate link. If you sign up through it, Shabelle Hub may earn a commission at no
         extra cost to you. This never affects our ratings — see our{' '}
         <Link href="/affiliate-disclosure" style={{ color: '#14FFF4' }}>Affiliate Disclosure</Link>.
@@ -21,7 +21,7 @@ export function AffiliateDisclosure({ compact = false }) {
       padding: '16px 20px', display: 'flex', gap: 12, alignItems: 'flex-start',
     }}>
       <span aria-hidden="true" style={{ fontSize: 18 }}>🔗</span>
-      <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
         <strong style={{ color: '#e8f0ff' }}>Affiliate relationship:</strong> Some links on this page are
         affiliate links. If you sign up or make a purchase through one, Shabelle Hub may receive a
         commission at no extra cost to you. Commission potential is never a factor in how we score or rank
@@ -39,7 +39,7 @@ export function AffiliateDisclosure({ compact = false }) {
 export function AdvertisingNotice({ compact = false }) {
   if (compact) {
     return (
-      <p style={{ color: '#6b82a8', fontSize: 11, opacity: 0.7, lineHeight: 1.5 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 11, opacity: 0.7, lineHeight: 1.5 }}>
         This page may display ads served by Google AdSense and other third-party networks. Ads are
         labeled and never written or endorsed by our editorial team. See our{' '}
         <Link href="/advertising-disclosure" style={{ color: '#14FFF4' }}>Advertising Disclosure</Link>.
@@ -52,7 +52,7 @@ export function AdvertisingNotice({ compact = false }) {
       padding: '16px 20px', display: 'flex', gap: 12, alignItems: 'flex-start',
     }}>
       <span aria-hidden="true" style={{ fontSize: 18 }}>📢</span>
-      <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
         <strong style={{ color: '#e8f0ff' }}>Advertising:</strong> This site may show ads served by Google
         AdSense and other third-party advertising networks. Advertisements are visually separated from and
         clearly distinguishable from our editorial content, and advertisers have no influence over our
@@ -75,7 +75,7 @@ export function ContentUpdateNotice({ lastUpdated, frequency = 'monthly' }) {
       padding: '14px 20px', display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 16,
     }}>
       <span aria-hidden="true" style={{ fontSize: 18 }}>🔄</span>
-      <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
         <strong style={{ color: '#e8f0ff' }}>Content freshness:</strong>{' '}
         {lastUpdated ? (
           <>This page was last updated on <time dateTime={lastUpdated}>{formatDate(lastUpdated)}</time>. </>
@@ -96,7 +96,7 @@ export function ContentUpdateNotice({ lastUpdated, frequency = 'monthly' }) {
 export function TransparencyNotice({ variant = 'default' }) {
   if (variant === 'minimal') {
     return (
-      <p style={{ color: '#6b82a8', fontSize: 12, lineHeight: 1.6 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 12, lineHeight: 1.6 }}>
         For information on who runs this site, how it&rsquo;s funded, and how content is produced, see our{' '}
         <Link href="/site-transparency" style={{ color: '#14FFF4' }}>Site Transparency</Link> page.
       </p>
@@ -108,7 +108,7 @@ export function TransparencyNotice({ variant = 'default' }) {
       padding: '16px 20px', display: 'flex', gap: 12, alignItems: 'flex-start',
     }}>
       <span aria-hidden="true" style={{ fontSize: 18 }}>🔍</span>
-      <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
         <strong style={{ color: '#e8f0ff' }}>Site transparency:</strong> Shabelle Hub publishes who owns and
         runs this site, how we&rsquo;re funded, who writes and reviews our content, and how to reach us — all
         in one place. Visit{' '}
@@ -130,7 +130,7 @@ export function ComplianceBanner() {
       borderRadius: 14, padding: '14px 20px', display: 'flex', gap: 12, alignItems: 'flex-start',
     }}>
       <span aria-hidden="true" style={{ fontSize: 18 }}>✅</span>
-      <p style={{ color: '#6b82a8', fontSize: 12, lineHeight: 1.65 }}>
+      <p style={{ color: '#8ba3ca', fontSize: 12, lineHeight: 1.65 }}>
         Shabelle Hub is reader-supported. We may earn an affiliate commission when you sign up for a tool
         through our links, and this site may display ads served by Google AdSense and other networks.
         Neither affects our editorial ratings.{' '}

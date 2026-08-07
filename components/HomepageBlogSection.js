@@ -24,13 +24,13 @@ function MiniCard({ post }) {
           {post.title}
         </h3>
         {post.excerpt && (
-          <p style={{ color: '#6b82a8', fontSize: 12.5, lineHeight: 1.6, marginBottom: 10,
+          <p style={{ color: '#8ba3ca', fontSize: 12.5, lineHeight: 1.6, marginBottom: 10,
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {post.excerpt}
           </p>
         )}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {pubDate && <time dateTime={post.published_at} style={{ fontSize: 11, color: '#6b82a8' }}>{pubDate}</time>}
+          {pubDate && <time dateTime={post.published_at} style={{ fontSize: 11, color: '#8ba3ca' }}>{pubDate}</time>}
           <span style={{ color: '#14FFF4', fontSize: 12, fontWeight: 600 }}>Read →</span>
         </div>
       </article>
@@ -61,11 +61,11 @@ function FeaturedCard({ post }) {
           {post.title}
         </h3>
         {post.excerpt && (
-          <p style={{ color: '#6b82a8', fontSize: 13.5, lineHeight: 1.65, marginBottom: 12 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 13.5, lineHeight: 1.65, marginBottom: 12 }}>
             {post.excerpt}
           </p>
         )}
-        <div style={{ display: 'flex', gap: 14, alignItems: 'center', color: '#6b82a8', fontSize: 12 }}>
+        <div style={{ display: 'flex', gap: 14, alignItems: 'center', color: '#8ba3ca', fontSize: 12 }}>
           {post.author_name && <span>By <strong style={{ color: '#9fb3d4' }}>{post.author_name}</strong></span>}
           {pubDate && <time dateTime={post.published_at}>{pubDate}</time>}
           <span style={{ marginLeft: 'auto', color: '#14FFF4', fontWeight: 600 }}>Read more →</span>

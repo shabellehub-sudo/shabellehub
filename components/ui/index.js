@@ -131,19 +131,19 @@ function ToolCardBase({ tool, isFavorite, onToggleFavorite }) {
                   {tool.hot && <Badge text="HOT" variant="hot" />}
                   {tool.badge && <Badge text={tool.badge} />}
                 </div>
-                <div style={{ color: '#6b82a8', fontSize: 11, marginTop: 1 }}>{tool.category}</div>
+                <div style={{ color: '#8ba3ca', fontSize: 11, marginTop: 1 }}>{tool.category}</div>
               </div>
             </div>
 
             {/* Bookmark — stops propagation so it doesn't follow the Link */}
             <button
               onClick={e => { e.preventDefault(); e.stopPropagation(); onToggleFavorite?.(tool.id); }}
-              style={{ background: 'none', border: 'none', padding: 4, cursor: 'pointer', color: isFavorite ? '#ff4d6d' : '#6b82a8', flexShrink: 0 }}
+              style={{ background: 'none', border: 'none', padding: 4, cursor: 'pointer', color: isFavorite ? '#ff4d6d' : '#8ba3ca', flexShrink: 0 }}
               aria-label={isFavorite ? `Unsave ${tool.name}` : `Save ${tool.name}`}
             >
               <svg width="17" height="17" viewBox="0 0 24 24"
                 fill={isFavorite ? '#ff4d6d' : 'none'}
-                stroke={isFavorite ? '#ff4d6d' : '#6b82a8'}
+                stroke={isFavorite ? '#ff4d6d' : '#8ba3ca'}
                 strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
               >
                 <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
@@ -153,7 +153,7 @@ function ToolCardBase({ tool, isFavorite, onToggleFavorite }) {
 
           <StarRating rating={tool.rating} />
 
-          <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.6, flex: 1 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6, flex: 1 }}>
             {tool.desc}
           </p>
 
@@ -161,7 +161,7 @@ function ToolCardBase({ tool, isFavorite, onToggleFavorite }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
             {tool.tags.map(t => (
               <span key={t} style={{
-                fontSize: 11, color: '#6b82a8',
+                fontSize: 11, color: '#8ba3ca',
                 background: 'rgba(26,45,74,0.5)', border: '1px solid #1a2d4a',
                 borderRadius: 5, padding: '2px 8px',
               }}>{t}</span>
@@ -308,7 +308,7 @@ export function PageTitle({ children, sub }) {
         {children}
       </h1>
       {sub && (
-        <p style={{ color: '#6b82a8', fontSize: 15, marginTop: 8 }}>{sub}</p>
+        <p style={{ color: '#8ba3ca', fontSize: 15, marginTop: 8 }}>{sub}</p>
       )}
     </div>
   );

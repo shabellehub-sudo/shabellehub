@@ -57,9 +57,9 @@ export default function TeamPage({ toolsCount: fetchedCount }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 20px' }}>
-        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#6b82a8', marginBottom: 16 }}>
+        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#8ba3ca', marginBottom: 16 }}>
           <ol style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <li><Link href="/" style={{ color: '#6b82a8' }}>Home</Link></li>
+            <li><Link href="/" style={{ color: '#8ba3ca' }}>Home</Link></li>
             <li aria-hidden="true" style={{ margin: '0 4px' }}>›</li>
             <li><span style={{ color: '#e8f0ff' }} aria-current="page">Our Team</span></li>
           </ol>
@@ -73,13 +73,13 @@ export default function TeamPage({ toolsCount: fetchedCount }) {
           background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16,
           padding: 24, marginBottom: 28,
         }}>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75, marginBottom: 10 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75, marginBottom: 10 }}>
             Shabelle Hub is a small, independent team. We review {toolsCount} AI tools hands-on rather than
             hundreds at a surface level, and every page is owned by a specific person — not an anonymous
             &ldquo;editorial staff&rdquo; byline. That ownership means a real person stands behind every rating,
             and a separate editor verifies every factual claim before and after publication.
           </p>
-          <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75 }}>
             Learn more about how we work in our{' '}
             <Link href="/editorial-standards" style={{ color: '#14FFF4' }}>Editorial Standards</Link>{' '}
             and{' '}

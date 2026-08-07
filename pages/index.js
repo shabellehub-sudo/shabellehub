@@ -139,7 +139,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
               <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 22, fontWeight: 800, color: '#14FFF4' }}>
                 <AnimatedCounter value={s.value} decimals={s.decimals} suffix={s.suffix} />
               </div>
-              <div style={{ fontSize: 11, color: '#6b82a8', marginTop: 2 }}>{s.label}</div>
+              <div style={{ fontSize: 11, color: '#8ba3ca', marginTop: 2 }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -151,7 +151,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
             { icon: '📊', text: 'Honest Comparisons'   },
             { icon: '🔄', text: 'Updated Weekly'        },
           ].map(item => (
-            <span key={item.text} style={{ fontSize: 11, color: '#6b82a8', display: 'flex', alignItems: 'center', gap: 5 }}>
+            <span key={item.text} style={{ fontSize: 11, color: '#8ba3ca', display: 'flex', alignItems: 'center', gap: 5 }}>
               <span aria-hidden="true">{item.icon}</span> {item.text}
             </span>
           ))}
@@ -217,7 +217,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
                 <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, color: '#e8f0ff', lineHeight: 1.35, flex: 1 }}>
                   {post.title}
                 </h3>
-                <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.6 }}>{post.excerpt}</p>
+                <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>{post.excerpt}</p>
               </article>
             </Link>
           ))}
@@ -249,7 +249,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
         <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 800, marginBottom: 14 }}>
           Ready to find your perfect AI tool?
         </h2>
-        <p style={{ color: '#6b82a8', fontSize: 14, marginBottom: 28 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 14, marginBottom: 28 }}>
           Browse {toolsCount} tools across {categoriesCount} categories — all independently reviewed by Shabelle Hub.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>

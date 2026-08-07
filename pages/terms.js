@@ -50,7 +50,7 @@ export default function TermsPage() {
         <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 28, fontWeight: 800, marginBottom: 12 }}>
           Terms of Service
         </h1>
-        <p style={{ color: '#6b82a8', fontSize: 13, marginBottom: 32 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 13, marginBottom: 32 }}>
           Last updated: June 2026
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
@@ -59,11 +59,11 @@ export default function TermsPage() {
               <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, marginBottom: 8, color: '#e8f0ff' }}>
                 {s.title}
               </h2>
-              <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.7 }}>{s.body}</p>
+              <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7 }}>{s.body}</p>
             </div>
           ))}
         </div>
-        <p style={{ color: '#6b82a8', fontSize: 13, marginTop: 32 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 13, marginTop: 32 }}>
           See also our <Link href="/privacy" style={{ color: '#14FFF4' }}>Privacy Policy</Link> and{' '}
           <Link href="/affiliate-disclosure" style={{ color: '#14FFF4' }}>Affiliate Disclosure</Link>.
         </p>

@@ -23,7 +23,7 @@
 }
 
 .icon {
-  color: var(--muted);
+  color: var(--muted-accessible);
   flex-shrink: 0;
 }
 
@@ -40,7 +40,7 @@
 }
 
 .input::placeholder {
-  color: var(--muted);
+  color: var(--muted-accessible);
 }
 
 .input::-webkit-search-cancel-button {
@@ -50,7 +50,7 @@
 .shortcut {
   font-family: 'Inter', monospace;
   font-size: 12px;
-  color: var(--muted);
+  color: var(--muted-accessible);
   background: rgba(26,45,74,0.6);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -118,7 +118,7 @@
 }
 
 .suggestionCategory {
-  color: var(--muted);
+  color: var(--muted-accessible);
   font-size: var(--text-caption);
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -136,13 +136,13 @@
 
 .chipsLabel {
   font-size: var(--text-caption);
-  color: var(--muted);
+  color: var(--muted-accessible);
   opacity: 0.8;
 }
 
 .chip {
   font-size: 12px;
-  color: var(--muted);
+  color: var(--muted-accessible);
   background: rgba(26,45,74,0.5);
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);

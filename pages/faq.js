@@ -68,7 +68,7 @@ export default function FAQPage({ toolsCount, categoriesCount }) {
               <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 15, fontWeight: 700, marginBottom: 8, color: '#e8f0ff' }}>
                 {f.q}
               </h2>
-              <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.7 }}>{f.a}</p>
+              <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7 }}>{f.a}</p>
             </div>
           ))}
         </div>

@@ -74,9 +74,9 @@ export default function ContentPolicyPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px' }}>
-        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#6b82a8', marginBottom: 16 }}>
+        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#8ba3ca', marginBottom: 16 }}>
           <ol style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <li><Link href="/" style={{ color: '#6b82a8' }}>Home</Link></li>
+            <li><Link href="/" style={{ color: '#8ba3ca' }}>Home</Link></li>
             <li aria-hidden="true" style={{ margin: '0 4px' }}>›</li>
             <li><span style={{ color: '#e8f0ff' }} aria-current="page">Content Policy</span></li>
           </ol>
@@ -92,13 +92,13 @@ export default function ContentPolicyPage() {
               <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, marginBottom: 8, color: '#e8f0ff' }}>
                 {s.title}
               </h2>
-              <p style={{ color: '#6b82a8', fontSize: 14, lineHeight: 1.75 }}>{s.body}</p>
+              <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75 }}>{s.body}</p>
             </div>
           ))}
         </div>
 
         <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14, padding: '16px 20px' }}>
-          <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
             Related: see our{' '}
             <Link href="/editorial-standards" style={{ color: '#14FFF4' }}>Editorial Standards</Link>,{' '}
             <Link href="/review-methodology" style={{ color: '#14FFF4' }}>Review Methodology</Link>,{' '}

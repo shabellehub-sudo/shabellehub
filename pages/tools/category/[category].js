@@ -87,10 +87,10 @@ export default function CategoryPage({ category, categoryTools, toolsCount, favo
 
         {/* Breadcrumb nav */}
         <nav aria-label="Breadcrumb" style={{ marginBottom: 16 }}>
-          <ol style={{ display: 'flex', gap: 6, flexWrap: 'wrap', listStyle: 'none', fontSize: 13, color: '#6b82a8' }}>
-            <li><Link href="/" style={{ color: '#6b82a8' }}>Home</Link></li>
+          <ol style={{ display: 'flex', gap: 6, flexWrap: 'wrap', listStyle: 'none', fontSize: 13, color: '#8ba3ca' }}>
+            <li><Link href="/" style={{ color: '#8ba3ca' }}>Home</Link></li>
             <li aria-hidden="true">/</li>
-            <li><Link href="/tools" style={{ color: '#6b82a8' }}>AI Tools</Link></li>
+            <li><Link href="/tools" style={{ color: '#8ba3ca' }}>AI Tools</Link></li>
             <li aria-hidden="true">/</li>
             <li aria-current="page" style={{ color: '#e8f0ff' }}>{category.name}</li>
           </ol>
@@ -100,7 +100,7 @@ export default function CategoryPage({ category, categoryTools, toolsCount, favo
           {category.icon} Best {category.name} AI Tools
         </PageTitle>
 
-        <p style={{ color: '#6b82a8', fontSize: 15, lineHeight: 1.75, marginBottom: 28, maxWidth: 760 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 15, lineHeight: 1.75, marginBottom: 28, maxWidth: 760 }}>
           {category.description}
         </p>
 
@@ -119,14 +119,14 @@ export default function CategoryPage({ category, categoryTools, toolsCount, favo
             ))}
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#6b82a8' }}>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8ba3ca' }}>
             <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No tools in this category yet</p>
             <p style={{ fontSize: 14 }}>Check back soon — we&rsquo;re adding new reviews regularly.</p>
           </div>
         )}
 
         <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14, padding: 24, textAlign: 'center' }}>
-          <p style={{ color: '#6b82a8', fontSize: 14, marginBottom: 12 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 14, marginBottom: 12 }}>
             Looking for something else? We cover {toolsCount} AI tools across every major category.
           </p>
           <Link

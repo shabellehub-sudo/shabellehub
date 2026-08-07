@@ -171,7 +171,7 @@ export default function ToolsPage({ favorites = [], toggleFavorite, tools: fetch
                   whiteSpace: 'nowrap', borderRadius: 8, padding: '7px 14px',
                   fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
                   background: activeCat === c ? '#14FFF4' : '#0f1829',
-                  color:      activeCat === c ? '#080d1a' : '#6b82a8',
+                  color:      activeCat === c ? '#080d1a' : '#8ba3ca',
                   border:     `1px solid ${activeCat === c ? '#14FFF4' : '#1a2d4a'}`,
                 }}
               >
@@ -191,7 +191,7 @@ export default function ToolsPage({ favorites = [], toggleFavorite, tools: fetch
                 key={c.name}
                 href={`/tools/category/${categoryToSlug(c.name)}`}
                 style={{
-                  fontSize: 12, color: '#6b82a8', textDecoration: 'none',
+                  fontSize: 12, color: '#8ba3ca', textDecoration: 'none',
                   border: '1px solid #1a2d4a', borderRadius: 8, padding: '5px 12px',
                 }}
               >
@@ -209,7 +209,7 @@ export default function ToolsPage({ favorites = [], toggleFavorite, tools: fetch
           aria-atomic="false"
         >
           {filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#6b82a8' }}>
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8ba3ca' }}>
               <p style={{ fontSize: 32, marginBottom: 12 }} aria-hidden="true">🔍</p>
               <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No tools found</p>
               <p style={{ fontSize: 14 }}>Try a different search term or category</p>

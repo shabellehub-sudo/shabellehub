@@ -63,7 +63,7 @@ export function Navbar({ favoriteCount = 0 }) {
               aria-current={isActive(l.href) ? 'page' : undefined}
               style={{
                 padding: '8px 14px', fontSize: 14, fontWeight: 500,
-                color: isActive(l.href) ? '#14FFF4' : '#6b82a8',
+                color: isActive(l.href) ? '#14FFF4' : '#8ba3ca',
                 textDecoration: 'none', borderRadius: 8, transition: 'color 0.2s',
               }}
             >
@@ -163,7 +163,7 @@ export function Footer() {
             <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 800, color: '#e8f0ff', marginBottom: 8 }}>
               Shabelle<span style={{ color: '#14FFF4' }}>Hub</span>
             </div>
-            <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.65 }}>
+            <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
               Shabelle Hub helps users discover, compare, and choose the best AI tools
               through independent reviews, rankings, and expert insights.
             </p>
@@ -182,10 +182,10 @@ export function Footer() {
 
           {/* Newsletter */}
           <div style={{ maxWidth: 260 }}>
-            <h4 style={{ fontSize: 11, fontWeight: 700, color: '#e8f0ff', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>
+            <h2 style={{ fontSize: 11, fontWeight: 700, color: '#e8f0ff', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>
               Newsletter
-            </h4>
-            <p style={{ color: '#6b82a8', fontSize: 13, lineHeight: 1.55, marginBottom: 14 }}>
+            </h2>
+            <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.55, marginBottom: 14 }}>
               Weekly AI tool reviews and picks.
             </p>
             <NewsletterSignupForm source="footer" variant="compact" />
@@ -193,14 +193,14 @@ export function Footer() {
 
           {/* Directory */}
           <nav aria-label="Footer directory links">
-            <h4 style={{ fontSize: 11, fontWeight: 700, color: '#e8f0ff', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
+            <h2 style={{ fontSize: 11, fontWeight: 700, color: '#e8f0ff', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
               Directory
-            </h4>
+            </h2>
             {categories.filter(c => c.name !== 'All').map(c => (
               <Link
                 key={c.name}
                 href={`/tools/category/${categoryToSlug(c.name)}`}
-                style={{ display: 'block', color: '#6b82a8', fontSize: 13, marginBottom: 6, textDecoration: 'none' }}
+                style={{ display: 'block', color: '#8ba3ca', fontSize: 13, marginBottom: 6, textDecoration: 'none', padding: '6px 0', minHeight: 24 }}
               >
                 {c.name}
               </Link>
@@ -209,9 +209,9 @@ export function Footer() {
 
           {/* Platform */}
           <nav aria-label="Footer platform links">
-            <h4 style={{ fontSize: 11, fontWeight: 700, color: '#e8f0ff', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
+            <h2 style={{ fontSize: 11, fontWeight: 700, color: '#e8f0ff', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
               Platform
-            </h4>
+            </h2>
             {[
               { href: '/about',               label: 'About' },
               { href: '/team',                label: 'Our Team' },
@@ -230,7 +230,7 @@ export function Footer() {
               <Link
                 key={l.href}
                 href={l.href}
-                style={{ display: 'block', color: '#6b82a8', fontSize: 13, marginBottom: 6, textDecoration: 'none' }}
+                style={{ display: 'block', color: '#8ba3ca', fontSize: 13, marginBottom: 6, textDecoration: 'none', padding: '6px 0', minHeight: 24 }}
               >
                 {l.label}
               </Link>
@@ -240,7 +240,7 @@ export function Footer() {
 
         {/* Bottom */}
         <div style={{ borderTop: '1px solid #1a2d4a', paddingTop: 20 }}>
-          <p style={{ color: '#6b82a8', fontSize: 12, marginBottom: 12 }}>
+          <p style={{ color: '#8ba3ca', fontSize: 12, marginBottom: 12 }}>
             © {CURRENT_YEAR} Shabelle Hub. All rights reserved. Independent AI Discovery Platform.
           </p>
           <ComplianceBanner />
