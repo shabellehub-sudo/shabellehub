@@ -222,7 +222,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
           and feature information for each tool rather than running an
           identical task across every tool — this is disclosed at the
           end of each comparison article. Where a comparison references a
-          specific tool's rating, that rating reflects the tool's
+          specific tool&apos;s rating, that rating reflects the tool&apos;s
           individual hands-on review.
         </p>
       </section>
