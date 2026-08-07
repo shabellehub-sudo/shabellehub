@@ -41,10 +41,6 @@ const EditorsChoice = dynamic(() => import('../components/home/EditorsChoice/Edi
   ssr: true,
   loading: () => <div style={{ minHeight: 420 }} aria-hidden="true" />,
 });
-const Testimonials = dynamic(() => import('../components/home/Testimonials/Testimonials'), {
-  ssr: true,
-  loading: () => <div style={{ minHeight: 360 }} aria-hidden="true" />,
-});
 const FAQ = dynamic(() => import('../components/home/FAQ/FAQ'), {
   ssr: true,
   loading: () => <div style={{ minHeight: 400 }} aria-hidden="true" />,
@@ -180,7 +176,6 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
       <EditorsChoice tools={tools} />
 
       {/* ── TESTIMONIALS (Phase 4) ── */}
-      <Testimonials />
 
       {/* ── FAQ (Phase 4: schema markup) ── */}
       <FAQ limit={5} toolsCount={toolsCount} categoriesCount={categoriesCount} />
