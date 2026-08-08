@@ -54,12 +54,29 @@ export async function getStaticProps() {
       getFastestGrowing({ limit: 6 }),
       listTools({ status: 'published', lim: 200 }),
     ]);
+    // Perf fix: listTools() returns the full CMS record per tool (Supabase
+    // stores extra fields in a doc JSONB blob), which pushed the homepage
+    // props payload to 263KB -- over Next.js's 128KB large-page-data
+    // threshold and a likely contributor to the ~1.4s LCP render delay on
+    // mobile. The homepage only reads these 13 fields, so trim here at the
+    // page level rather than touching the shared listTools()/_base.js
+    // query other pages (admin, /tools) still rely on for full records.
+    const HOMEPAGE_TOOL_FIELDS = [
+      'id', 'name', 'slug', 'category', 'tags', 'rating', 'hot',
+      'badge', 'desc', 'pros', 'price', 'priceTier', 'featured',
+    ];
+    const trimTool = (t) => {
+      const out = {};
+      for (const f of HOMEPAGE_TOOL_FIELDS) out[f] = t[f];
+      return out;
+    };
+    const tools = toolsRes.error ? [] : toolsRes.data.map(trimTool);
     return {
       props: {
         ...blogProps,
         trendingThisWeek,
         fastestGrowing,
-        tools: toolsRes.error ? [] : toolsRes.data,
+        tools,
       },
       revalidate: 300,
     };
@@ -143,7 +160,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
         <div style={{ maxWidth: 1200, margin: '10px auto 0', display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap', alignItems: 'center', paddingTop: 10, borderTop: '1px solid rgba(26,45,74,0.6)' }}>
           {[
             { icon: '🛡️', text: 'No Sponsored Content' },
-            { icon: '🔍', text: 'Hands-On Tested'      },
+            { icon: '🔍', text: 'Tools Hands-On Tested'      },
             { icon: '📊', text: 'Honest Comparisons'   },
             { icon: '🔄', text: 'Updated Weekly'        },
           ].map(item => (
