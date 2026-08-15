@@ -22,6 +22,7 @@ const NAV_SECTIONS = [
       { href: '/admin/media',      label: 'Media',      icon: '🖼️' },
       { href: '/admin/authors',    label: 'Authors',    icon: '🧑‍💼' },
       { href: '/admin/blog-seo',   label: 'Blog SEO',   icon: '🔍' },
+      { href: '/admin/monitoring', label: 'Monitoring', icon: '🛰️' },
     ],
   },
   {
