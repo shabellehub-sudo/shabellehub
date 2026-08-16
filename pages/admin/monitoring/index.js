@@ -63,6 +63,23 @@ export default function AdminMonitoringPage() {
 
   const confidenceColor = { high: '#ff4d6d', medium: '#f5a623', low: '#6b82a8' };
 
+  // Flag tools whose 3 most recent audit-log entries are all failures —
+  // a lightweight early-warning signal computed client-side from data
+  // we already fetch, no extra backend call needed.
+  const FAILURE_ACTIONS = new Set(['fetch_failed', 'fetch_incomplete', 'robots_disallowed', 'tool_not_found', 'no_url', 'snapshot_insert_failed']);
+  const failingTools = (() => {
+    const bySlug = {};
+    for (const entry of auditLog) {
+      const key = entry.tool_slug?.toLowerCase();
+      if (!key) continue;
+      if (!bySlug[key]) bySlug[key] = [];
+      bySlug[key].push(entry);
+    }
+    return Object.entries(bySlug)
+      .filter(([, entries]) => entries.length >= 3 && entries.slice(0, 3).every((e) => FAILURE_ACTIONS.has(e.action)))
+      .map(([slug, entries]) => ({ slug, lastAction: entries[0].action, lastAt: entries[0].created_at }));
+  })();
+
   return (
     <AdminLayout title="Tool Monitoring">
       <ErrorBanner message={error} />
@@ -88,6 +105,24 @@ export default function AdminMonitoringPage() {
           </pre>
         )}
       </AdminCard>
+
+      {failingTools.length > 0 && (
+        <AdminCard style={{ marginBottom: 20, border: '1px solid #ff4d6d', background: 'rgba(255,77,109,0.06)' }}>
+          <h3 style={{ fontSize: 13, fontWeight: 700, color: '#ff4d6d', marginBottom: 8 }}>
+            ⚠ {failingTools.length} tool{failingTools.length > 1 ? 's' : ''} failing repeatedly
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {failingTools.map((t) => (
+              <div key={t.slug} style={{ fontSize: 12, color: '#e8f0ff' }}>
+                <strong>{t.slug}</strong> — last 3 checks: {t.lastAction} (most recent {new Date(t.lastAt).toLocaleString()})
+              </div>
+            ))}
+          </div>
+          <p style={{ color: '#6b82a8', fontSize: 11, marginTop: 8 }}>
+            Consider checking the monitoring source URL for these tools — it may need a fallback or override.
+          </p>
+        </AdminCard>
+      )}
 
       <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Pending Review ({changes.length})</h3>
 
