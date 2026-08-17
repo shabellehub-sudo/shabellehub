@@ -159,9 +159,22 @@ export default function AdminMonitoringPage() {
                   <Button variant="danger" onClick={() => handleReview(c.id, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
                 </div>
               </div>
-              <pre style={{ marginTop: 10, fontSize: 12, color: '#e8f0ff', background: '#0a0e16', padding: 10, borderRadius: 8, whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
-                {c.diff_excerpt}
-              </pre>
+              {c.ai_summary ? (
+                <div style={{ marginTop: 10, display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: '#14FFF4', border: '1px solid #14FFF4', borderRadius: 4, padding: '2px 5px', flexShrink: 0 }}>AI</span>
+                  <p style={{ fontSize: 13, color: '#e8f0ff', margin: 0, lineHeight: 1.4 }}>{c.ai_summary}</p>
+                </div>
+              ) : (
+                <div style={{ marginTop: 8 }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: '#6b82a8', border: '1px solid #6b82a8', borderRadius: 4, padding: '2px 5px' }}>KEYWORD</span>
+                </div>
+              )}
+              <details style={{ marginTop: 8 }}>
+                <summary style={{ cursor: 'pointer', fontSize: 11, color: '#6b82a8' }}>Show raw diff</summary>
+                <pre style={{ marginTop: 8, fontSize: 12, color: '#e8f0ff', background: '#0a0e16', padding: 10, borderRadius: 8, whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
+                  {c.diff_excerpt}
+                </pre>
+              </details>
             </AdminCard>
           ))}
         </div>
