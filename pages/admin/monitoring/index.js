@@ -62,6 +62,7 @@ export default function AdminMonitoringPage() {
   }
 
   const confidenceColor = { high: '#ff4d6d', medium: '#f5a623', low: '#6b82a8' };
+  const sourceTypeLabel = { official: null, support: null, wikipedia: '⚠ Wikipedia source (may lag)', unofficial: '⚠ Third-party source (may lag)' };
 
   // Flag tools whose 3 most recent audit-log entries are all failures —
   // a lightweight early-warning signal computed client-side from data
@@ -148,6 +149,11 @@ export default function AdminMonitoringPage() {
                     Detected {new Date(c.detected_at).toLocaleString()} ·{' '}
                     <a href={c.evidence_url} target="_blank" rel="noopener noreferrer" style={{ color: '#14FFF4' }}>source</a>
                   </div>
+                  {sourceTypeLabel[c.source_type] && (
+                    <div style={{ color: '#f5a623', fontSize: 11, marginTop: 4 }}>
+                      {sourceTypeLabel[c.source_type]}
+                    </div>
+                  )}
                   {c.affected_article_slugs?.length > 0 && (
                     <div style={{ color: '#6b82a8', fontSize: 11, marginTop: 4 }}>
                       Affects: {c.affected_article_slugs.join(', ')}
