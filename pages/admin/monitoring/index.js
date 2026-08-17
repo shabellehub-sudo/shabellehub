@@ -175,7 +175,14 @@ export default function AdminMonitoringPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12 }}>
             {auditLog.map((a) => (
               <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1a2d4a', paddingBottom: 6 }}>
-                <span style={{ color: '#e8f0ff' }}>{a.tool_slug} — {a.action}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ color: '#e8f0ff' }}>{a.tool_slug} — {a.action}</span>
+                  {a.detail && (
+                    <div style={{ color: '#6b82a8', fontSize: 11, marginTop: 2, wordBreak: 'break-word' }}>
+                      {a.detail}
+                    </div>
+                  )}
+                </div>
                 <span style={{ color: '#6b82a8' }}>{new Date(a.created_at).toLocaleString()}</span>
               </div>
             ))}
