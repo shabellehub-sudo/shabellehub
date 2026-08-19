@@ -4,6 +4,19 @@ import { AdminCard, Button, ErrorBanner, EmptyState } from '../../../components/
 import { listPendingChanges, reviewChange, listRecentAuditLog } from '../../../lib/cms/monitoring';
 import { isSupabaseConfigured, getSupabaseClient } from '../../../lib/supabase';
 
+const CATEGORY_LABELS = {
+  status: '🔴 Status',
+  model_update: '🔄 Model Update',
+  pricing: '💰 Pricing',
+  plan_change: '📦 Plan Change',
+  limit_change: '🔢 Limit Change',
+  api_change: '💉 СPI Change',
+  integration_change: '🔗 Integration',
+  feature_added: '🆕 Feature Added',
+  feature_removed: '❌ Feature Removed',
+  unknown: 'Unknown',
+};
+
 export default function AdminMonitoringPage() {
   const [changes, setChanges] = useState([]);
   const [auditLog, setAuditLog] = useState([]);
@@ -62,11 +75,8 @@ export default function AdminMonitoringPage() {
   }
 
   const confidenceColor = { high: '#ff4d6d', medium: '#f5a623', low: '#6b82a8' };
-  const sourceTypeLabel = { official: null, support: null, wikipedia: '⚠ Wikipedia source (may lag)', unofficial: '⚠ Third-party source (may lag)' };
+  const sourceTypeLabel = { official: null, support: null, wikipedia: '⚠ Wikipedia source (may lag)', unofficial: '⚠ Third-party source (may lag)', ai_search: '⚠ AI search evidence (no diff history, may lag)' };
 
-  // Flag tools whose 3 most recent audit-log entries are all failures —
-  // a lightweight early-warning signal computed client-side from data
-  // we already fetch, no extra backend call needed.
   const FAILURE_ACTIONS = new Set(['fetch_failed', 'fetch_incomplete', 'robots_disallowed', 'tool_not_found', 'no_url', 'snapshot_insert_failed']);
   const failingTools = (() => {
     const bySlug = {};
@@ -141,8 +151,8 @@ export default function AdminMonitoringPage() {
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>
                     {c.tool_slug}{' '}
-                    <span style={{ fontSize: 11, fontWeight: 700, color: confidenceColor[c.confidence] || '#6b82a8', textTransform: 'uppercase' }}>
-                      {c.change_category} · {c.confidence}
+                    <span style={{ fontSize: 11, fontWeight: 700, color: confidenceColor[c.confidence] || '#6b82a8' }}>
+                      {CATEGORY_LABELS[c.change_category] || c.change_category} · {c.confidence?.toUpperCase()}
                     </span>
                   </div>
                   <div style={{ color: '#6b82a8', fontSize: 11, marginTop: 2 }}>
@@ -167,7 +177,9 @@ export default function AdminMonitoringPage() {
               </div>
               {c.ai_summary ? (
                 <div style={{ marginTop: 10, display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: '#14FFF4', border: '1px solid #14FFF4', borderRadius: 4, padding: '2px 5px', flexShrink: 0 }}>AI</span>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: '#14FFF4', border: '1px solid #14FFF4', borderRadius: 4, padding: '2px 5px', flexShrink: 0 }}>
+                    {c.classified_by === 'ai_search' ? 'AI SEARCH' : 'AI'}
+                  </span>
                   <p style={{ fontSize: 13, color: '#e8f0ff', margin: 0, lineHeight: 1.4 }}>{c.ai_summary}</p>
                 </div>
               ) : (
@@ -175,12 +187,14 @@ export default function AdminMonitoringPage() {
                   <span style={{ fontSize: 9, fontWeight: 700, color: '#6b82a8', border: '1px solid #6b82a8', borderRadius: 4, padding: '2px 5px' }}>KEYWORD</span>
                 </div>
               )}
-              <details style={{ marginTop: 8 }}>
-                <summary style={{ cursor: 'pointer', fontSize: 11, color: '#6b82a8' }}>Show raw diff</summary>
-                <pre style={{ marginTop: 8, fontSize: 12, color: '#e8f0ff', background: '#0a0e16', padding: 10, borderRadius: 8, whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
-                  {c.diff_excerpt}
-                </pre>
-              </details>
+              {c.diff_excerpt && (
+                <details style={{ marginTop: 8 }}>
+                  <summary style={{ cursor: 'pointer', fontSize: 11, color: '#6b82a8' }}>Show raw diff</summary>
+                  <pre style={{ marginTop: 8, fontSize: 12, color: '#e8f0ff', background: '#0a0e16', padding: 10, borderRadius: 8, whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
+                    {c.diff_excerpt}
+                  </pre>
+                </details>
+              )}
             </AdminCard>
           ))}
         </div>
