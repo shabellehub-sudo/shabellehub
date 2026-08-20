@@ -10,7 +10,7 @@ const CATEGORY_LABELS = {
   pricing: '💰 Pricing',
   plan_change: '📦 Plan Change',
   limit_change: '🔢 Limit Change',
-  api_change: '💉 СPI Change',
+  api_change: '🔌 API Change',
   integration_change: '🔗 Integration',
   feature_added: '🆕 Feature Added',
   feature_removed: '❌ Feature Removed',
@@ -77,7 +77,7 @@ export default function AdminMonitoringPage() {
   const confidenceColor = { high: '#ff4d6d', medium: '#f5a623', low: '#6b82a8' };
   const sourceTypeLabel = { official: null, support: null, wikipedia: '⚠ Wikipedia source (may lag)', unofficial: '⚠ Third-party source (may lag)', ai_search: '⚠ AI search evidence (no diff history, may lag)' };
 
-  const FAILURE_ACTIONS = new Set(['fetch_failed', 'fetch_incomplete', 'robots_disallowed', 'tool_not_found', 'no_url', 'snapshot_insert_failed']);
+  const FAILURE_ACTIONS = new Set(['fetch_failed', 'fetch_incomplete', 'robots_disallowed', 'tool_not_found', 'no_url', 'snapshot_insert_failed', 'db_insert_failed']);
   const failingTools = (() => {
     const bySlug = {};
     for (const entry of auditLog) {
