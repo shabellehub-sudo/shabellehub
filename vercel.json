@@ -6,10 +6,5 @@
   "regions": [
     "iad1"
   ],
-  "crons": [
-    {
-      "path": "/api/cron/monitor-tools",
-      "schedule": "0 6 * * *"
-    }
-  ]
+  "crons": []
 }
