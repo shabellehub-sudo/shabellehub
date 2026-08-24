@@ -23,6 +23,7 @@ export default function MobilePerformanceBadge({ label = 'Optimized for Mobile' 
           border-radius: 999px;
           background: rgba(20, 255, 244, 0.08);
           color: #14FFF4;
+          margin: 0 auto 1.5rem auto;
           font-size: 13px;
           font-weight: 500;
           font-family: 'Space Grotesk', sans-serif;
