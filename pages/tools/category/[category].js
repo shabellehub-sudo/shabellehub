@@ -6,6 +6,7 @@ import { ToolCard, PageTitle } from '../../../components/ui';
 import { EditorialResponsibilityNotice } from '../../../components/eeat';
 import { ContentUpdateNotice } from '../../../components/compliance';
 import { categoryToSlug } from '../../../lib/categories';
+import { getLatestUpdatedAt } from '../../../lib/utils';
 
 const REAL_CATEGORIES = categories.filter(c => c.name !== 'All');
 
@@ -105,7 +106,7 @@ export default function CategoryPage({ category, categoryTools, toolsCount, favo
         </p>
 
         <EditorialResponsibilityNotice />
-        <ContentUpdateNotice lastUpdated="2026-06-12" frequency="monthly" />
+        <ContentUpdateNotice lastUpdated={getLatestUpdatedAt(categoryTools) || "2026-06-12"} frequency="monthly" />
 
         {categoryTools.length > 0 ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: 16, marginBottom: 32 }}>

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 import { tools as staticTools, categories } from '../../data';
 import { listTools } from '../../lib/cms/tools';
+import { getLatestUpdatedAt } from '../../lib/utils';
 
 export async function getStaticProps() {
   try {
@@ -119,7 +120,7 @@ export default function ToolsPage({ favorites = [], toggleFavorite, tools: fetch
         </PageTitle>
 
         <EditorialResponsibilityNotice />
-        <ContentUpdateNotice lastUpdated="2026-06-12" frequency="weekly" />
+        <ContentUpdateNotice lastUpdated={getLatestUpdatedAt(tools) || "2026-06-12"} frequency="weekly" />
 
         {/* Search + Sort */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }} role="search">
