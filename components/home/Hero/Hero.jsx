@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Button from '../../shared/Button/Button';
 import HeroSearch from './HeroSearch';
 import HeroVisual, { HeroProofStrip } from './HeroVisual';
+import MobilePerformanceBadge from '../../ui/MobilePerformanceBadge';
 import styles from './Hero.module.css';
 
 /**
@@ -75,6 +76,10 @@ export default function Hero({ tools = [] }) {
             Latest AI Reviews
           </Button>
         </div>
+      </div>
+
+      <div className={styles.reveal} style={{ '--reveal-delay': '0.6s' }}>
+        <MobilePerformanceBadge />
       </div>
 
       <a href="#stats" className={styles.scrollIndicator} aria-label="Scroll to statistics">
