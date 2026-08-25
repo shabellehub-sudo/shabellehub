@@ -8,7 +8,7 @@ import { getAuthor, getReviewer } from '../../data/team';
 import { openAffiliateLink, buildAffiliateUrl } from '../../lib/affiliate';
 import { StarRating, Badge } from '../../components/ui';
 import { TrustBlock } from '../../components/eeat';
-import { AffiliateDisclosure, AdvertisingNotice } from '../../components/compliance';
+import { AffiliateDisclosure, AdvertisingNotice, ContentUpdateNotice } from '../../components/compliance';
 import AdSlot from '../../components/AdSlot';
 import SmartStack from '../../components/tools/SmartStack';
 import { getAffiliateByToolSlug } from '../../lib/cms/affiliates';
@@ -138,6 +138,11 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
             <li><span style={{ color: '#e8f0ff' }} aria-current="page"><span className="notranslate">{tool.name}</span></span></li>
           </ol>
         </nav>
+
+        <ContentUpdateNotice
+          lastUpdated={tool.updated_at ? new Date(tool.updated_at).toISOString() : "2026-06-12"}
+          frequency="monthly"
+        />
 
         {/* Hero card */}
         <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 28, marginBottom: 24 }}>
