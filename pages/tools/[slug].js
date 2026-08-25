@@ -12,6 +12,7 @@ import { AffiliateDisclosure, AdvertisingNotice } from '../../components/complia
 import AdSlot from '../../components/AdSlot';
 import { getAffiliateByToolSlug } from '../../lib/cms/affiliates';
 import { listTools, getToolBySlug } from '../../lib/cms/tools';
+import { getComplementaryStack } from '../../lib/stackMatcher';
 
 export async function getStaticPaths() {
   return {
@@ -58,7 +59,18 @@ export async function getStaticProps({ params }) {
     affiliateLink = data ?? null;
   } catch (_) { /* non-fatal — falls back to static data */ }
 
-  return { props: { tool, related, affiliateLink }, revalidate: 3600 };
+  // Phase 4.3: Smart Stack Matcher — build the 3-tool complementary bundle
+  // at build time (zero extra runtime Supabase reads). Wrapped in try/catch
+  // because getComplementaryStack() throws on an unmapped category, and a
+  // taxonomy gap for one tool must never fail the build for every tool.
+  let stack = { primary: tool, asset: null, distribution: null };
+  try {
+    stack = getComplementaryStack(tool, allTools);
+  } catch (err) {
+    console.warn(`[stackMatcher] ${err.message}`);
+  }
+
+  return { props: { tool, related, affiliateLink, stack }, revalidate: 3600 };
 }
 
 export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null }) {
