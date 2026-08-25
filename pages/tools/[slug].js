@@ -10,6 +10,7 @@ import { StarRating, Badge } from '../../components/ui';
 import { TrustBlock } from '../../components/eeat';
 import { AffiliateDisclosure, AdvertisingNotice } from '../../components/compliance';
 import AdSlot from '../../components/AdSlot';
+import SmartStack from '../../components/tools/SmartStack';
 import { getAffiliateByToolSlug } from '../../lib/cms/affiliates';
 import { listTools, getToolBySlug } from '../../lib/cms/tools';
 import { getComplementaryStack } from '../../lib/stackMatcher';
@@ -328,6 +329,8 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
             </div>
           </section>
         )}
+
+        <SmartStack stack={stack} />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 24 }}>
           <AffiliateDisclosure />
