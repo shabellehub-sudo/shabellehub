@@ -74,7 +74,7 @@ export async function getStaticProps({ params }) {
   return { props: { tool, related, affiliateLink, stack }, revalidate: 3600 };
 }
 
-export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null }) {
+export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null, stack = null }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
