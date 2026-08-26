@@ -33,3 +33,6 @@ next-env.d.ts
 build_output.txt
 firestore_audit*.txt
 *.zip
+data/*.bak
+data/*.bak-*
+index-diff.txt

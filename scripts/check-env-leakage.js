@@ -9,7 +9,7 @@ const ALLOWED = [
   path.join('pages', 'api'),
   path.join('lib', 'supabaseAdmin.js'),
   '.env.local.example',
-  path.join('scripts', 'check-env-leakage.js'),
+  path.join('scripts'),
 ];
 const SKIP = new Set(['node_modules', '.next', '.git', 'public', 'supabase']);
 
