@@ -5,7 +5,7 @@
 // statically from the legacy data/index.js bundle) so the first answer
 // always reflects the real, current Supabase inventory rather than the
 // count frozen at whatever data/index.js said at build time.
-export function getFaqs({ toolsCount = 100, categoriesCount = 16 } = {}) {
+export function getFaqs({ toolsCount = 100, categoriesCount = 14 } = {}) {
   return [
     {
       q: 'How does Shabelle Hub choose which AI tools to review?',
