@@ -8,7 +8,7 @@ import { getToken } from '../../lib/cms/apiHelpers';
 
 const categories = [
   { name: "Chatbots", icon: "💬", description: "General-purpose AI chat assistants for everyday questions, writing, brainstorming, and research." },
-  { name: "AI Writing", icon: "✍️", description: "AI tools focused on producing marketing copy, blog content, and short-form writing at scale." },
+  { name: "Writing", icon: "✍️", description: "AI tools focused on producing marketing copy, blog content, and short-form writing at scale." },
   { name: "Coding", icon: "💻", description: "AI-powered code editors, assistants, and app builders." },
   { name: "Image Generation", icon: "🎨", description: "AI models that turn text prompts into original artwork and images." },
   { name: "Video Generation", icon: "🎬", description: "Tools that generate video clips and talking AI avatars from text prompts." },
@@ -46,7 +46,7 @@ export default function MigratePage() {
       const token = await getToken();
 
       // ── 1. Tools ──────────────────────────────────────────────────────────
-      addLog('⏳ Tools migrate billaabmaya (64 tools)...');
+      addLog('⏳ Tools migrate billaabmaya (100 tools)...');
       const r1 = await fetch('/api/admin/tools/seed', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
@@ -61,7 +61,7 @@ export default function MigratePage() {
       addLog(`✅ Tools: ${d1.data.created} cusub, ${d1.data.skipped} horay u jiray`);
 
       // ── 2. Categories ─────────────────────────────────────────────────────
-      addLog('⏳ Categories migrate billaabmaya (14 categories)...');
+      addLog('⏳ Categories migrate billaabmaya (15 categories)...');
       let catDone = 0;
       for (const cat of categories) {
         const r = await fetch('/api/admin/cms/categories', {

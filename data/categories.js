@@ -3,13 +3,13 @@
 // pull in the full 424 KB tools+blogPosts bundle just for the category list.
 
 export const categories = [
-  { name: "All", icon: "🔍", count: 64 },
+  { name: "All", icon: "🔍", count: 100 },
   {
     name: "Chatbots", icon: "💬", count: 4,
     description: "General-purpose AI chat assistants for everyday questions, writing, brainstorming, and research. These are the tools most people reach for first — capable of drafting emails, explaining concepts, summarizing documents, and holding open-ended conversations.",
   },
   {
-    name: "AI Writing", icon: "✍️", count: 3,
+    name: "Writing", icon: "✍️", count: 13,
     description: "AI tools focused on producing marketing copy, blog content, and short-form writing at scale, with templates, tone controls, and (in some cases) built-in SEO scoring for content teams.",
   },
   {
