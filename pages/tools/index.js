@@ -64,10 +64,11 @@ export default function ToolsPage({ favorites = [], toggleFavorite, tools: fetch
     let list = tools.filter(t => {
       const q = debouncedSearch.toLowerCase();
       const matchSearch = !q ||
-        t.name.toLowerCase().includes(q) ||
-        t.desc.toLowerCase().includes(q) ||
-        t.tags.some(tag => tag.toLowerCase().includes(q)) ||
-        t.category.toLowerCase().includes(q);
+        t.name?.toLowerCase().includes(q) ||
+        t.desc?.toLowerCase().includes(q) ||
+        t.tags?.some(tag => tag.toLowerCase().includes(q)) ||
+        t.category?.toLowerCase().includes(q) ||
+        t.useCases?.some(u => u.toLowerCase().includes(q));
 
       const matchCat =
         activeCat === 'All'      ? true :
@@ -84,6 +85,11 @@ export default function ToolsPage({ favorites = [], toggleFavorite, tools: fetch
       ...list.filter(t => t.priceTier === 'free'),
       ...list.filter(t => t.priceTier === 'paid'),
     ];
+    if (sort === 'newest') list = [...list].sort((a, b) => {
+      const aTime = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+      const bTime = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+      return (Number.isFinite(bTime) ? bTime : 0) - (Number.isFinite(aTime) ? aTime : 0);
+    });
 
     return list;
   }, [debouncedSearch, activeCat, sort, favorites, mounted, tools]);
@@ -147,6 +153,7 @@ export default function ToolsPage({ favorites = [], toggleFavorite, tools: fetch
             }}
           >
             <option value="rating">Top Rated</option>
+            <option value="newest">Newest</option>
             <option value="name">A–Z</option>
             <option value="price">Free First</option>
           </select>
