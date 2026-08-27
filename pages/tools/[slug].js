@@ -218,19 +218,27 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           </div>
         </div>
 
+        <nav aria-label="Table of contents" style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 20, padding: '10px 0', borderBottom: '1px solid #1a2d4a' }}>
+          <a href="#overview" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>Overview</a>
+          <a href="#pros-cons" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>Pros & Cons</a>
+          <a href="#use-cases" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>Use Cases</a>
+          <a href="#faq" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>FAQ</a>
+          <a href="#alternatives" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>Alternatives</a>
+        </nav>
+
         {/* Trust block — author, reviewer, last updated/reviewed, editorial links */}
         <TrustBlock author={author} reviewer={reviewer} lastUpdated={meta.lastUpdated} lastReviewed={meta.lastReviewed} type="tool" />
 
         <AdSlot slot="3333333333" label="Tool review ad (top)" />
 
         {/* Overview */}
-        <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 24, marginBottom: 20 }}>
+        <div id="overview" style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 24, marginBottom: 20 }}>
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 14 }}>Overview</h2>
           <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75 }}>{tool.longDesc}</p>
         </div>
 
         {/* Pros & Cons */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16, marginBottom: 20 }}>
+        <div id="pros-cons" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16, marginBottom: 20 }}>
           <div style={{ background: '#0f1829', border: '1px solid rgba(0,208,132,0.2)', borderRadius: 16, padding: 22 }}>
             <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, color: '#00d084', marginBottom: 14 }}>✅ Pros</h3>
             <ul style={{ listStyle: 'none' }}>
@@ -254,7 +262,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
         </div>
 
         {/* Use Cases */}
-        <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 22, marginBottom: 20 }}>
+        <div id="use-cases" style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 22, marginBottom: 20 }}>
           <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, marginBottom: 14 }}>Best Use Cases</h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {tool.useCases.map((u, i) => (
@@ -269,7 +277,9 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           </div>
         </div>
 
-        <ToolFAQ faqs={faqs} toolName={tool.name} />
+        <div id="faq">
+          <ToolFAQ faqs={faqs} toolName={tool.name} />
+        </div>
 
         {/* Trust badge */}
         <div style={{
@@ -321,7 +331,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
 
         {/* Related tools */}
         {related.length > 0 && (
-          <section aria-label={`Alternatives to ${tool.name}`}>
+          <section id="alternatives" aria-label={`Alternatives to ${tool.name}`}>
             <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 16 }}>
               {tool.alternatives && tool.alternatives.length > 0
                 ? `Popular Alternatives to ${tool.name}`
