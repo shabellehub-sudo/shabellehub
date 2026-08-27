@@ -14,6 +14,8 @@ import SmartStack from '../../components/tools/SmartStack';
 import { getAffiliateByToolSlug } from '../../lib/cms/affiliates';
 import { listTools, getToolBySlug } from '../../lib/cms/tools';
 import { getComplementaryStack } from '../../lib/stackMatcher';
+import { generateToolFaqs } from '../../lib/faq-generator';
+import ToolFAQ from '../../components/tools/ToolFAQ';
 
 export async function getStaticPaths() {
   return {
@@ -71,10 +73,10 @@ export async function getStaticProps({ params }) {
     console.warn(`[stackMatcher] ${err.message}`);
   }
 
-  return { props: { tool, related, affiliateLink, stack }, revalidate: 3600 };
+  return { props: { tool, related, affiliateLink, stack, allTools }, revalidate: 3600 };
 }
 
-export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null, stack = null }) {
+export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null, stack = null, allTools = [] }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -92,6 +94,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
   }
   const seo     = getToolSEO(tool);
   const meta    = getToolMeta(tool.slug);
+  const faqs = generateToolFaqs(tool, allTools);
   const author  = getAuthor(meta.authorSlug);
   const reviewer = getReviewer(meta.reviewerSlug);
   const schema  = getToolStructuredData(tool, meta);
@@ -265,6 +268,8 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
             ))}
           </div>
         </div>
+
+        <ToolFAQ faqs={faqs} toolName={tool.name} />
 
         {/* Trust badge */}
         <div style={{
