@@ -68,7 +68,7 @@ export function AdvertisingNotice({ compact = false }) {
 // Communicates content freshness / maintenance cadence. Used on category and
 // listing pages where a full TrustBlock byline doesn't apply to a single
 // author/reviewer.
-export function ContentUpdateNotice({ lastUpdated, frequency = 'monthly' }) {
+export function ContentUpdateNotice({ lastUpdated, frequency = 'monthly', label = 'Content freshness' }) {
   return (
     <div style={{
       background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14,
@@ -76,7 +76,7 @@ export function ContentUpdateNotice({ lastUpdated, frequency = 'monthly' }) {
     }}>
       <span aria-hidden="true" style={{ fontSize: 18 }}>🔄</span>
       <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
-        <strong style={{ color: '#e8f0ff' }}>Content freshness:</strong>{' '}
+        <strong style={{ color: '#e8f0ff' }}>{label}:</strong>{' '}
         {lastUpdated ? (
           <>This page was last updated on <time dateTime={lastUpdated}>{formatDate(lastUpdated)}</time>. </>
         ) : null}

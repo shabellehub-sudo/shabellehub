@@ -142,6 +142,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
         <ContentUpdateNotice
           lastUpdated={tool.updated_at ? new Date(tool.updated_at).toISOString() : "2026-06-12"}
           frequency="monthly"
+          label="Data last synced"
         />
 
         {/* Hero card */}
