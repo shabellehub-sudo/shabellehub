@@ -75,8 +75,19 @@ export function Badge({ text, variant = 'default' }) {
 // of them. `tool` is a stable reference and `isFavorite` a plain boolean,
 // so shallow-prop memo is a direct win (onToggleFavorite is memoized with
 // useCallback in pages/_app.js so its reference stays stable too).
+// Lightweight Freshness System: a tool counts as "recently updated" if
+// tool.updated_at falls within the last 48 hours. Guards against
+// missing/invalid dates so a bad value never throws or shows stale UI.
+function isRecentlyUpdated(updatedAt) {
+  if (!updatedAt) return false;
+  const t = new Date(updatedAt).getTime();
+  if (!Number.isFinite(t)) return false;
+  return Date.now() - t < 48 * 60 * 60 * 1000;
+}
+
 function ToolCardBase({ tool, isFavorite, onToggleFavorite }) {
   const [hovered, setHovered] = useState(false);
+  const recentlyUpdated = isRecentlyUpdated(tool.updated_at);
 
   return (
     <div
@@ -130,6 +141,7 @@ function ToolCardBase({ tool, isFavorite, onToggleFavorite }) {
                   </span>
                   {tool.hot && <Badge text="HOT" variant="hot" />}
                   {tool.badge && <Badge text={tool.badge} />}
+                  {recentlyUpdated && <Badge text="🔄 Updated" />}
                 </div>
                 <div style={{ color: '#8ba3ca', fontSize: 11, marginTop: 1 }}>{tool.category}</div>
               </div>
