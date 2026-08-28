@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import { AdminCard, Button, ErrorBanner, EmptyState } from '../../../components/admin/ui';
-import { listPendingChanges, reviewChange, listRecentAuditLog } from '../../../lib/cms/monitoring';
+import { listPendingChanges, listAllChanges, reviewChange, listRecentAuditLog } from '../../../lib/cms/monitoring';
 import { isSupabaseConfigured, getSupabaseClient } from '../../../lib/supabase';
 
 const CATEGORY_LABELS = {
@@ -25,17 +25,30 @@ export default function AdminMonitoringPage() {
   const [scanSlug, setScanSlug] = useState('');
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
+  const [shippable, setShippable] = useState([]);
+  const [shipValues, setShipValues] = useState({});
+  const [shipping, setShipping] = useState({});
+
+  const SHIPPABLE_CATEGORIES = new Set(['pricing', 'status']);
 
   const load = useCallback(async () => {
     if (!isSupabaseConfigured()) { setLoading(false); return; }
     setLoading(true);
-    const [changesRes, auditRes] = await Promise.all([
+    const [changesRes, auditRes, confirmedRes] = await Promise.all([
       listPendingChanges({ lim: 50 }),
       listRecentAuditLog({ lim: 20 }),
+      listAllChanges({ status: 'confirmed', lim: 50 }),
     ]);
     setChanges(changesRes.data || []);
     setAuditLog(auditRes.data || []);
-    setError(changesRes.error || auditRes.error || null);
+    const eligible = (confirmedRes.data || []).filter((c) => c.change_category === 'pricing' || c.change_category === 'status');
+    setShippable(eligible);
+    setShipValues((prev) => {
+      const next = { ...prev };
+      for (const c of eligible) if (next[c.id] === undefined) next[c.id] = c.new_value || '';
+      return next;
+    });
+    setError(changesRes.error || auditRes.error || confirmedRes.error || null);
     setLoading(false);
   }, []);
 
@@ -45,6 +58,30 @@ export default function AdminMonitoringPage() {
     const result = await reviewChange(id, decision);
     if (result.error) { setError(result.error); return; }
     load();
+  }
+
+  async function handleShip(id) {
+    setShipping((s) => ({ ...s, [id]: true }));
+    setError(null);
+    try {
+      const supabase = getSupabaseClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch('/api/admin/ship-change', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token || ''}`,
+        },
+        body: JSON.stringify({ changeId: id, confirmedValue: shipValues[id] || '' }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setError(json.error || 'Ship failed'); return; }
+      load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setShipping((s) => ({ ...s, [id]: false }));
+    }
   }
 
   async function handleScanNow() {
@@ -132,6 +169,37 @@ export default function AdminMonitoringPage() {
           <p style={{ color: '#6b82a8', fontSize: 11, marginTop: 8 }}>
             Consider checking the monitoring source URL for these tools — it may need a fallback or override.
           </p>
+        </AdminCard>
+      )}
+
+      {shippable.length > 0 && (
+        <AdminCard style={{ marginBottom: 20, border: '1px solid #14FFF4', background: 'rgba(20,255,244,0.05)' }}>
+          <h3 style={{ fontSize: 13, fontWeight: 700, color: '#14FFF4', marginBottom: 10 }}>
+            Confirmed — Ready to Ship ({shippable.length})
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {shippable.map((c) => (
+              <div key={c.id} style={{ borderBottom: '1px solid #1a2d4a', paddingBottom: 10 }}>
+                <div style={{ fontWeight: 700, fontSize: 13 }}>
+                  {c.tool_slug} — {CATEGORY_LABELS[c.change_category] || c.change_category}
+                </div>
+                <div style={{ color: '#6b82a8', fontSize: 11, margin: '4px 0' }}>
+                  {c.old_value || '(none)'} → {c.new_value || '(none)'}
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
+                  <input
+                    type="text"
+                    value={shipValues[c.id] ?? ''}
+                    onChange={(e) => setShipValues((v) => ({ ...v, [c.id]: e.target.value }))}
+                    style={{ flex: 1, minWidth: 180, padding: '6px 10px', borderRadius: 8, border: '1px solid #1a2d4a', background: '#0a0e16', color: '#e8f0ff', fontSize: 12 }}
+                  />
+                  <Button onClick={() => handleShip(c.id)} disabled={shipping[c.id]} style={{ fontSize: 11, padding: '5px 9px' }}>
+                    {shipping[c.id] ? 'Shipping…' : 'Confirm & Ship'}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
         </AdminCard>
       )}
 
