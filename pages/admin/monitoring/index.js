@@ -196,6 +196,7 @@ export default function AdminMonitoringPage() {
                   <Button onClick={() => handleShip(c.id)} disabled={shipping[c.id]} style={{ fontSize: 11, padding: '5px 9px' }}>
                     {shipping[c.id] ? 'Shipping…' : 'Confirm & Ship'}
                   </Button>
+                  <Button variant="danger" onClick={() => handleReview(c.id, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
                 </div>
               </div>
             ))}
