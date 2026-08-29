@@ -15,6 +15,7 @@ import { getAffiliateByToolSlug } from '../../lib/cms/affiliates';
 import { listTools, getToolBySlug } from '../../lib/cms/tools';
 import { getComplementaryStack } from '../../lib/stackMatcher';
 import { generateToolFaqs } from '../../lib/faq-generator';
+import { listAllChanges } from '../../lib/cms/monitoring';
 import ToolFAQ from '../../components/tools/ToolFAQ';
 
 export async function getStaticPaths() {
@@ -73,10 +74,39 @@ export async function getStaticProps({ params }) {
     console.warn(`[stackMatcher] ${err.message}`);
   }
 
-  return { props: { tool, related, affiliateLink, stack, allTools }, revalidate: 3600 };
+  // Lightweight Freshness System, part 2: surface the most recent
+  // shipped Approve & Ship change (within 30 days) as a plain-language
+  // summary. Wrapped in try/catch so a monitoring-table issue never
+  // fails the tool page build.
+  let recentUpdate = null;
+  try {
+    const shippedRes = await listAllChanges({ status: 'shipped', lim: 200 });
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const forThisTool = (shippedRes.data || [])
+      .filter((c) => c.tool_slug === params.slug && c.shipped_at && new Date(c.shipped_at).getTime() > cutoff)
+      .sort((a, b) => new Date(b.shipped_at) - new Date(a.shipped_at));
+    if (forThisTool.length > 0) {
+      const c = forThisTool[0];
+      recentUpdate = {
+        category: c.change_category,
+        oldValue: c.old_value,
+        newValue: c.confirmed_value || c.new_value,
+        shippedAt: c.shipped_at,
+      };
+    }
+  } catch (err) {
+    console.warn(`[recentUpdate] ${err.message}`);
+  }
+
+  return { props: { tool, related, affiliateLink, stack, allTools, recentUpdate }, revalidate: 3600 };
 }
 
-export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null, stack = null, allTools = [] }) {
+const CATEGORY_LABELS_LOCAL = {
+  pricing: 'Pricing',
+  status: 'Status',
+};
+
+export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null, stack = null, allTools = [], recentUpdate = null }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -225,6 +255,19 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           <a href="#faq" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>FAQ</a>
           <a href="#alternatives" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>Alternatives</a>
         </nav>
+
+        {recentUpdate && (
+          <div style={{ background: '#0f1829', border: '1px solid rgba(20,255,244,0.25)', borderRadius: 14, padding: '14px 20px', marginBottom: 16 }}>
+            <div style={{ color: '#14FFF4', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
+              📋 Recent Update ({new Date(recentUpdate.shippedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
+            </div>
+            <div style={{ color: '#8ba3ca', fontSize: 13 }}>
+              {CATEGORY_LABELS_LOCAL[recentUpdate.category] || recentUpdate.category} changed
+              {recentUpdate.oldValue ? `: ${recentUpdate.oldValue} → ` : ': '}
+              {recentUpdate.newValue || '(updated)'}
+            </div>
+          </div>
+        )}
 
         {/* Trust block — author, reviewer, last updated/reviewed, editorial links */}
         <TrustBlock author={author} reviewer={reviewer} lastUpdated={meta.lastUpdated} lastReviewed={meta.lastReviewed} type="tool" />
