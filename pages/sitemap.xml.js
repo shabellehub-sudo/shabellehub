@@ -4,6 +4,7 @@ import { teamMembers } from '../data/team';
 import { generateSitemapEntries } from '../lib/seo';
 import { listPublishedPosts } from '../lib/cms/posts';
 import { listTools } from '../lib/cms/tools';
+import { isAlternativesPageEligible } from '../lib/alternatives';
 
 const BASE_URL = 'https://shabellehub.com';
 
@@ -32,7 +33,11 @@ export async function getServerSideProps({ res }) {
     }
   } catch { /* Supabase not configured — sitemap still works */ }
 
-  const entries = generateSitemapEntries(tools, livePosts, categories, teamMembers);
+  const alternativesEntries = tools
+    .filter((t) => isAlternativesPageEligible(t, tools))
+    .map((t) => ({ url: `/tools/${t.slug}/alternatives`, changefreq: 'weekly', priority: 0.6 }));
+
+  const entries = [...generateSitemapEntries(tools, livePosts, categories, teamMembers), ...alternativesEntries];
   const today   = new Date().toISOString().split('T')[0];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

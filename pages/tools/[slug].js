@@ -16,6 +16,7 @@ import { listTools, getToolBySlug } from '../../lib/cms/tools';
 import { getComplementaryStack } from '../../lib/stackMatcher';
 import { generateToolFaqs } from '../../lib/faq-generator';
 import { listAllChanges } from '../../lib/cms/monitoring';
+import { isAlternativesPageEligible } from '../../lib/alternatives';
 import ToolFAQ from '../../components/tools/ToolFAQ';
 
 export async function getStaticPaths() {
@@ -98,7 +99,9 @@ export async function getStaticProps({ params }) {
     console.warn(`[recentUpdate] ${err.message}`);
   }
 
-  return { props: { tool, related, affiliateLink, stack, allTools, recentUpdate }, revalidate: 3600 };
+  const hasAlternativesPage = isAlternativesPageEligible(tool, allTools);
+
+  return { props: { tool, related, affiliateLink, stack, allTools, recentUpdate, hasAlternativesPage }, revalidate: 3600 };
 }
 
 const CATEGORY_LABELS_LOCAL = {
@@ -106,7 +109,7 @@ const CATEGORY_LABELS_LOCAL = {
   status: 'Status',
 };
 
-export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null, stack = null, allTools = [], recentUpdate = null }) {
+export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null, stack = null, allTools = [], recentUpdate = null, hasAlternativesPage = false }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -391,6 +394,13 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
                 </Link>
               ))}
             </div>
+            {hasAlternativesPage && (
+              <div style={{ marginTop: 14 }}>
+                <Link href={`/tools/${tool.slug}/alternatives`} style={{ color: '#14FFF4', fontSize: 13, textDecoration: 'none' }}>
+                  View all alternatives →
+                </Link>
+              </div>
+            )}
           </section>
         )}
 
