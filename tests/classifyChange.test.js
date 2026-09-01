@@ -180,9 +180,26 @@ check('COLLISION FIX: "Now available in Europe" -> not pricing (eur substring in
   assert.notStrictEqual(r.category, 'pricing');
 });
 
-check('KNOWN GAP (Pass 2, unchanged): dollar-brace config variable -> still pricing (bare $ punctuation not addressed in Pass 1)', () => {
+check('PASS 2 FIX: dollar-brace config variable -> unknown, not pricing (bare $ with no adjacent digit no longer matches)', () => {
   const r = classifyChange('+ Updated ${env} config variable');
+  assert.notStrictEqual(r.category, 'pricing');
+});
+
+check('PASS 2 FIX: generic template-literal variable -> unknown, not pricing (same bare-$ pattern, different variable name)', () => {
+  const r = classifyChange('+ Rendering ${amount} in template');
+  assert.notStrictEqual(r.category, 'pricing');
+});
+
+check('PASS 2 REGRESSION: symbol-before-digit still fires pricing on its own, no other pricing word needed', () => {
+  const r = classifyChange('+ Now available at €50');
   assert.strictEqual(r.category, 'pricing');
+  assert.strictEqual(r.confidence, 'high');
+});
+
+check('PASS 2 REGRESSION: digit-before-symbol order also fires pricing', () => {
+  const r = classifyChange('+ Now 20€ monthly');
+  assert.strictEqual(r.category, 'pricing');
+  assert.strictEqual(r.confidence, 'high');
 });
 
 check('COLLISION FIX: "We plan to launch next quarter" -> not plan_change (bare "plan" verb moved to fallback; "launch" is a real feature_added signal)', () => {
