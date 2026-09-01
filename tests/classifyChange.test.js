@@ -132,4 +132,123 @@ check('KNOWN GAP: "GPT-5.6" vs "GPT-5.5" diff -> currently unknown, NOT model_up
   assert.strictEqual(r.signal, false);
 });
 
+
+// ── Pass 1: substring & semantic false-positive fixes (collision audit) ──
+
+check('COLLISION FIX: "Rapid response time improved" -> unknown, not api_change (api substring in "rapid")', () => {
+  const r = classifyChange('+ Rapid response time improved');
+  assert.notStrictEqual(r.category, 'api_change');
+  assert.strictEqual(r.category, 'unknown');
+});
+
+check('COLLISION FIX: "Capital raised for expansion" -> unknown, not api_change (api substring in "capital")', () => {
+  const r = classifyChange('+ Capital raised for expansion');
+  assert.notStrictEqual(r.category, 'api_change');
+  assert.strictEqual(r.category, 'unknown');
+});
+
+check('COLLISION FIX: "New Zapier integration available" -> integration_change (was api_change via api substring in "zapier")', () => {
+  const r = classifyChange('+ New Zapier integration available');
+  assert.strictEqual(r.category, 'integration_change');
+});
+
+check('COLLISION FIX: "subscription model" -> pricing, not model_update (pricing tier checked before model-generic fallback)', () => {
+  const r = classifyChange('+ Introducing a new subscription model');
+  assert.strictEqual(r.category, 'pricing');
+  assert.strictEqual(r.confidence, 'high');
+});
+
+check('FALLBACK BEHAVIOR: "business model is changing" -> model_update at MEDIUM confidence (was HIGH) -- model-generic checked before business-generic within the fallback tier, so category is unchanged but confidence is downgraded', () => {
+  const r = classifyChange('+ Our business model is changing');
+  assert.strictEqual(r.category, 'model_update');
+  assert.strictEqual(r.confidence, 'medium');
+});
+
+check('COLLISION FIX: "New API version 2 released" -> api_change, not model_update (api tier checked before model-generic fallback)', () => {
+  const r = classifyChange('+ New API version 2 released');
+  assert.strictEqual(r.category, 'api_change');
+});
+
+check('KNOWN GAP (Pass 2, unchanged): "Endpoint v2.3 deployed" -> still model_update (punctuation version markers not addressed in Pass 1)', () => {
+  const r = classifyChange('+ Endpoint v2.3 deployed');
+  assert.strictEqual(r.category, 'model_update');
+  assert.strictEqual(r.confidence, 'high');
+});
+
+check('COLLISION FIX: "Now available in Europe" -> not pricing (eur substring in "Europe" now word-boundaried)', () => {
+  const r = classifyChange('+ Now available in Europe');
+  assert.notStrictEqual(r.category, 'pricing');
+});
+
+check('KNOWN GAP (Pass 2, unchanged): dollar-brace config variable -> still pricing (bare $ punctuation not addressed in Pass 1)', () => {
+  const r = classifyChange('+ Updated ${env} config variable');
+  assert.strictEqual(r.category, 'pricing');
+});
+
+check('COLLISION FIX: "We plan to launch next quarter" -> not plan_change (bare "plan" verb moved to fallback; "launch" is a real feature_added signal)', () => {
+  const r = classifyChange('+ We plan to launch next quarter');
+  assert.strictEqual(r.category, 'feature_added');
+});
+
+check('FALLBACK BEHAVIOR: "Our business continues to grow" -> plan_change at MEDIUM confidence (was HIGH) -- bare "business" is a real word, not a substring collision, so category is unchanged but confidence is downgraded', () => {
+  const r = classifyChange('+ Our business continues to grow');
+  assert.strictEqual(r.category, 'plan_change');
+  assert.strictEqual(r.confidence, 'medium');
+});
+
+check('COLLISION FIX: "No limitations on export size" -> unknown, not limit_change ("limit" word-boundary no longer matches inside "limitations")', () => {
+  const r = classifyChange('+ No limitations on export size');
+  assert.strictEqual(r.category, 'unknown');
+});
+
+check('FALLBACK BEHAVIOR: "Photo credits: Unsplash" -> limit_change at MEDIUM confidence (was HIGH) -- bare "credits" is a real word, not a substring collision, so category is unchanged but confidence is downgraded', () => {
+  const r = classifyChange('+ Photo credits: Unsplash');
+  assert.strictEqual(r.category, 'limit_change');
+  assert.strictEqual(r.confidence, 'medium');
+});
+
+check('FALLBACK BEHAVIOR: "Trial extension for all users" -> integration_change at MEDIUM confidence (was HIGH) -- bare "extension" is a real word, not a substring collision, so category is unchanged but confidence is downgraded', () => {
+  const r = classifyChange('+ Trial extension for all users');
+  assert.strictEqual(r.category, 'integration_change');
+  assert.strictEqual(r.confidence, 'medium');
+});
+
+// ── Regression guards: exact/multi-word phrases must keep working after removing their bare generic counterparts ──
+
+check('REGRESSION GUARD: "New checkpoint for gpt-4" -> model_update via MODEL_IDENTIFIERS (Tier 0 unaffected)', () => {
+  const r = classifyChange('+ New checkpoint for gpt-4');
+  assert.strictEqual(r.category, 'model_update');
+  assert.strictEqual(r.confidence, 'high');
+});
+
+check('REGRESSION GUARD: "$20/month pricing update" -> pricing via currency symbol (Pass 2 territory, untouched, must still work)', () => {
+  const r = classifyChange('+ $20/month pricing update');
+  assert.strictEqual(r.category, 'pricing');
+  assert.strictEqual(r.confidence, 'high');
+});
+
+check('REGRESSION GUARD: "New pro plan tier" -> plan_change via exact phrase (must survive removal of bare "plan")', () => {
+  const r = classifyChange('+ New pro plan tier');
+  assert.strictEqual(r.category, 'plan_change');
+  assert.strictEqual(r.confidence, 'high');
+});
+
+check('REGRESSION GUARD: "New Chrome extension released" -> integration_change via exact phrase (must survive removal of bare "extension")', () => {
+  const r = classifyChange('+ New Chrome extension released');
+  assert.strictEqual(r.category, 'integration_change');
+  assert.strictEqual(r.confidence, 'high');
+});
+
+check('REGRESSION GUARD: "ChatGPT has been discontinued" -> status (Tier-0 boundary case: no model identifier present)', () => {
+  const r = classifyChange('+ ChatGPT has been discontinued');
+  assert.strictEqual(r.category, 'status');
+  assert.strictEqual(r.confidence, 'high');
+});
+
+check('REGRESSION GUARD: "GPT-4 has been discontinued" -> model_update (Tier-0 boundary case: model identifier present, wins per approved decision)', () => {
+  const r = classifyChange('+ GPT-4 has been discontinued');
+  assert.strictEqual(r.category, 'model_update');
+  assert.strictEqual(r.confidence, 'high');
+});
+
 console.log(`\n${n} checks run.`);
