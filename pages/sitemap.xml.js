@@ -5,6 +5,7 @@ import { generateSitemapEntries } from '../lib/seo';
 import { listPublishedPosts } from '../lib/cms/posts';
 import { listTools } from '../lib/cms/tools';
 import { isAlternativesPageEligible } from '../lib/alternatives';
+import { getAllComparisonPairs, isComparisonPairEligible, comparisonUrl } from '../lib/comparisons';
 
 const BASE_URL = 'https://shabellehub.com';
 
@@ -37,7 +38,11 @@ export async function getServerSideProps({ res }) {
     .filter((t) => isAlternativesPageEligible(t, tools))
     .map((t) => ({ url: `/tools/${t.slug}/alternatives`, changefreq: 'weekly', priority: 0.6 }));
 
-  const entries = [...generateSitemapEntries(tools, livePosts, categories, teamMembers), ...alternativesEntries];
+  const comparisonEntries = getAllComparisonPairs(tools)
+    .filter(isComparisonPairEligible)
+    .map((p) => ({ url: comparisonUrl(p.slug1, p.slug2), changefreq: 'monthly', priority: 0.5 }));
+
+  const entries = [...generateSitemapEntries(tools, livePosts, categories, teamMembers), ...alternativesEntries, ...comparisonEntries];
   const today   = new Date().toISOString().split('T')[0];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
