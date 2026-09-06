@@ -68,10 +68,24 @@ function escapeHtml(str) {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
 }
+// Scheme allowlist for rendered markdown links. Blocks javascript:, data:,
+// vbscript:, and any other scheme not explicitly trusted -- relative paths
+// and anchors (no scheme at all) are allowed since they can't execute code.
+// Fix: P1 Security Sprint -- Phase 1, item 1 (markdown link XSS).
+function isSafeLinkUrl(url) {
+  const trimmed = (url || '').trim();
+  if (!trimmed) return false;
+  if (/^[\/#.]/.test(trimmed)) return true; // relative path, anchor, or "./"
+  return /^(https?|mailto|tel):/i.test(trimmed);
+}
+
 function inlineFormat(esc) {
   return esc
     .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#e8f0ff;font-weight:700">$1</strong>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" style="color:#14FFF4;text-decoration:underline">$1</a>')
+    .replace(/\[(.+?)\]\((.+?)\)/g, (match, text, url) => {
+      if (!isSafeLinkUrl(url)) return text;
+      return `<a href="${url}" style="color:#14FFF4;text-decoration:underline">${text}</a>`;
+    })
     .replace(/`([^`]+)`/g, '<code style="background:#0f1829;color:#14FFF4;padding:2px 6px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:0.9em">$1</code>');
 }
 

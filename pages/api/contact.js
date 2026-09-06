@@ -91,6 +91,18 @@ export default async function handler(req, res) {
       `(reason: ${escapeForLog(reason || 'N/A')}): ${escapeForLog(message.trim())}`
     );
 
+    // Fix: P1 Security Sprint -- Phase 1, item 3 (false-success behavior).
+    // The submission genuinely was received and logged, so this stays a
+    // 200 (not an error) -- but when no email provider is configured, the
+    // team will NOT see this until someone checks Vercel logs, so the
+    // response must say so rather than implying a person was notified.
+    if (!process.env.RESEND_API_KEY) {
+      return res.status(200).json({
+        success: true,
+        warning: 'Message received and logged, but email delivery is not configured yet -- our team may not see this immediately.',
+      });
+    }
+
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error('[Shabelle Hub] Contact error:', err);
