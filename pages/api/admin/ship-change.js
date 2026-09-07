@@ -22,7 +22,7 @@
 // top-level SQL columns directly.
 
 import { requireAuth } from '../../../lib/supabaseAdmin';
-import { getOneByField, update } from '../../../lib/cms/_base';
+import { getById, getOneByField, update } from '../../../lib/cms/_base';
 
 const CATEGORY_TO_COLUMN = {
   pricing: 'price',
@@ -49,7 +49,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'changeId and confirmedValue are required (non-empty strings)' });
   }
 
-  const { data: change, error: fetchErr } = await getOneByField('tool_changes', 'id', changeId);
+  const { data: change, error: fetchErr } = await getById('tool_changes', changeId);
   if (fetchErr || !change) {
     return res.status(404).json({ error: 'Change not found' });
   }
