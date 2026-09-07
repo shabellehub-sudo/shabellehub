@@ -22,7 +22,7 @@
 // top-level SQL columns directly.
 
 import { requireAuth } from '../../../lib/supabaseAdmin';
-import { getById, getOneByField, update } from '../../../lib/cms/_base';
+import { toRecord } from '../../../lib/cms/_base';
 
 const CATEGORY_TO_COLUMN = {
   pricing: 'price',
@@ -49,10 +49,11 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'changeId and confirmedValue are required (non-empty strings)' });
   }
 
-  const { data: change, error: fetchErr } = await getById('tool_changes', changeId);
-  if (fetchErr || !change) {
+  const { data: changeRow, error: fetchErr } = await auth.db.from('tool_changes').select('*').eq('id', changeId).maybeSingle();
+  if (fetchErr || !changeRow) {
     return res.status(404).json({ error: 'Change not found' });
   }
+  const change = toRecord(changeRow);
 
   if (change.status !== 'confirmed') {
     return res.status(400).json({ error: `Change status is "${change.status}", must be "confirmed" to ship` });
@@ -70,32 +71,38 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Change record is missing tool_slug' });
   }
 
-  const { data: tool, error: toolErr } = await getOneByField('tools', 'slug', slug);
-  if (toolErr || !tool) {
+  const { data: toolRow, error: toolErr } = await auth.db.from('tools').select('*').eq('slug', slug).maybeSingle();
+  if (toolErr || !toolRow) {
     return res.status(404).json({ error: `Tool "${slug}" not found` });
   }
+  const tool = toRecord(toolRow);
 
   // 1. Write the confirmed value to the live tools table.
-  const shipResult = await update('tools', tool.id, { [column]: confirmedValue.trim() }, { userId: auth.uid });
-  if (shipResult.error) {
-    return res.status(500).json({ error: `Failed to update tools table: ${shipResult.error}` });
+  const { data: existingToolDoc } = await auth.db.from('tools').select('doc').eq('id', tool.id).maybeSingle();
+  const mergedToolDoc = { ...(existingToolDoc?.doc || {}), [column]: confirmedValue.trim(), updated_at: new Date().toISOString() };
+  const { error: shipError } = await auth.db.from('tools').update({ doc: mergedToolDoc }).eq('id', tool.id);
+  if (shipError) {
+    return res.status(500).json({ error: `Failed to update tools table: ${shipError.message}` });
   }
 
   // 2. Mark the change as shipped, recording the confirmed value
   //    (which may differ from the raw suggested newValue) for audit.
   const shippedAt = new Date().toISOString();
-  const auditResult = await update('tool_changes', changeId, {
+  const { data: existingChangeDoc } = await auth.db.from('tool_changes').select('doc').eq('id', changeId).maybeSingle();
+  const mergedChangeDoc = {
+    ...(existingChangeDoc?.doc || {}),
     status: 'shipped',
     confirmed_value: confirmedValue.trim(),
     shipped_at: shippedAt,
     shipped_by: auth.uid || null,
-  }, { userId: auth.uid });
+  };
+  const { error: auditError } = await auth.db.from('tool_changes').update({ doc: mergedChangeDoc }).eq('id', changeId);
 
-  if (auditResult.error) {
+  if (auditError) {
     // The tools table write already succeeded -- do not report this as a
     // full failure, but surface it so the audit trail gap is visible.
     return res.status(207).json({
-      warning: `tools.${column} updated successfully, but tool_changes status update failed: ${auditResult.error}`,
+      warning: `tools.${column} updated successfully, but tool_changes status update failed: ${auditError.message}`,
       slug,
       column,
       confirmedValue: confirmedValue.trim(),
