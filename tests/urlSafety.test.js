@@ -62,6 +62,29 @@ check('BLOCKS IPv6 unique-local fc00::1', () => assert.strictEqual(isBlockedIPv6
 check('BLOCKS IPv6 unique-local fd00::1', () => assert.strictEqual(isBlockedIPv6('fd00::1'), true));
 check('ALLOWS real public IPv6: 2606:4700:4700::1111 (Cloudflare)', () => assert.strictEqual(isBlockedIPv6('2606:4700:4700::1111'), false));
 
+// ===== IPv4-mapped / IPv4-compatible IPv6 (audit finding C1) =====
+
+check('BLOCKS IPv4-mapped loopback ::ffff:127.0.0.1', () => assert.strictEqual(isBlockedIPv6('::ffff:127.0.0.1'), true));
+check('BLOCKS IPv4-mapped metadata ::ffff:169.254.169.254', () => assert.strictEqual(isBlockedIPv6('::ffff:169.254.169.254'), true));
+check('BLOCKS IPv4-mapped private ::ffff:10.0.0.1', () => assert.strictEqual(isBlockedIPv6('::ffff:10.0.0.1'), true));
+check('BLOCKS IPv4-mapped private ::ffff:192.168.1.1', () => assert.strictEqual(isBlockedIPv6('::ffff:192.168.1.1'), true));
+check('BLOCKS IPv4-compatible loopback ::127.0.0.1', () => assert.strictEqual(isBlockedIPv6('::127.0.0.1'), true));
+check('BLOCKS IPv4-mapped hex-group form ::ffff:a9fe:a9fe (= 169.254.169.254)', () => assert.strictEqual(isBlockedIPv6('::ffff:a9fe:a9fe'), true));
+check('ALLOWS IPv4-mapped public address ::ffff:8.8.8.8', () => assert.strictEqual(isBlockedIPv6('::ffff:8.8.8.8'), false));
+check('BLOCKS fe90:: (fe80::/10 range, not just literal "fe80:" prefix)', () => assert.strictEqual(isBlockedIPv6('fe90::1'), true));
+check('BLOCKS febf:: (fe80::/10 range upper bound)', () => assert.strictEqual(isBlockedIPv6('febf::1'), true));
+check('ALLOWS fec0:: (just above fe80::/10 range)', () => assert.strictEqual(isBlockedIPv6('fec0::1'), false));
+
+await checkAsync('BLOCKS IPv4-mapped IPv6 metadata via full URL: http://[::ffff:169.254.169.254]/', async () => {
+  const r = await isSafeMonitoringUrl('http://[::ffff:169.254.169.254]/');
+  assert.strictEqual(r.safe, false);
+});
+
+await checkAsync('ALLOWS IPv4-mapped IPv6 of a public address via full URL: http://[::ffff:8.8.8.8]/', async () => {
+  const r = await isSafeMonitoringUrl('http://[::ffff:8.8.8.8]/');
+  assert.strictEqual(r.safe, true);
+});
+
 // ===== isSafeMonitoringUrl -- IP-literal cases (no DNS needed, deterministic) =====
 
 await checkAsync('DIRECT PRIVATE IP: http://127.0.0.1/ is blocked', async () => {
@@ -129,6 +152,20 @@ await checkAsync('REDIRECT TO PRIVATE IP IS BLOCKED: public URL 302-redirecting 
   } catch (err) {
     assert.ok(err instanceof SsrfBlockedError, `expected SsrfBlockedError, got ${err.constructor.name}`);
     assert.ok(err.url.includes('169.254.169.254'), `error must identify the actual blocked hop, got: ${err.url}`);
+  } finally {
+    restoreFetch();
+  }
+});
+
+await checkAsync('REDIRECT TO IPv4-MAPPED IPv6 PRIVATE ADDRESS IS BLOCKED', async () => {
+  mockFetch({
+    'https://93.184.216.34/redirector2': { status: 302, location: 'http://[::ffff:169.254.169.254]/latest/meta-data/' },
+  });
+  try {
+    await safeFetch('https://93.184.216.34/redirector2');
+    assert.fail('safeFetch must throw for a redirect to a mapped-IPv6 blocked address');
+  } catch (err) {
+    assert.ok(err instanceof SsrfBlockedError);
   } finally {
     restoreFetch();
   }
