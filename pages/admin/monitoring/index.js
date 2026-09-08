@@ -235,7 +235,7 @@ export default function AdminMonitoringPage() {
                   )}
                   {c.affected_article_slugs?.length > 0 && (
                     <div style={{ color: '#6b82a8', fontSize: 11, marginTop: 4 }}>
-                      Affects: {c.affected_article_slugs.join(', ')}
+                      Linked articles: {c.affected_article_slugs.join(', ')}
                     </div>
                   )}
                 </div>
