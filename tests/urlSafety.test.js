@@ -71,6 +71,47 @@ check('BLOCKS IPv4-mapped private ::ffff:192.168.1.1', () => assert.strictEqual(
 check('BLOCKS IPv4-compatible loopback ::127.0.0.1', () => assert.strictEqual(isBlockedIPv6('::127.0.0.1'), true));
 check('BLOCKS IPv4-mapped hex-group form ::ffff:a9fe:a9fe (= 169.254.169.254)', () => assert.strictEqual(isBlockedIPv6('::ffff:a9fe:a9fe'), true));
 check('ALLOWS IPv4-mapped public address ::ffff:8.8.8.8', () => assert.strictEqual(isBlockedIPv6('::ffff:8.8.8.8'), false));
+
+check('BLOCKS compressed hex IPv4-mapped loopback ::ffff:7f00:1', () =>
+  assert.strictEqual(isBlockedIPv6('::ffff:7f00:1'), true)
+);
+
+check('BLOCKS fully-expanded IPv4-mapped loopback 0:0:0:0:0:ffff:7f00:1', () =>
+  assert.strictEqual(isBlockedIPv6('0:0:0:0:0:ffff:7f00:1'), true)
+);
+
+check('BLOCKS fully-expanded IPv4-mapped metadata 0000:0000:0000:0000:0000:ffff:a9fe:a9fe', () =>
+  assert.strictEqual(
+    isBlockedIPv6('0000:0000:0000:0000:0000:ffff:a9fe:a9fe'),
+    true
+  )
+);
+
+check('BLOCKS compressed hex IPv4-compatible loopback ::7f00:1', () =>
+  assert.strictEqual(isBlockedIPv6('::7f00:1'), true)
+);
+
+check('BLOCKS fully-expanded IPv4-compatible loopback 0:0:0:0:0:0:7f00:1', () =>
+  assert.strictEqual(isBlockedIPv6('0:0:0:0:0:0:7f00:1'), true)
+);
+
+check('BLOCKS fully-expanded IPv4-compatible metadata 0000:0000:0000:0000:0000:0000:a9fe:a9fe', () =>
+  assert.strictEqual(
+    isBlockedIPv6('0000:0000:0000:0000:0000:0000:a9fe:a9fe'),
+    true
+  )
+);
+
+check('ALLOWS compressed hex IPv4-mapped public ::ffff:808:808', () =>
+  assert.strictEqual(isBlockedIPv6('::ffff:808:808'), false)
+);
+
+check('ALLOWS fully-expanded IPv4-mapped public 0:0:0:0:0:ffff:808:808', () =>
+  assert.strictEqual(
+    isBlockedIPv6('0:0:0:0:0:ffff:808:808'),
+    false
+  )
+);
 check('BLOCKS fe90:: (fe80::/10 range, not just literal "fe80:" prefix)', () => assert.strictEqual(isBlockedIPv6('fe90::1'), true));
 check('BLOCKS febf:: (fe80::/10 range upper bound)', () => assert.strictEqual(isBlockedIPv6('febf::1'), true));
 check('ALLOWS fec0:: (just above fe80::/10 range)', () => assert.strictEqual(isBlockedIPv6('fec0::1'), false));
@@ -125,71 +166,122 @@ await checkAsync('BLOCKS malformed URL', async () => {
   assert.strictEqual(r.reason, 'invalid_url');
 });
 
-// ===== safeFetch -- redirect-bypass tests (mocked fetch, deterministic IP literals only) =====
+// ===== safeFetch -- redirect-bypass tests =====
+//
+// safeFetch intentionally uses pinnedRequest() rather than globalThis.fetch.
+// Tests therefore inject a deterministic request implementation through the
+// internal test hook below. Production behavior remains connection-pinned.
 
-const realFetch = globalThis.fetch;
-function mockFetch(responsesByUrl) {
-  globalThis.fetch = async (url) => {
+const realPinnedRequest = globalThis.__SHABELLEHUB_TEST_PINNED_REQUEST__;
+
+function installMockPinnedRequest(responsesByUrl) {
+  globalThis.__SHABELLEHUB_TEST_PINNED_REQUEST__ = async (url, ip, options = {}) => {
     const entry = responsesByUrl[url];
-    if (!entry) throw new Error(`mockFetch: no canned response for ${url}`);
+    if (!entry) {
+      throw new Error(`mockPinnedRequest: no canned response for ${url}`);
+    }
+
     return {
       status: entry.status,
       ok: entry.status >= 200 && entry.status < 300,
-      headers: { get: (name) => (name.toLowerCase() === 'location' ? entry.location : null) },
+      headers: {
+        get: (name) => {
+          const key = name.toLowerCase();
+          if (key === 'location') return entry.location ?? null;
+          if (key === 'content-type') return entry.contentType ?? 'text/html';
+          return null;
+        },
+      },
       text: async () => entry.body || '',
     };
   };
 }
-function restoreFetch() { globalThis.fetch = realFetch; }
+
+function restoreMockPinnedRequest() {
+  if (realPinnedRequest === undefined) {
+    delete globalThis.__SHABELLEHUB_TEST_PINNED_REQUEST__;
+  } else {
+    globalThis.__SHABELLEHUB_TEST_PINNED_REQUEST__ = realPinnedRequest;
+  }
+}
 
 await checkAsync('REDIRECT TO PRIVATE IP IS BLOCKED: public URL 302-redirecting to cloud metadata is blocked, not followed', async () => {
-  mockFetch({
-    'https://93.184.216.34/redirector': { status: 302, location: 'http://169.254.169.254/latest/meta-data/' },
+  installMockPinnedRequest({
+    'https://93.184.216.34/redirector': {
+      status: 302,
+      location: 'http://169.254.169.254/latest/meta-data/',
+    },
   });
+
   try {
     await safeFetch('https://93.184.216.34/redirector');
     assert.fail('safeFetch must throw for a redirect to a blocked IP, but it did not');
   } catch (err) {
     assert.ok(err instanceof SsrfBlockedError, `expected SsrfBlockedError, got ${err.constructor.name}`);
-    assert.ok(err.url.includes('169.254.169.254'), `error must identify the actual blocked hop, got: ${err.url}`);
+    assert.ok(
+      err.url.includes('169.254.169.254'),
+      `error must identify the actual blocked hop, got: ${err.url}`
+    );
   } finally {
-    restoreFetch();
+    restoreMockPinnedRequest();
   }
 });
 
 await checkAsync('REDIRECT TO IPv4-MAPPED IPv6 PRIVATE ADDRESS IS BLOCKED', async () => {
-  mockFetch({
-    'https://93.184.216.34/redirector2': { status: 302, location: 'http://[::ffff:169.254.169.254]/latest/meta-data/' },
+  installMockPinnedRequest({
+    'https://93.184.216.34/redirector2': {
+      status: 302,
+      location: 'http://[::ffff:169.254.169.254]/latest/meta-data/',
+    },
   });
+
   try {
     await safeFetch('https://93.184.216.34/redirector2');
     assert.fail('safeFetch must throw for a redirect to a mapped-IPv6 blocked address');
   } catch (err) {
     assert.ok(err instanceof SsrfBlockedError);
+    assert.ok(
+      err.url.includes('a9fe:a9fe') || err.url.includes('169.254.169.254'),
+      `error must identify the blocked metadata address, got: ${err.url}`
+    );
   } finally {
-    restoreFetch();
+    restoreMockPinnedRequest();
   }
 });
 
 await checkAsync('PUBLIC URL ALLOWED: legitimate public->public redirect chain is followed successfully', async () => {
-  mockFetch({
-    'https://1.1.1.1/page': { status: 301, location: 'https://93.184.216.34/page' },
-    'https://93.184.216.34/page': { status: 200, body: 'final content' },
+  installMockPinnedRequest({
+    'https://1.1.1.1/page': {
+      status: 301,
+      location: 'https://93.184.216.34/page',
+    },
+    'https://93.184.216.34/page': {
+      status: 200,
+      body: 'final content',
+    },
   });
+
   try {
     const res = await safeFetch('https://1.1.1.1/page');
     assert.strictEqual(res.status, 200);
     assert.strictEqual(await res.text(), 'final content');
   } finally {
-    restoreFetch();
+    restoreMockPinnedRequest();
   }
 });
 
 await checkAsync('Redirect loop eventually throws instead of looping forever', async () => {
-  mockFetch({
-    'https://93.184.216.34/a': { status: 302, location: 'https://1.1.1.1/b' },
-    'https://1.1.1.1/b': { status: 302, location: 'https://93.184.216.34/a' },
+  installMockPinnedRequest({
+    'https://93.184.216.34/a': {
+      status: 302,
+      location: 'https://1.1.1.1/b',
+    },
+    'https://1.1.1.1/b': {
+      status: 302,
+      location: 'https://93.184.216.34/a',
+    },
   });
+
   try {
     await safeFetch('https://93.184.216.34/a');
     assert.fail('must throw on a redirect loop, not hang forever');
@@ -197,29 +289,37 @@ await checkAsync('Redirect loop eventually throws instead of looping forever', a
     assert.ok(err instanceof SsrfBlockedError);
     assert.strictEqual(err.reason, 'too_many_redirects');
   } finally {
-    restoreFetch();
+    restoreMockPinnedRequest();
   }
 });
 
 await checkAsync('A non-redirect response (200) is returned directly, no redirect logic triggered', async () => {
-  mockFetch({ 'https://93.184.216.34/direct': { status: 200, body: 'ok' } });
+  installMockPinnedRequest({
+    'https://93.184.216.34/direct': {
+      status: 200,
+      body: 'ok',
+    },
+  });
+
   try {
     const res = await safeFetch('https://93.184.216.34/direct');
     assert.strictEqual(res.status, 200);
+    assert.strictEqual(await res.text(), 'ok');
   } finally {
-    restoreFetch();
+    restoreMockPinnedRequest();
   }
 });
 
 await checkAsync('DIRECT PRIVATE IP VIA safeFetch: blocked before any fetch is attempted', async () => {
-  mockFetch({});
+  installMockPinnedRequest({});
+
   try {
     await safeFetch('http://127.0.0.1/admin');
     assert.fail('must block before attempting any fetch');
   } catch (err) {
     assert.ok(err instanceof SsrfBlockedError);
   } finally {
-    restoreFetch();
+    restoreMockPinnedRequest();
   }
 });
 
