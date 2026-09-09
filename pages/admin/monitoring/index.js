@@ -28,6 +28,7 @@ export default function AdminMonitoringPage() {
   const [shippable, setShippable] = useState([]);
   const [shipValues, setShipValues] = useState({});
   const [shipping, setShipping] = useState({});
+  const [dismissingLow, setDismissingLow] = useState(false);
 
   const SHIPPABLE_CATEGORIES = new Set(['pricing', 'status']);
 
@@ -58,6 +59,21 @@ export default function AdminMonitoringPage() {
     const result = await reviewChange(id, decision);
     if (result.error) { setError(result.error); return; }
     load();
+  }
+
+  async function handleDismissAllLowPriority() {
+    setDismissingLow(true);
+    setError(null);
+    try {
+      const supabase = getSupabaseClient();
+      const { error: rpcError } = await supabase.rpc('dismiss_all_low_priority');
+      if (rpcError) { setError(rpcError.message); return; }
+      load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDismissingLow(false);
+    }
   }
 
   async function handleShip(id) {
@@ -127,6 +143,9 @@ export default function AdminMonitoringPage() {
       .filter(([, entries]) => entries.length >= 3 && entries.slice(0, 3).every((e) => FAILURE_ACTIONS.has(e.action)))
       .map(([slug, entries]) => ({ slug, lastAction: entries[0].action, lastAt: entries[0].created_at }));
   })();
+
+  const needsReview = changes.filter((c) => c.priority !== 'low');
+  const lowPriority = changes.filter((c) => c.priority === 'low');
 
   return (
     <AdminLayout title="Tool Monitoring">
@@ -204,17 +223,17 @@ export default function AdminMonitoringPage() {
         </AdminCard>
       )}
 
-      <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Pending Review ({changes.length})</h3>
+      <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Needs Review ({needsReview.length})</h3>
 
       {!isSupabaseConfigured() ? (
         <EmptyState message="No database connection." />
       ) : loading ? (
         <p style={{ color: '#6b82a8' }}>Loading…</p>
-      ) : changes.length === 0 ? (
+      ) : needsReview.length === 0 ? (
         <EmptyState message="No pending changes." sub="Nothing flagged since the last scan." />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 28 }}>
-          {changes.map((c) => (
+          {needsReview.map((c) => (
             <AdminCard key={c.id}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
                 <div>
@@ -267,6 +286,73 @@ export default function AdminMonitoringPage() {
             </AdminCard>
           ))}
         </div>
+      )}
+
+      {lowPriority.length > 0 && (
+        <details style={{ marginBottom: 28 }}>
+          <summary style={{ cursor: 'pointer', fontSize: 13, fontWeight: 700, color: '#6b82a8', marginBottom: 10 }}>
+            Low Priority — Noise ({lowPriority.length})
+          </summary>
+          <div style={{ margin: '10px 0' }}>
+            <Button variant="secondary" onClick={handleDismissAllLowPriority} disabled={dismissingLow} style={{ fontSize: 11, padding: '5px 9px' }}>
+              {dismissingLow ? 'Dismissing…' : `Dismiss All Low Priority (${lowPriority.length})`}
+            </Button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {lowPriority.map((c) => (
+              <AdminCard key={c.id}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>
+                      {c.tool_slug}{' '}
+                      <span style={{ fontSize: 11, fontWeight: 700, color: confidenceColor[c.confidence] || '#6b82a8' }}>
+                        {CATEGORY_LABELS[c.change_category] || c.change_category} · {c.confidence?.toUpperCase()}
+                      </span>
+                    </div>
+                      <div style={{ color: '#6b82a8', fontSize: 11, marginTop: 2 }}>
+                      Detected {new Date(c.detected_at).toLocaleString()} ·{' '}
+                      <a href={c.evidence_url} target="_blank" rel="noopener noreferrer" style={{ color: '#14FFF4' }}>source</a>
+                    </div>
+                    {sourceTypeLabel[c.source_type] && (
+                        <div style={{ color: '#f5a623', fontSize: 11, marginTop: 4 }}>
+                        {sourceTypeLabel[c.source_type]}
+                      </div>
+                    )}
+                    {c.affected_article_slugs?.length > 0 && (
+                        <div style={{ color: '#6b82a8', fontSize: 11, marginTop: 4 }}>
+                        Linked articles: {c.affected_article_slugs.join(', ')}
+                      </div>
+                    )}
+                  </div>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                    <Button variant="secondary" onClick={() => handleReview(c.id, 'confirmed')} style={{ fontSize: 11, padding: '5px 9px' }}>Confirm</Button>
+                    <Button variant="danger" onClick={() => handleReview(c.id, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
+                  </div>
+                </div>
+                {c.ai_summary ? (
+                    <div style={{ marginTop: 10, display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: '#14FFF4', border: '1px solid #14FFF4', borderRadius: 4, padding: '2px 5px', flexShrink: 0 }}>
+                      {c.classified_by === 'ai_search' ? 'AI SEARCH' : 'AI'}
+                    </span>
+                    <p style={{ fontSize: 13, color: '#e8f0ff', margin: 0, lineHeight: 1.4 }}>{c.ai_summary}</p>
+                  </div>
+                ) : (
+                    <div style={{ marginTop: 8 }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: '#6b82a8', border: '1px solid #6b82a8', borderRadius: 4, padding: '2px 5px' }}>KEYWORD</span>
+                  </div>
+                )}
+                {c.diff_excerpt && (
+                  <details style={{ marginTop: 8 }}>
+                    <summary style={{ cursor: 'pointer', fontSize: 11, color: '#6b82a8' }}>Show raw diff</summary>
+                    <pre style={{ marginTop: 8, fontSize: 12, color: '#e8f0ff', background: '#0a0e16', padding: 10, borderRadius: 8, whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
+                      {c.diff_excerpt}
+                    </pre>
+                  </details>
+                )}
+              </AdminCard>
+            ))}
+          </div>
+        </details>
       )}
 
       <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Recent Audit Log</h3>
