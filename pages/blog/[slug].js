@@ -89,6 +89,11 @@ function inlineFormat(esc) {
     .replace(/`([^`]+)`/g, '<code style="background:#0f1829;color:#14FFF4;padding:2px 6px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:0.9em">$1</code>');
 }
 
+function slugifyHeading(text, index) {
+  const slug = String(text || '').toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+  return (slug || 'section') + '-' + index;
+}
+
 function renderMarkdown(md) {
   if (!md) return '';
 
@@ -128,11 +133,11 @@ function renderMarkdown(md) {
     }
 
     if (/^### (.+)$/.test(line)) {
-      html.push(`<h3 style="font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:700;margin:25px 0 11px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^### /, '')))}</h3>`);
+      html.push(`<h3 id="${slugifyHeading(line.replace(/^### /, ''), i)}" style="font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:700;margin:25px 0 11px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^### /, '')))}</h3>`);
       continue;
     }
     if (/^## (.+)$/.test(line)) {
-      html.push(`<h2 style="font-family:Space Grotesk,sans-serif;font-size:22px;font-weight:700;margin:31px 0 13px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^## /, '')))}</h2>`);
+      html.push(`<h2 id="${slugifyHeading(line.replace(/^## /, ''), i)}" style="font-family:Space Grotesk,sans-serif;font-size:22px;font-weight:700;margin:31px 0 13px;color:#e8f0ff">${inlineFormat(escapeHtml(line.replace(/^## /, '')))}</h2>`);
       continue;
     }
     if (/^# (.+)$/.test(line)) {
@@ -192,7 +197,7 @@ function renderBlock(block, idx) {
       const sizes = { 1: 28, 2: 22, 3: 18, 4: 15 };
       const size  = sizes[block.level || 2];
       return (
-        <Tag key={idx} style={{
+        <Tag key={idx} id={slugifyHeading(block.text, idx)} style={{
           fontFamily: 'Space Grotesk, sans-serif',
           fontSize: size,
           fontWeight: 800,
@@ -243,6 +248,16 @@ function renderBlock(block, idx) {
   }
 }
 
+function getPostHeadings(post) {
+  if (Array.isArray(post.content_blocks)) return post.content_blocks.map((b,i) => b?.type === BLOCK_TYPES.HEADING && b.text ? { text: b.text, id: slugifyHeading(b.text, i) } : null).filter(Boolean);
+  return (post.content || '').split('\n').map((line,i) => { const m=line.match(/^##+ (.+)$/); return m ? { text: m[1], id: slugifyHeading(m[1], i) } : null; }).filter(Boolean);
+}
+
+function TableOfContents({ headings }) {
+  if (headings == null || headings.length < 2) return null;
+  return <nav aria-label="Table of contents" style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 12, padding: '16px 20px', marginBottom: 28 }}><strong style={{ color: '#e8f0ff' }}>Table of Contents</strong><ul style={{ margin: '10px 0 0', paddingLeft: 18 }}>{headings.map(h => <li key={h.id} style={{ marginBottom: 6 }}><a href={'#' + h.id} style={{ color: '#14FFF4', textDecoration: 'none' }}>{h.text}</a></li>)}</ul></nav>;
+}
+
 function BlockContent({ blocks }) {
   return (
     <div>
@@ -278,6 +293,9 @@ export default function BlogPostPage({ post }) {
   const pubDate    = post.published_at ? new Date(post.published_at).toISOString() : null;
   const modDate    = post.updated_at   ? new Date(post.updated_at).toISOString()   : pubDate;
   const pubDisplay = pubDate ? new Date(pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+  const updatedMs = post.updated_at ? new Date(post.updated_at).getTime() : NaN;
+  const isFresh = Number.isFinite(updatedMs) && updatedMs <= Date.now() && Date.now() - updatedMs <= 48 * 60 * 60 * 1000;
+  const headings = getPostHeadings(post);
 
   return (
     <>
@@ -364,6 +382,7 @@ export default function BlogPostPage({ post }) {
           )}
           {pubDisplay && <time dateTime={pubDate}>{pubDisplay}</time>}
           {post.read_time && <span>{post.read_time} read</span>}
+          {isFresh && <span style={{ color: '#14FFF4', fontWeight: 700 }}>Updated recently</span>}
         </div>
 
         {/* Featured image */}
@@ -385,6 +404,8 @@ export default function BlogPostPage({ post }) {
             </p>
           </div>
         )}
+
+        <TableOfContents headings={headings} />
 
         {/* ── Content: block system or legacy markdown ── */}
         {Array.isArray(post.content_blocks) && post.content_blocks.length > 0
