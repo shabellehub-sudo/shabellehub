@@ -45,7 +45,7 @@ export default function Hero({ tools = [] }) {
         </div>
 
         <p className={`${styles.eyebrow} ${styles.reveal}`} style={{ '--reveal-delay': '0.12s' }}>
-          The Ultimate 2026 AI Discovery Platform
+          AI Tools Discovered, Reviewed & Monitored Daily
         </p>
 
         {/*
@@ -61,7 +61,8 @@ export default function Hero({ tools = [] }) {
 
         <p className={`${styles.subhead} ${styles.reveal}`} style={{ '--reveal-delay': '0.24s' }}>
           Compare, review, and explore the world&rsquo;s top AI tools for writing, coding,
-          productivity, design, video, automation, and more.
+          productivity, design, video, automation, and more. Every listing is automatically
+          monitored for pricing and feature changes, so you&rsquo;re never looking at stale data.
         </p>
 
         <div className={`${styles.reveal} ${styles.searchSlot}`} style={{ '--reveal-delay': '0.36s' }}>
@@ -80,6 +81,9 @@ export default function Hero({ tools = [] }) {
 
       <div className={styles.reveal} style={{ '--reveal-delay': '0.6s' }}>
         <MobilePerformanceBadge />
+      </div>
+      <div className={styles.reveal} style={{ '--reveal-delay': '0.66s' }}>
+        <MobilePerformanceBadge label="Automated Change Monitoring" />
       </div>
 
       <a href="#stats" className={styles.scrollIndicator} aria-label="Scroll to statistics">
