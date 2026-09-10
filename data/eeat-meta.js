@@ -186,8 +186,8 @@ export const toolReviewMeta = {
   'replit-ai': {
     authorSlug: 'mohamed-abdi-guled',
     reviewerSlug: 'mohamed-abdi-guled',
-    lastUpdated: '2026-06-13',
-    lastReviewed: '2026-06-11',
+    lastUpdated: '2026-09-10',
+    lastReviewed: '2026-09-10',
   },
   devin: {
     authorSlug: 'mohamed-abdi-guled',
