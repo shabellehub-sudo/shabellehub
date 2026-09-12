@@ -109,6 +109,25 @@ export default async function handler(req, res) {
     });
   }
 
+  // On-demand revalidation: without this, the shipped change sits in
+  // Supabase but the live /tools/[slug] page keeps serving its cached
+  // ISR output for up to `revalidate: 3600` seconds (1 hour). This makes
+  // the shipped value appear immediately. Best-effort: a failure here
+  // must not undo the successful writes above, so it's caught and
+  // surfaced as a warning rather than an error.
+  try {
+    await res.revalidate(`/tools/${slug}`);
+  } catch (revalidateErr) {
+    return res.status(200).json({
+      ok: true,
+      slug,
+      column,
+      confirmedValue: confirmedValue.trim(),
+      shippedAt,
+      warning: `Shipped successfully, but on-demand revalidation failed: ${revalidateErr.message}. Page will still update within the normal 1-hour ISR window.`,
+    });
+  }
+
   return res.status(200).json({
     ok: true,
     slug,
