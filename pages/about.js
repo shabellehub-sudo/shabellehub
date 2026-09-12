@@ -57,9 +57,10 @@ export default function AboutPage({ toolsCount: fetchedCount, categoriesCount: f
           About Shabelle Hub
         </h1>
         <p style={{ color: '#8ba3ca', fontSize: 15, lineHeight: 1.75, marginBottom: 16 }}>
-          Shabelle Hub is an independent AI tool review and comparison site built to cut through the
-          noise of the fast-moving AI landscape. Every tool listed is tested hands-on and evaluated
-          on technical merit, real-world utility, and honest pricing.
+          Shabelle Hub is an independent AI tools platform that helps people discover and review
+          AI products while continuously monitoring them for pricing and feature changes. Detected
+          changes are verified before they are published. Every tool listed is tested hands-on and
+          evaluated on technical merit, real-world utility, and honest pricing.
         </p>
         <p style={{ color: '#8ba3ca', fontSize: 15, lineHeight: 1.75, marginBottom: 16 }}>
           Our goal is simple: help individuals and teams find the right AI tool for their needs
