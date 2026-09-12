@@ -62,7 +62,8 @@ export default function Hero({ tools = [] }) {
         <p className={`${styles.subhead} ${styles.reveal}`} style={{ '--reveal-delay': '0.24s' }}>
           Compare, review, and explore the world&rsquo;s top AI tools for writing, coding,
           productivity, design, video, automation, and more. Every listing is automatically
-          monitored for pricing and feature changes, so you&rsquo;re never looking at stale data.
+          monitored for pricing and feature changes, then verified by our editorial team
+          before you see it.
         </p>
 
         <div className={`${styles.reveal} ${styles.searchSlot}`} style={{ '--reveal-delay': '0.36s' }}>
