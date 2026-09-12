@@ -60,7 +60,7 @@ export default function Hero({ tools = [] }) {
         </h1>
 
         <p className={`${styles.subhead} ${styles.reveal}`} style={{ '--reveal-delay': '0.24s' }}>
-          Compare, review, and explore the world&rsquo;s top AI tools for writing, coding,
+          Compare, review, and explore leading AI tools for writing, coding,
           productivity, design, video, automation, and more. Every listing is automatically
           monitored for pricing and feature changes, then verified by our editorial team
           before you see it.
