@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import { AdminCard, Button, ErrorBanner, EmptyState } from '../../../components/admin/ui';
-import { listPendingChanges, listAllChanges, reviewChange, listRecentAuditLog, skipShip } from '../../../lib/cms/monitoring';
+import { listPendingChanges, listAllChanges, reviewChange, listRecentAuditLog, skipShip, markEditorialUpdated } from '../../../lib/cms/monitoring';
 import { isSupabaseConfigured, getSupabaseClient } from '../../../lib/supabase';
 
 const CATEGORY_LABELS = {
@@ -26,6 +26,8 @@ export default function AdminMonitoringPage() {
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [shippable, setShippable] = useState([]);
+  const [needsEditorial, setNeedsEditorial] = useState([]);
+  const [markingUpdated, setMarkingUpdated] = useState({});
   const [shipValues, setShipValues] = useState({});
   const [shipping, setShipping] = useState({});
   const [dismissingLow, setDismissingLow] = useState(false);
@@ -44,6 +46,7 @@ export default function AdminMonitoringPage() {
     setAuditLog(auditRes.data || []);
     const eligible = (confirmedRes.data || []).filter((c) => (c.change_category === 'pricing' || c.change_category === 'status') && !c.ship_skipped);
     setShippable(eligible);
+    setNeedsEditorial((confirmedRes.data || []).filter((c) => c.editorial_update_needed));
     setShipValues((prev) => {
       const next = { ...prev };
       for (const c of eligible) if (next[c.id] === undefined) next[c.id] = c.new_value || '';
@@ -82,6 +85,16 @@ export default function AdminMonitoringPage() {
     const supabase = getSupabaseClient();
     const { data: { session } } = await supabase.auth.getSession();
     const result = await skipShip(id, session?.user?.id);
+    if (result.error) { setError(result.error); return; }
+    load();
+  }
+
+  async function handleMarkEditorialUpdated(id) {
+    setMarkingUpdated((m) => ({ ...m, [id]: true }));
+    const supabase = getSupabaseClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    const result = await markEditorialUpdated(id, session?.user?.id);
+    setMarkingUpdated((m) => ({ ...m, [id]: false }));
     if (result.error) { setError(result.error); return; }
     load();
   }
@@ -232,6 +245,34 @@ export default function AdminMonitoringPage() {
             ))}
           </div>
         </AdminCard>
+      )}
+
+      {needsEditorial.length > 0 && (
+        <details style={{ marginBottom: 20 }}>
+          <summary style={{ cursor: 'pointer', fontSize: 13, fontWeight: 700, color: '#f5a623', marginBottom: 10 }}>
+            ✏️ Needs Article Update ({needsEditorial.length})
+          </summary>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>
+            {needsEditorial.map((c) => (
+              <AdminCard key={c.id} style={{ border: '1px solid #f5a623', background: 'rgba(245,166,35,0.05)' }}>
+                <div style={{ fontWeight: 700, fontSize: 13 }}>
+                  {c.tool_slug} — {CATEGORY_LABELS[c.change_category] || c.change_category}
+                </div>
+                <div style={{ color: '#8ba3ca', fontSize: 11, margin: '4px 0' }}>
+                  Confirmed {c.reviewed_at ? new Date(c.reviewed_at).toLocaleDateString() : ''} · longDesc/article not yet updated
+                </div>
+                {c.affected_article_slugs?.length > 0 && (
+                  <div style={{ color: '#6b82a8', fontSize: 11, marginBottom: 8 }}>
+                    Linked articles: {c.affected_article_slugs.join(', ')}
+                  </div>
+                )}
+                <Button variant="secondary" onClick={() => handleMarkEditorialUpdated(c.id)} disabled={markingUpdated[c.id]} style={{ fontSize: 11, padding: '5px 9px' }}>
+                  {markingUpdated[c.id] ? 'Saving…' : 'Mark Updated'}
+                </Button>
+              </AdminCard>
+            ))}
+          </div>
+        </details>
       )}
 
       <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Needs Review ({needsReview.length})</h3>
