@@ -56,7 +56,9 @@ export default function AdminMonitoringPage() {
   useEffect(() => { load(); }, [load]);
 
   async function handleReview(id, decision) {
-    const result = await reviewChange(id, decision);
+    const supabase = getSupabaseClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    const result = await reviewChange(id, decision, session?.user?.id);
     if (result.error) { setError(result.error); return; }
     load();
   }
@@ -77,7 +79,9 @@ export default function AdminMonitoringPage() {
   }
 
   async function handleSkipShip(id) {
-    const result = await skipShip(id);
+    const supabase = getSupabaseClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    const result = await skipShip(id, session?.user?.id);
     if (result.error) { setError(result.error); return; }
     load();
   }
