@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import { AdminCard, Button, ErrorBanner, EmptyState } from '../../../components/admin/ui';
-import { listPendingChanges, listAllChanges, reviewChange, listRecentAuditLog } from '../../../lib/cms/monitoring';
+import { listPendingChanges, listAllChanges, reviewChange, listRecentAuditLog, skipShip } from '../../../lib/cms/monitoring';
 import { isSupabaseConfigured, getSupabaseClient } from '../../../lib/supabase';
 
 const CATEGORY_LABELS = {
@@ -42,7 +42,7 @@ export default function AdminMonitoringPage() {
     ]);
     setChanges(changesRes.data || []);
     setAuditLog(auditRes.data || []);
-    const eligible = (confirmedRes.data || []).filter((c) => c.change_category === 'pricing' || c.change_category === 'status');
+    const eligible = (confirmedRes.data || []).filter((c) => (c.change_category === 'pricing' || c.change_category === 'status') && !c.ship_skipped);
     setShippable(eligible);
     setShipValues((prev) => {
       const next = { ...prev };
@@ -74,6 +74,12 @@ export default function AdminMonitoringPage() {
     } finally {
       setDismissingLow(false);
     }
+  }
+
+  async function handleSkipShip(id) {
+    const result = await skipShip(id);
+    if (result.error) { setError(result.error); return; }
+    load();
   }
 
   async function handleShip(id) {
@@ -215,6 +221,7 @@ export default function AdminMonitoringPage() {
                   <Button onClick={() => handleShip(c.id)} disabled={shipping[c.id]} style={{ fontSize: 11, padding: '5px 9px' }}>
                     {shipping[c.id] ? 'Shipping…' : 'Confirm & Ship'}
                   </Button>
+                  <Button variant="secondary" onClick={() => handleSkipShip(c.id)} style={{ fontSize: 11, padding: '5px 9px' }}>Skip Ship</Button>
                   <Button variant="danger" onClick={() => handleReview(c.id, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
                 </div>
               </div>
