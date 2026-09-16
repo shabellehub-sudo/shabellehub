@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import { AdminCard, Button, ErrorBanner, EmptyState } from '../../../components/admin/ui';
 import { listPendingChanges, listAllChanges, reviewChange, listRecentAuditLog, skipShip, markEditorialUpdated } from '../../../lib/cms/monitoring';
+import { listTools } from '../../../lib/cms/tools';
 import { isSupabaseConfigured, getSupabaseClient } from '../../../lib/supabase';
 
 const CATEGORY_LABELS = {
@@ -27,6 +29,7 @@ export default function AdminMonitoringPage() {
   const [scanResult, setScanResult] = useState(null);
   const [shippable, setShippable] = useState([]);
   const [needsEditorial, setNeedsEditorial] = useState([]);
+  const [toolIdBySlug, setToolIdBySlug] = useState({});
   const [markingUpdated, setMarkingUpdated] = useState({});
   const [shipValues, setShipValues] = useState({});
   const [shipping, setShipping] = useState({});
@@ -37,11 +40,15 @@ export default function AdminMonitoringPage() {
   const load = useCallback(async () => {
     if (!isSupabaseConfigured()) { setLoading(false); return; }
     setLoading(true);
-    const [changesRes, auditRes, confirmedRes] = await Promise.all([
+    const [changesRes, auditRes, confirmedRes, toolsRes] = await Promise.all([
       listPendingChanges({ lim: 50 }),
       listRecentAuditLog({ lim: 20 }),
       listAllChanges({ status: 'confirmed', lim: 50 }),
+      listTools({ lim: 200 }),
     ]);
+    const idMap = {};
+    for (const t of toolsRes.data || []) idMap[t.slug] = t.id;
+    setToolIdBySlug(idMap);
     setChanges(changesRes.data || []);
     setAuditLog(auditRes.data || []);
     const eligible = (confirmedRes.data || []).filter((c) => (c.change_category === 'pricing' || c.change_category === 'status') && !c.ship_skipped);
@@ -266,9 +273,16 @@ export default function AdminMonitoringPage() {
                     Linked articles: {c.affected_article_slugs.join(', ')}
                   </div>
                 )}
-                <Button variant="secondary" onClick={() => handleMarkEditorialUpdated(c.id)} disabled={markingUpdated[c.id]} style={{ fontSize: 11, padding: '5px 9px' }}>
-                  {markingUpdated[c.id] ? 'Saving…' : 'Mark Updated'}
-                </Button>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {toolIdBySlug[c.tool_slug] && (
+                    <Link href={`/admin/tools/${toolIdBySlug[c.tool_slug]}`} style={{ textDecoration: 'none' }}>
+                      <Button variant="secondary" style={{ fontSize: 11, padding: '5px 9px' }}>Edit {c.tool_slug} →</Button>
+                    </Link>
+                  )}
+                  <Button variant="secondary" onClick={() => handleMarkEditorialUpdated(c.id)} disabled={markingUpdated[c.id]} style={{ fontSize: 11, padding: '5px 9px' }}>
+                    {markingUpdated[c.id] ? 'Saving…' : 'Mark Updated'}
+                  </Button>
+                </div>
               </AdminCard>
             ))}
           </div>
