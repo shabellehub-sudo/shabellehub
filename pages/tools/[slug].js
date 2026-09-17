@@ -353,7 +353,7 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           ) : (
             <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>
               <strong style={{ color: '#e8f0ff' }}>Reviewed by {author ? author.name : 'Shabelle Hub'}.</strong>{' '}
-              This listing is based on publicly available information from the provider's official site — it has not yet been independently rated or hands-on tested.
+              This listing is based on publicly available information from the provider&apos;s official site — it has not yet been independently rated or hands-on tested.
               Meet {' '}
               <Link href="/team" style={{ color: '#14FFF4' }}>{author ? author.name : 'the team'}</Link>.
             </p>
