@@ -343,12 +343,21 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           padding: 18, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12,
         }}>
           <span aria-hidden="true" style={{ fontSize: 22 }}>🛡️</span>
-          <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>
-            <strong style={{ color: '#e8f0ff' }}>Independently reviewed by {author ? author.name : 'Shabelle Hub'}.</strong>{' '}
-            Our ratings are based on hands-on testing and are never influenced by affiliate relationships.
-            Meet the{' '}
-            <Link href="/team" style={{ color: '#14FFF4' }}>Shabelle Hub team</Link>.
-          </p>
+          {(tool.rating || tool.pros.length > 0 || tool.cons.length > 0) ? (
+            <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>
+              <strong style={{ color: '#e8f0ff' }}>Independently reviewed by {author ? author.name : 'Shabelle Hub'}.</strong>{' '}
+              Our ratings are based on hands-on testing and are never influenced by affiliate relationships.
+              Meet {' '}
+              <Link href="/team" style={{ color: '#14FFF4' }}>{author ? author.name : 'the team'}</Link>.
+            </p>
+          ) : (
+            <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>
+              <strong style={{ color: '#e8f0ff' }}>Reviewed by {author ? author.name : 'Shabelle Hub'}.</strong>{' '}
+              This listing is based on publicly available information from the provider's official site — it has not yet been independently rated or hands-on tested.
+              Meet {' '}
+              <Link href="/team" style={{ color: '#14FFF4' }}>{author ? author.name : 'the team'}</Link>.
+            </p>
+          )}
         </div>
 
         {/* CTA box */}
