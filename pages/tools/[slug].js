@@ -236,8 +236,14 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
 
           {/* Rating row */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 20, flexWrap: 'wrap' }}>
-            <StarRating rating={tool.rating} size={16} />
-            <span style={{ color: '#8ba3ca', fontSize: 13 }}>Shabelle Hub Rating</span>
+            {tool.rating ? (
+              <>
+                <StarRating rating={tool.rating} size={16} />
+                <span style={{ color: '#8ba3ca', fontSize: 13 }}>Shabelle Hub Rating</span>
+              </>
+            ) : (
+              <span style={{ color: '#8ba3ca', fontSize: 13, fontStyle: 'italic' }}>ShabelleHub Rating — Not yet rated</span>
+            )}
             <span style={{
               background: 'rgba(20,255,244,0.1)', color: '#14FFF4',
               border: '1px solid rgba(20,255,244,0.2)', borderRadius: 6,
@@ -288,21 +294,25 @@ export default function ToolPage({ tool, related, favorites = [], toggleFavorite
           <div style={{ background: '#0f1829', border: '1px solid rgba(0,208,132,0.2)', borderRadius: 16, padding: 22 }}>
             <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, color: '#00d084', marginBottom: 14 }}>✅ Pros</h3>
             <ul style={{ listStyle: 'none' }}>
-              {tool.pros.map((p, i) => (
+              {tool.pros.length > 0 ? tool.pros.map((p, i) => (
                 <li key={i} style={{ color: '#e8f0ff', fontSize: 14, display: 'flex', gap: 8, marginBottom: 8 }}>
                   <span aria-hidden="true" style={{ color: '#00d084', flexShrink: 0 }}>+</span>{p}
                 </li>
-              ))}
+              )) : (
+                <li style={{ color: '#8ba3ca', fontSize: 14, fontStyle: 'italic' }}>Not yet assessed</li>
+              )}
             </ul>
           </div>
           <div style={{ background: '#0f1829', border: '1px solid rgba(255,77,109,0.2)', borderRadius: 16, padding: 22 }}>
             <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, color: '#ff4d6d', marginBottom: 14 }}>❌ Cons</h3>
             <ul style={{ listStyle: 'none' }}>
-              {tool.cons.map((c, i) => (
+              {tool.cons.length > 0 ? tool.cons.map((c, i) => (
                 <li key={i} style={{ color: '#e8f0ff', fontSize: 14, display: 'flex', gap: 8, marginBottom: 8 }}>
                   <span aria-hidden="true" style={{ color: '#ff4d6d', flexShrink: 0 }}>–</span>{c}
                 </li>
-              ))}
+              )) : (
+                <li style={{ color: '#8ba3ca', fontSize: 14, fontStyle: 'italic' }}>Not yet assessed</li>
+              )}
             </ul>
           </div>
         </div>
