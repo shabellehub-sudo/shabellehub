@@ -72,7 +72,7 @@ export default function Hero({ tools = [] }) {
 
         <div className={`${styles.ctas} ${styles.reveal}`} style={{ '--reveal-delay': '0.48s' }}>
           <Button href="/tools" variant="primary" size="lg">
-            Explore Tools →
+            Explore Tools
           </Button>
           <Button href="/blog" variant="secondary" size="lg">
             Latest AI Reviews
