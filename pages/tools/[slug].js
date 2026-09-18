@@ -30,7 +30,9 @@ export async function getStaticProps({ params }) {
   try {
     const toolRes = await getToolBySlug(params.slug);
     if (!toolRes?.error && toolRes?.data) tool = normalizeTool(toolRes.data);
-  } catch (_) {}
+  } catch (err) {
+    console.warn('[getStaticProps] getToolBySlug failed:', err);
+  }
 
   if (!tool) {
     const staticMatch = (staticTools || []).find((t) => t?.slug === params.slug) || null;
@@ -48,7 +50,9 @@ export async function getStaticProps({ params }) {
     if (!toolsRes?.error && Array.isArray(toolsRes?.data) && toolsRes.data.length > 0) {
       allTools = toolsRes.data.map(normalizeTool);
     }
-  } catch (_) {}
+  } catch (err) {
+    console.warn('[getStaticProps] listTools failed:', err);
+  }
 
   let related = [];
   if (Array.isArray(tool.alternatives) && tool.alternatives.length > 0) {
@@ -92,7 +96,6 @@ export default function ToolPage({ tool, related = [] }) {
     author = 'Mohamed Abdi Guled',
   } = tool;
 
-  // Garantiinta Link-ga si uusan batanku mar kale u baabi'in
   const ctaUrl = affiliateLink || website || 'https://profitio.ai';
   const pageTitle = seoTitle || `${name} Review & Pricing | ShabelleHub`;
   const pageDescription = seoDescription || desc;
@@ -110,21 +113,18 @@ export default function ToolPage({ tool, related = [] }) {
       <div style={{ backgroundColor: '#0b0f17', color: '#e2e8f0', minHeight: '100vh', padding: '2rem 1rem' }}>
         <div style={{ maxWidth: '56rem', margin: '0 auto' }} className="space-y-6">
           
-          {/* Nav */}
           <nav style={{ fontSize: '0.875rem', color: '#94a3b8' }}>
             <Link href="/" className="hover:underline">Home</Link> / <Link href="/tools" className="hover:underline">Directory</Link> / <span style={{ color: '#f8fafc' }}>{name}</span>
           </nav>
 
-          {/* Sync Header */}
           <div style={{ backgroundColor: '#111827', borderColor: 'rgba(6,182,212,0.2)', borderWidth: '1px', borderRadius: '0.75rem', padding: '1rem', fontSize: '0.75rem', color: '#94a3b8' }}>
             <strong style={{ color: '#22d3ee' }}>Data last synced:</strong> This page was last updated on {lastUpdated}. Rankings, pricing, and feature details are checked on a monthly basis.
           </div>
 
-          {/* Hero Box */}
           <div style={{ backgroundColor: '#111827', borderColor: '#1f2937', borderWidth: '1px', borderRadius: '1rem', padding: '1.5rem' }}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div style={{ width: '3.5rem', height: '3.5rem', backgroundColor: 'rgba(6,182,212,0.1)', borderColor: 'rgba(6,182,212,0.3)', borderWidth: '1px', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#22d3ee', fontWeight: 'bold', fontSize: '1.5rem' }}>
+                <div style={{ width: '3.5rem', height: '3.5rem', backgroundColor: 'rgba(6,182,212,0.1)', borderColor: 'rgba(6,182,212,0.3)', borderWidth: '1px', borderRadius: '1rem', display: 'flex', itemsCenter: 'center', justifyContent: 'center', color: '#22d3ee', fontWeight: 'bold', fontSize: '1.5rem' }}>
                   {name ? name[0] : 'T'}
                 </div>
                 <div>
@@ -158,7 +158,6 @@ export default function ToolPage({ tool, related = [] }) {
             </div>
           </div>
 
-          {/* Author */}
           <div style={{ backgroundColor: '#111827', borderColor: '#1f2937', borderWidth: '1px', borderRadius: '1rem', padding: '1.5rem' }}>
             <h3 style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '1rem' }}>
               🛡️ Who wrote and verified this review
@@ -174,13 +173,11 @@ export default function ToolPage({ tool, related = [] }) {
             </div>
           </div>
 
-          {/* Overview */}
           <div style={{ backgroundColor: '#111827', borderColor: '#1f2937', borderWidth: '1px', borderRadius: '1rem', padding: '1.5rem' }}>
             <h2 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#ffffff', marginBottom: '0.75rem' }}>Overview</h2>
             <p style={{ fontSize: '0.875rem', color: '#cbd5e1', lineHeight: '1.6' }}>{longDesc || desc}</p>
           </div>
 
-          {/* Pros & Cons */}
           {(pros.length > 0 || cons.length > 0) && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div style={{ backgroundColor: '#111827', borderColor: '#1f2937', borderWidth: '1px', borderRadius: '1rem', padding: '1.5rem' }}>
@@ -202,7 +199,6 @@ export default function ToolPage({ tool, related = [] }) {
             </div>
           )}
 
-          {/* Bottom CTA */}
           <div style={{ backgroundColor: '#111827', borderColor: '#1f2937', borderWidth: '1px', borderRadius: '1rem', padding: '2rem', textAlign: 'center' }} className="space-y-4">
             <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#ffffff' }}>Ready to try {name}?</h3>
             <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Start for free — no credit card required.</p>
