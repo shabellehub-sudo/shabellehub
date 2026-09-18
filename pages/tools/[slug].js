@@ -1,243 +1,1331 @@
+import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { tools as staticTools } from '../../data';
-import { listTools, getToolBySlug } from '../../lib/cms/tools';
+import { listTools } from '../../lib/cms/tools';
 
-// Normalizes a Supabase `tools` row: merges the jsonb `doc` column
-// (desc, price, rating, features, affiliateLink, etc.) with the
-// top-level columns (id, slug, status, name, category).
+/* -------------------------------------------------------------------------- */
+/* Helpers                                                                    */
+/* -------------------------------------------------------------------------- */
+
 function normalizeTool(row) {
   if (!row) return null;
+
   const doc = row.doc || {};
-  return { ...doc, ...row };
+
+  return {
+    ...doc,
+    ...row,
+  };
 }
 
-export async function getStaticPaths() {
-  let paths = (staticTools || []).map((t) => ({ params: { slug: t.slug } }));
+function asArray(value) {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (typeof value === 'string' && value.trim()) {
+    return value
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+function unique(values) {
+  return [...new Set(values.filter(Boolean).map(String))];
+}
+
+function safeUrl(value) {
+  if (!value || typeof value !== 'string') return null;
 
   try {
-    const res = await listTools({ status: 'published', lim: 1000 });
-    if (!res?.error && Array.isArray(res?.data) && res.data.length > 0) {
-      paths = res.data.map((t) => ({ params: { slug: t.slug } }));
+    const url = new URL(value);
+
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      return null;
     }
-  } catch (err) {
-    console.warn('[getStaticPaths] Supabase fetch failed, using fallback:', err);
+
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+function safeJsonLd(value) {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
+}
+
+function normalizeFaq(tool) {
+  const source =
+    tool?.faq ??
+    tool?.faqs ??
+    tool?.faqItems ??
+    tool?.frequentlyAskedQuestions ??
+    [];
+
+  if (!Array.isArray(source)) return [];
+
+  return source
+    .map((item) => {
+      if (!item) return null;
+
+      if (typeof item === 'string') {
+        const separator = item.indexOf('?');
+
+        if (separator === -1) return null;
+
+        return {
+          question: item.slice(0, separator + 1).trim(),
+          answer: item.slice(separator + 1).trim(),
+        };
+      }
+
+      const question =
+        item.question ||
+        item.q ||
+        item.title ||
+        item.name;
+
+      const answer =
+        item.answer ||
+        item.a ||
+        item.content ||
+        item.description;
+
+      if (!question || !answer) return null;
+
+      return {
+        question: String(question),
+        answer: String(answer),
+      };
+    })
+    .filter(Boolean);
+}
+
+function ReviewContent({ value }) {
+  if (!value) return null;
+
+  const text = String(value).replace(/\r\n/g, '\n').trim();
+
+  const blocks = text
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  return (
+    <div className="sh-review-content">
+      {blocks.map((block, index) => {
+        if (block.startsWith('### ')) {
+          return (
+            <h3 key={index}>
+              {block.replace(/^###\s+/, '')}
+            </h3>
+          );
+        }
+
+        if (block.startsWith('## ')) {
+          return (
+            <h2 key={index}>
+              {block.replace(/^##\s+/, '')}
+            </h2>
+          );
+        }
+
+        if (block.startsWith('# ')) {
+          return (
+            <h2 key={index}>
+              {block.replace(/^#\s+/, '')}
+            </h2>
+          );
+        }
+
+        const lines = block
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean);
+
+        const isList = lines.every((line) =>
+          /^[-*•]\s+/.test(line)
+        );
+
+        if (isList) {
+          return (
+            <ul key={index}>
+              {lines.map((line, itemIndex) => (
+                <li key={itemIndex}>
+                  {line.replace(/^[-*•]\s+/, '')}
+                </li>
+              ))}
+            </ul>
+          );
+        }
+
+        return <p key={index}>{block}</p>;
+      })}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Smart Stack Matcher                                                        */
+/* -------------------------------------------------------------------------- */
+
+function getToolSignals(tool) {
+  const tags = asArray(tool.tags);
+  const integrations = asArray(
+    tool.integrations ||
+      tool.integration ||
+      tool.supportedIntegrations
+  );
+
+  const stack = asArray(
+    tool.stack ||
+      tool.techStack ||
+      tool.compatibility ||
+      tool.platforms
+  );
+
+  const useCases = asArray(tool.useCases);
+
+  return {
+    tags: unique(tags),
+    integrations: unique(integrations),
+    stack: unique(stack),
+    useCases: unique(useCases),
+  };
+}
+
+function normalizeSignal(value) {
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ');
+}
+
+function signalMatches(source, selected) {
+  const normalizedSource = source.map(normalizeSignal);
+
+  return selected.filter((item) => {
+    const normalized = normalizeSignal(item);
+
+    return normalizedSource.some(
+      (sourceItem) =>
+        sourceItem === normalized ||
+        sourceItem.includes(normalized) ||
+        normalized.includes(sourceItem)
+    );
+  });
+}
+
+function SmartStackMatcher({ tool }) {
+  const [role, setRole] = React.useState('');
+  const [stack, setStack] = React.useState([]);
+  const [needs, setNeeds] = React.useState([]);
+  const [result, setResult] = React.useState(null);
+
+  const signals = getToolSignals(tool);
+
+  const roles = unique([
+    ...asArray(tool.roles),
+    ...asArray(tool.targetAudience),
+    ...asArray(tool.audiences),
+    ...asArray(tool.useCases),
+  ]).slice(0, 12);
+
+  const availableStack = unique([
+    ...signals.stack,
+    ...signals.integrations,
+    ...asArray(tool.platforms),
+  ]).slice(0, 18);
+
+  const availableNeeds = unique([
+    ...signals.useCases,
+    ...signals.tags,
+  ]).slice(0, 18);
+
+  function toggleValue(list, setList, value) {
+    setList((current) =>
+      current.includes(value)
+        ? current.filter((x) => x !== value)
+        : [...current, value]
+    );
+  }
+
+  function calculateMatch() {
+    const selectedStack = stack;
+    const selectedNeeds = needs;
+
+    const stackMatches = signalMatches(
+      [...signals.stack, ...signals.integrations],
+      selectedStack
+    );
+
+    const needMatches = signalMatches(
+      [...signals.useCases, ...signals.tags],
+      selectedNeeds
+    );
+
+    const roleMatches = role
+      ? signalMatches(
+          [
+            ...signals.useCases,
+            ...signals.tags,
+            ...roles,
+          ],
+          [role]
+        )
+      : [];
+
+    const totalSelected =
+      selectedStack.length +
+      selectedNeeds.length +
+      (role ? 1 : 0);
+
+    const totalMatches =
+      stackMatches.length +
+      needMatches.length +
+      roleMatches.length;
+
+    let score = totalSelected
+      ? Math.round((totalMatches / totalSelected) * 100)
+      : 0;
+
+    score = Math.max(0, Math.min(100, score));
+
+    let strength = 'Possible Match';
+
+    if (score >= 80) {
+      strength = 'Strong Match';
+    } else if (score >= 55) {
+      strength = 'Good Match';
+    } else if (score < 35) {
+      strength = 'Limited Match';
+    }
+
+    const reasons = [
+      ...stackMatches.map(
+        (item) => `Works with ${item}`
+      ),
+      ...needMatches.map(
+        (item) => `Useful for ${item}`
+      ),
+      ...roleMatches.map(
+        (item) => `Relevant to ${item}`
+      ),
+    ].slice(0, 5);
+
+    setResult({
+      score,
+      strength,
+      reasons,
+    });
+  }
+
+  return (
+    <section className="sh-section sh-matcher" id="smart-stack-matcher">
+      <div className="sh-section-heading">
+        <div>
+          <span className="sh-eyebrow">SMART TOOL DISCOVERY</span>
+          <h2>Smart Stack Matcher</h2>
+          <p>
+            Check how well this tool fits your workflow, stack and
+            use case.
+          </p>
+        </div>
+      </div>
+
+      <div className="sh-matcher-grid">
+        <div className="sh-matcher-panel">
+          {roles.length > 0 && (
+            <div className="sh-field">
+              <label htmlFor="matcher-role">Your role</label>
+
+              <select
+                id="matcher-role"
+                value={role}
+                onChange={(event) => setRole(event.target.value)}
+              >
+                <option value="">Choose your role</option>
+
+                {roles.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {availableStack.length > 0 && (
+            <div className="sh-field">
+              <label>Your stack</label>
+
+              <div className="sh-chip-list">
+                {availableStack.map((item) => {
+                  const active = stack.includes(item);
+
+                  return (
+                    <button
+                      type="button"
+                      key={item}
+                      className={`sh-chip ${
+                        active ? 'is-active' : ''
+                      }`}
+                      onClick={() =>
+                        toggleValue(stack, setStack, item)
+                      }
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {availableNeeds.length > 0 && (
+            <div className="sh-field">
+              <label>What do you need it for?</label>
+
+              <div className="sh-chip-list">
+                {availableNeeds.map((item) => {
+                  const active = needs.includes(item);
+
+                  return (
+                    <button
+                      type="button"
+                      key={item}
+                      className={`sh-chip ${
+                        active ? 'is-active' : ''
+                      }`}
+                      onClick={() =>
+                        toggleValue(needs, setNeeds, item)
+                      }
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <button
+            type="button"
+            className="sh-primary-button"
+            onClick={calculateMatch}
+          >
+            Check Compatibility
+            <span>→</span>
+          </button>
+        </div>
+
+        <div className="sh-match-result">
+          {!result ? (
+            <div className="sh-empty-match">
+              <div className="sh-match-icon">✦</div>
+              <h3>Find your compatibility</h3>
+              <p>
+                Select your role, stack or needs to see how this
+                tool fits your workflow.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="sh-score">
+                <strong>{result.score}%</strong>
+                <span>compatibility</span>
+              </div>
+
+              <div className="sh-match-strength">
+                {result.strength}
+              </div>
+
+              {result.reasons.length > 0 && (
+                <ul className="sh-reasons">
+                  {result.reasons.map((reason, index) => (
+                    <li key={index}>
+                      <span>✓</span>
+                      {reason}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {result.reasons.length === 0 && (
+                <p className="sh-muted">
+                  We don't have enough matching signals yet.
+                  Consider checking the alternatives below.
+                </p>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* FAQ                                                                        */
+/* -------------------------------------------------------------------------- */
+
+function FAQSection({ faq }) {
+  const [open, setOpen] = React.useState(0);
+
+  if (!faq.length) return null;
+
+  return (
+    <section className="sh-section" id="faq">
+      <div className="sh-section-heading">
+        <div>
+          <span className="sh-eyebrow">QUESTIONS</span>
+          <h2>Frequently Asked Questions</h2>
+          <p>
+            Common questions about this AI tool, pricing and
+            capabilities.
+          </p>
+        </div>
+      </div>
+
+      <div className="sh-faq">
+        {faq.map((item, index) => {
+          const isOpen = open === index;
+
+          return (
+            <div
+              className={`sh-faq-item ${
+                isOpen ? 'is-open' : ''
+              }`}
+              key={`${item.question}-${index}`}
+            >
+              <button
+                type="button"
+                className="sh-faq-question"
+                aria-expanded={isOpen}
+                onClick={() =>
+                  setOpen(isOpen ? -1 : index)
+                }
+              >
+                <span>{item.question}</span>
+                <span
+                  className="sh-faq-plus"
+                  aria-hidden="true"
+                >
+                  {isOpen ? '−' : '+'}
+                </span>
+              </button>
+
+              {isOpen && (
+                <div className="sh-faq-answer">
+                  <p>{item.answer}</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Related Cards                                                              */
+/* -------------------------------------------------------------------------- */
+
+function ToolCard({ tool }) {
+  const logo =
+    tool.logo ||
+    tool.logoUrl ||
+    tool.image ||
+    tool.icon;
+
+  return (
+    <Link
+      href={`/tools/${tool.slug}`}
+      className="sh-related-card"
+    >
+      <div className="sh-related-top">
+        {logo ? (
+          <img
+            src={logo}
+            alt=""
+            className="sh-related-logo"
+            loading="lazy"
+          />
+        ) : (
+          <div className="sh-related-logo-placeholder">
+            {String(tool.name || '?')
+              .slice(0, 1)
+              .toUpperCase()}
+          </div>
+        )}
+
+        <div>
+          <h3>{tool.name}</h3>
+          {tool.category && (
+            <span>{tool.category}</span>
+          )}
+        </div>
+      </div>
+
+      <p>{tool.desc || tool.description}</p>
+    </Link>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Data                                                                       */
+/* -------------------------------------------------------------------------- */
+
+export async function getStaticPaths() {
+  try {
+    const result = await listTools({
+      status: 'published',
+      lim: 1000,
+    });
+
+    if (
+      !result?.error &&
+      Array.isArray(result?.data)
+    ) {
+      return {
+        paths: result.data
+          .filter((tool) => tool?.slug)
+          .map((tool) => ({
+            params: {
+              slug: tool.slug,
+            },
+          })),
+        fallback: 'blocking',
+      };
+    }
+  } catch (error) {
+    console.warn(
+      '[tools/[slug]] published path lookup failed:',
+      error
+    );
   }
 
   return {
-    paths,
+    paths: (staticTools || [])
+      .filter((tool) => tool?.slug)
+      .map((tool) => ({
+        params: {
+          slug: tool.slug,
+        },
+      })),
     fallback: 'blocking',
   };
 }
 
 export async function getStaticProps({ params }) {
+  const slug = String(params?.slug || '').trim();
+
+  if (!slug) {
+    return {
+      notFound: true,
+    };
+  }
+
   let tool = null;
+  let databaseSucceeded = false;
 
   try {
-    const toolRes = await getToolBySlug(params.slug);
-    if (!toolRes?.error && toolRes?.data) tool = normalizeTool(toolRes.data);
-  } catch (_) {
-    /* fall through to static lookup */
-  }
+    const result = await listTools({
+      status: 'published',
+      lim: 1000,
+    });
 
-  if (!tool) {
-    const staticMatch = (staticTools || []).find((t) => t?.slug === params.slug) || null;
-    tool = staticMatch ? normalizeTool({ ...staticMatch, doc: staticMatch }) : null;
-  }
+    if (!result?.error && Array.isArray(result?.data)) {
+      databaseSucceeded = true;
 
-  if (!tool) return { notFound: true };
+      const match = result.data.find(
+        (item) => item?.slug === slug
+      );
 
-  let allTools = Array.isArray(staticTools)
-    ? staticTools.map((t) => normalizeTool({ ...t, doc: t }))
-    : [];
-
-  try {
-    const toolsRes = await listTools({ status: 'published', lim: 200 });
-    if (!toolsRes?.error && Array.isArray(toolsRes?.data) && toolsRes.data.length > 0) {
-      allTools = toolsRes.data.map(normalizeTool);
+      if (match) {
+        tool = normalizeTool(match);
+      }
     }
-  } catch (_) {
-    /* keep fallback */
+  } catch (error) {
+    console.warn(
+      '[tools/[slug]] tool lookup failed:',
+      error
+    );
   }
 
-  let related = [];
-  if (Array.isArray(tool.alternatives) && tool.alternatives.length > 0) {
-    related = tool.alternatives
-      .map((slug) => allTools.find((t) => t?.slug === slug))
-      .filter(Boolean)
-      .slice(0, 3);
+  if (!tool && !databaseSucceeded) {
+    const staticMatch = (staticTools || []).find(
+      (item) => item?.slug === slug
+    );
+
+    if (staticMatch) {
+      tool = normalizeTool({
+        ...staticMatch,
+        doc: staticMatch,
+      });
+    }
   }
+
+  if (!tool || (tool.status && tool.status !== 'published')) {
+    return {
+      notFound: true,
+    };
+  }
+
+  let allTools = [];
+
+  try {
+    const result = await listTools({
+      status: 'published',
+      lim: 1000,
+    });
+
+    if (
+      !result?.error &&
+      Array.isArray(result?.data)
+    ) {
+      allTools = result.data
+        .map(normalizeTool)
+        .filter(
+          (item) =>
+            item?.slug &&
+            (!item.status ||
+              item.status === 'published')
+        );
+    }
+  } catch (error) {
+    console.warn(
+      '[tools/[slug]] related tools lookup failed:',
+      error
+    );
+  }
+
+  const alternatives = asArray(tool.alternatives);
+
+  let related = alternatives
+    .map((slugValue) =>
+      allTools.find(
+        (item) => item?.slug === slugValue
+      )
+    )
+    .filter(Boolean)
+    .slice(0, 3);
+
   if (related.length === 0) {
     related = allTools
-      .filter((t) => t && t.category === tool.category && t.slug !== tool.slug)
+      .filter(
+        (item) =>
+          item &&
+          item.slug !== tool.slug &&
+          item.category === tool.category
+      )
       .slice(0, 3);
   }
 
   return {
-    props: { tool, related },
+    props: {
+      tool,
+      related,
+    },
+
     revalidate: 3600,
   };
 }
 
-export default function ToolPage({ tool, related = [] }) {
+/* -------------------------------------------------------------------------- */
+/* Page                                                                       */
+/* -------------------------------------------------------------------------- */
+
+export default function ToolPage({
+  tool,
+  related = [],
+}) {
   if (!tool) return null;
 
   const {
     name,
     desc,
+    description,
     longDesc,
+    fullReview,
+    review,
     price,
+    priceTier,
+    priceLabel,
     rating,
+    badge,
+    featured,
+    hot,
     features = [],
     pros = [],
     cons = [],
     useCases = [],
+    tags = [],
+    alternatives = [],
     website,
     affiliateLink,
     seoTitle,
     seoDescription,
     canonical_url,
+    ogImage,
+    og_image,
+    logo,
+    logoUrl,
     category,
   } = tool;
 
-  // Prioritize affiliate link over direct website URL for monetization
-  const ctaUrl = affiliateLink || website;
+  const faq = normalizeFaq(tool);
 
-  const pageTitle = seoTitle || `${name} Review & Pricing | ShabelleHub`;
-  const pageDescription = seoDescription || desc;
-  const canonical = canonical_url || `https://shabellehub.com/tools/${tool.slug}`;
+  const safeWebsite = safeUrl(website);
+  const safeAffiliate = safeUrl(affiliateLink);
+
+  const ctaUrl =
+    safeAffiliate ||
+    safeWebsite ||
+    null;
+
+  const pageTitle =
+    seoTitle ||
+    `${name} Review & Pricing | ShabelleHub`;
+
+  const pageDescription =
+    seoDescription ||
+    desc ||
+    description ||
+    `Learn about ${name}, its features, pricing and use cases.`;
+
+  const canonical =
+    safeUrl(canonical_url) ||
+    `https://shabellehub.com/tools/${encodeURIComponent(
+      tool.slug
+    )}`;
+
+  const image =
+    safeUrl(ogImage) ||
+    safeUrl(og_image);
+
+  const normalizedFeatures = asArray(features);
+  const normalizedPros = asArray(pros);
+  const normalizedCons = asArray(cons);
+  const normalizedUseCases = asArray(useCases);
+  const normalizedTags = asArray(tags);
+
+  const reviewContent =
+    fullReview ||
+    review ||
+    longDesc ||
+    desc ||
+    description;
+
+  const ratingValue = Number(rating) || 0;
 
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name,
-    description: desc,
-    applicationCategory: category,
+    description: pageDescription,
+    applicationCategory:
+      category || 'AIApplication',
+    url: canonical,
+    ...(image
+      ? {
+          image,
+        }
+      : {}),
+    ...(ratingValue > 0
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+    ...(price
+      ? {
+          offers: {
+            '@type': 'Offer',
+            description: String(price),
+          },
+        }
+      : {}),
   };
+
+  if (faq.length > 0) {
+    structuredData.mainEntity = faq.map(
+      (item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })
+    );
+  }
+
+  const stars =
+    ratingValue > 0
+      ? `${'★'.repeat(
+          Math.min(5, Math.round(ratingValue))
+        )}${'☆'.repeat(
+          Math.max(0, 5 - Math.round(ratingValue))
+        )}`
+      : '';
 
   return (
     <>
       <Head>
         <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
-        <link rel="canonical" href={canonical} />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:type" content="website" />
+
+        <meta
+          name="description"
+          content={pageDescription}
+        />
+
+        <link
+          rel="canonical"
+          href={canonical}
+        />
+
+        <meta
+          property="og:title"
+          content={pageTitle}
+        />
+
+        <meta
+          property="og:description"
+          content={pageDescription}
+        />
+
+        <meta
+          property="og:type"
+          content="website"
+        />
+
+        {image && (
+          <meta
+            property="og:image"
+            content={image}
+          />
+        )}
+
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{
+            __html: safeJsonLd(structuredData),
+          }}
         />
       </Head>
 
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
-        <nav className="text-sm text-gray-400 mb-4">
-          <Link href="/tools" className="hover:underline">AI Directory</Link> / {category || 'Tool'} / {name}
-        </nav>
+      <main className="sh-tool-page">
+        <div className="sh-container">
 
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-3xl font-bold">{name}</h1>
+          <nav
+            className="sh-breadcrumb"
+            aria-label="Breadcrumb"
+          >
+            <Link href="/tools">
+              AI Directory
+            </Link>
+
+            <span>/</span>
+
             {category && (
-              <span className="inline-block mt-1 text-xs px-2 py-1 rounded bg-gray-800 text-cyan-400">
-                {category}
-              </span>
-            )}
-          </div>
-          {rating > 0 && (
-            <div className="text-yellow-400 text-lg">
-              {'★'.repeat(Math.round(rating))}
-              {'☆'.repeat(5 - Math.round(rating))}
-              <span className="text-gray-400 text-sm ml-1">({rating})</span>
-            </div>
-          )}
-        </div>
-
-        <p className="mt-4 text-gray-300 text-lg leading-relaxed">{longDesc || desc}</p>
-
-        {price && <p className="mt-3 text-cyan-400 font-semibold text-lg">{price}</p>}
-
-        {ctaUrl && (
-          <div className="mt-6 p-4 rounded-xl bg-gray-900 border border-gray-800">
-            <a
-              href={ctaUrl}
-              target="_blank"
-              rel="noopener noreferrer sponsored nofollow"
-              className="inline-block bg-cyan-400 text-black font-bold px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
-            >
-              Try {name} Free →
-            </a>
-            <p className="text-xs text-gray-500 mt-2">
-              We may earn a commission if you sign up through this link, at no extra cost to you.
-            </p>
-          </div>
-        )}
-
-        {features.length > 0 && (
-          <section className="mt-8">
-            <h2 className="text-xl font-bold mb-3">Key Features</h2>
-            <ul className="list-disc list-inside text-gray-300 space-y-1">
-              {features.map((f, i) => (
-                <li key={i}>{f}</li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {(pros.length > 0 || cons.length > 0) && (
-          <section className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-            {pros.length > 0 && (
-              <div className="p-4 rounded-lg bg-green-950/20 border border-green-900/50">
-                <h3 className="font-bold text-green-400 mb-2">Pros</h3>
-                <ul className="list-disc list-inside text-gray-300 space-y-1 text-sm">
-                  {pros.map((p, i) => (
-                    <li key={i}>{p}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {cons.length > 0 && (
-              <div className="p-4 rounded-lg bg-red-950/20 border border-red-900/50">
-                <h3 className="font-bold text-red-400 mb-2">Cons</h3>
-                <ul className="list-disc list-inside text-gray-300 space-y-1 text-sm">
-                  {cons.map((c, i) => (
-                    <li key={i}>{c}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </section>
-        )}
-
-        {useCases.length > 0 && (
-          <section className="mt-8">
-            <h2 className="text-xl font-bold mb-3">Use Cases</h2>
-            <ul className="list-disc list-inside text-gray-300 space-y-1">
-              {useCases.map((u, i) => (
-                <li key={i}>{u}</li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {related.length > 0 && (
-          <section className="mt-10 border-t border-gray-800 pt-6">
-            <h2 className="text-xl font-bold mb-4">Related Tools</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {related.map((t) => (
+              <>
                 <Link
-                  key={t.slug}
-                  href={`/tools/${t.slug}`}
-                  className="block p-4 rounded-lg bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors"
+                  href={`/tools?category=${encodeURIComponent(
+                    category
+                  )}`}
                 >
-                  <p className="font-bold text-cyan-400">{t.name}</p>
-                  <p className="text-xs text-gray-400 mt-1 line-clamp-2">{t.desc}</p>
+                  {category}
                 </Link>
-              ))}
+                <span>/</span>
+              </>
+            )}
+
+            <span>{name}</span>
+          </nav>
+
+          <section className="sh-hero">
+            <div className="sh-hero-main">
+
+              <div className="sh-tool-identity">
+                {logo || logoUrl ? (
+                  <img
+                    src={logo || logoUrl}
+                    alt={`${name} logo`}
+                    className="sh-tool-logo"
+                  />
+                ) : (
+                  <div className="sh-tool-logo-placeholder">
+                    {String(name || '?')
+                      .slice(0, 1)
+                      .toUpperCase()}
+                  </div>
+                )}
+
+                <div>
+                  <div className="sh-badge-row">
+                    {badge && (
+                      <span className="sh-badge">
+                        {badge}
+                      </span>
+                    )}
+
+                    {featured && (
+                      <span className="sh-badge sh-badge-featured">
+                        Featured
+                      </span>
+                    )}
+
+                    {hot && (
+                      <span className="sh-badge sh-badge-hot">
+                        🔥 Trending
+                      </span>
+                    )}
+                  </div>
+
+                  <h1>{name}</h1>
+
+                  <div className="sh-meta-row">
+                    {category && (
+                      <span>{category}</span>
+                    )}
+
+                    {priceTier && (
+                      <span>{priceTier}</span>
+                    )}
+
+                    {(priceLabel || price) && (
+                      <span>
+                        {priceLabel || price}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <p className="sh-hero-description">
+                {desc || description}
+              </p>
+
+              {ratingValue > 0 && (
+                <div className="sh-rating">
+                  <span className="sh-stars">
+                    {stars}
+                  </span>
+
+                  <strong>
+                    {ratingValue.toFixed(1)}
+                  </strong>
+
+                  <span>/ 5</span>
+                </div>
+              )}
+
+              {ctaUrl && (
+                <div className="sh-cta-row">
+                  <a
+                    href={ctaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored nofollow"
+                    className="sh-primary-button sh-hero-button"
+                  >
+                    {safeAffiliate
+                      ? `Try ${name} →`
+                      : `Visit ${name} →`}
+                  </a>
+
+                  {safeAffiliate && (
+                    <span className="sh-affiliate-note">
+                      We may earn a commission at no
+                      extra cost to you.
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
+
+            <aside className="sh-hero-side">
+              <div className="sh-quick-card">
+                <span>Tool Overview</span>
+
+                {category && (
+                  <div>
+                    <small>Category</small>
+                    <strong>{category}</strong>
+                  </div>
+                )}
+
+                {(priceLabel || price) && (
+                  <div>
+                    <small>Pricing</small>
+                    <strong>
+                      {priceLabel || price}
+                    </strong>
+                  </div>
+                )}
+
+                {ratingValue > 0 && (
+                  <div>
+                    <small>Rating</small>
+                    <strong>
+                      {ratingValue.toFixed(1)} / 5
+                    </strong>
+                  </div>
+                )}
+
+                {normalizedTags.length > 0 && (
+                  <div>
+                    <small>Tags</small>
+                    <strong>
+                      {normalizedTags.length}
+                    </strong>
+                  </div>
+                )}
+              </div>
+            </aside>
           </section>
-        )}
-      </div>
+
+          {reviewContent && (
+            <section
+              className="sh-section"
+              id="overview"
+            >
+              <div className="sh-section-heading">
+                <div>
+                  <span className="sh-eyebrow">
+                    OVERVIEW
+                  </span>
+                  <h2>About {name}</h2>
+                </div>
+              </div>
+
+              <ReviewContent value={reviewContent} />
+            </section>
+          )}
+
+          {normalizedFeatures.length > 0 && (
+            <section
+              className="sh-section"
+              id="features"
+            >
+              <div className="sh-section-heading">
+                <div>
+                  <span className="sh-eyebrow">
+                    CAPABILITIES
+                  </span>
+                  <h2>Key Features</h2>
+                </div>
+              </div>
+
+              <div className="sh-feature-grid">
+                {normalizedFeatures.map(
+                  (feature, index) => (
+                    <div
+                      className="sh-feature-card"
+                      key={`${feature}-${index}`}
+                    >
+                      <span className="sh-feature-number">
+                        {String(index + 1).padStart(
+                          2,
+                          '0'
+                        )}
+                      </span>
+
+                      <p>{feature}</p>
+                    </div>
+                  )
+                )}
+              </div>
+            </section>
+          )}
+
+          {(normalizedPros.length > 0 ||
+            normalizedCons.length > 0) && (
+            <section
+              className="sh-section sh-pros-cons"
+              id="pros-cons"
+            >
+              {normalizedPros.length > 0 && (
+                <div className="sh-list-card sh-pros">
+                  <span className="sh-eyebrow">
+                    ADVANTAGES
+                  </span>
+
+                  <h2>Pros</h2>
+
+                  <ul>
+                    {normalizedPros.map(
+                      (item, index) => (
+                        <li key={index}>
+                          <span>✓</span>
+                          {item}
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </div>
+              )}
+
+              {normalizedCons.length > 0 && (
+                <div className="sh-list-card sh-cons">
+                  <span className="sh-eyebrow">
+                    CONSIDERATIONS
+                  </span>
+
+                  <h2>Cons</h2>
+
+                  <ul>
+                    {normalizedCons.map(
+                      (item, index) => (
+                        <li key={index}>
+                          <span>×</span>
+                          {item}
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </div>
+              )}
+            </section>
+          )}
+
+          {normalizedUseCases.length > 0 && (
+            <section
+              className="sh-section"
+              id="use-cases"
+            >
+              <div className="sh-section-heading">
+                <div>
+                  <span className="sh-eyebrow">
+                    WORKFLOWS
+                  </span>
+                  <h2>Use Cases</h2>
+                </div>
+              </div>
+
+              <div className="sh-use-case-grid">
+                {normalizedUseCases.map(
+                  (item, index) => (
+                    <div
+                      className="sh-use-case"
+                      key={`${item}-${index}`}
+                    >
+                      <span>→</span>
+                      <p>{item}</p>
+                    </div>
+                  )
+                )}
+              </div>
+            </section>
+          )}
+
+          <SmartStackMatcher tool={tool} />
+
+          {normalizedTags.length > 0 && (
+            <section
+              className="sh-section"
+              id="tags"
+            >
+              <div className="sh-section-heading">
+                <div>
+                  <span className="sh-eyebrow">
+                    DISCOVERY
+                  </span>
+                  <h2>Tags</h2>
+                </div>
+              </div>
+
+              <div className="sh-tag-list">
+                {normalizedTags.map((tag) => (
+                  <span
+                    className="sh-tag"
+                    key={tag}
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {(price || priceLabel || priceTier) && (
+            <section
+              className="sh-section sh-pricing-section"
+              id="pricing"
+            >
+              <div className="sh-pricing-card">
+                <div>
+                  <span className="sh-eyebrow">
+                    PRICING
+                  </span>
+
+                  <h2>
+                    {priceLabel ||
+                      price ||
+                      priceTier}
+                  </h2>
+
+                  {priceTier && (
+                    <p>{priceTier}</p>
+                  )}
+                </div>
+
+                {ctaUrl && (
+                  <a
+                    href={ctaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored nofollow"
+                    className="sh-primary-button"
+                  >
+                    Check Current Pricing →
+                  </a>
+                )}
+              </div>
+            </section>
+          )}
+
+          {related.length > 0 && (
+            <section
+              className="sh-section"
+              id="related"
+            >
+              <div className="sh-section-heading">
+                <div>
+                  <span className="sh-eyebrow">
+                    EXPLORE MORE
+                  </span>
+                  <h2>
+                    {alternatives.length > 0
+                      ? 'Alternatives & Related Tools'
+                      : 'Related Tools'}
+                  </h2>
+                </div>
+              </div>
+
+              <div className="sh-related-grid">
+                {related.map((item) => (
+                  <ToolCard
+                    key={item.slug}
+                    tool={item}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <FAQSection faq={faq} />
+
+        </div>
+      </main>
     </>
   );
 }
