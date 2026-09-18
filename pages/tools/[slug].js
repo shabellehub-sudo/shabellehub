@@ -21,13 +21,16 @@ import ToolFAQ from '../../components/tools/ToolFAQ';
 
 export async function getStaticPaths() {
   let paths = staticTools.map(t => ({ params: { slug: t.slug } }));
+
   try {
     const res = await listTools({ status: 'published', lim: 1000 });
+    if (!res.error && res.data?.length > 0) {
       paths = res.data.map(t => ({ params: { slug: t.slug } }));
     }
   } catch (err) {
-    console.warn('[getStaticPaths] DB fetch failed, using static fallback');
+    console.warn('[getStaticPaths] Supabase fetch failed, using static fallback:', err);
   }
+
   return {
     paths,
     fallback: 'blocking',
@@ -72,10 +75,6 @@ export async function getStaticProps({ params }) {
     affiliateLink = data ?? null;
   } catch (_) { /* non-fatal — falls back to static data */ }
 
-  // Phase 4.3: Smart Stack Matcher — build the 3-tool complementary bundle
-  // at build time (zero extra runtime Supabase reads). Wrapped in try/catch
-  // because getComplementaryStack() throws on an unmapped category, and a
-  // taxonomy gap for one tool must never fail the build for every tool.
   let stack = { primary: tool, asset: null, distribution: null };
   try {
     stack = getComplementaryStack(tool, allTools);
@@ -83,10 +82,6 @@ export async function getStaticProps({ params }) {
     console.warn(`[stackMatcher] ${err.message}`);
   }
 
-  // Lightweight Freshness System, part 2: surface the most recent
-  // shipped Approve & Ship change (within 30 days) as a plain-language
-  // summary. Wrapped in try/catch so a monitoring-table issue never
-  // fails the tool page build.
   let recentUpdate = null;
   try {
     const shippedRes = await listAllChanges({ status: 'shipped', lim: 200 });
@@ -107,337 +102,20 @@ export async function getStaticProps({ params }) {
     console.warn(`[recentUpdate] ${err.message}`);
   }
 
-  const hasAlternativesPage = isAlternativesPageEligible(tool, allTools);
+  const hasAlternativesPage = isAlternativesPageEligible(tool);
 
-  return { props: { tool, related, affiliateLink, stack, allTools, recentUpdate, hasAlternativesPage }, revalidate: 3600 };
+  return {
+    props: { tool, related, affiliateLink, stack, allTools, recentUpdate, hasAlternativesPage },
+    revalidate: 3600,
+  };
 }
 
-const CATEGORY_LABELS_LOCAL = {
-  pricing: 'Pricing',
-  status: 'Status',
-};
-
-export default function ToolPage({ tool, related, favorites = [], toggleFavorite, affiliateLink = null, stack = null, allTools = [], recentUpdate = null, hasAlternativesPage = false }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-
-  const isSaved = mounted && favorites.includes(tool.id);
-
-  // Phase 5A: resolve CTA URL — Supabase record takes priority over static data
-  const resolvedAffiliateUrl = affiliateLink?.affiliateUrl
-    ? buildAffiliateUrl(affiliateLink.affiliateUrl, tool.slug)
-    : tool.affiliateLink || tool.website;
-  const customDisclosure = affiliateLink?.disclosureText || null;
-
-  function handleAffiliateCTA() {
-    if (typeof window === 'undefined') return;
-    openAffiliateLink({ ...tool, affiliateLink: resolvedAffiliateUrl });
-  }
-  const seo     = getToolSEO(tool);
-  const meta    = getToolMeta(tool.slug);
-  const faqs = generateToolFaqs(tool, allTools);
-  const author  = getAuthor(meta.authorSlug);
-  const reviewer = getReviewer(meta.reviewerSlug);
-  const schema  = getToolStructuredData(tool, meta);
-
-  // BreadcrumbList schema — boosts Rich Results in Google
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home',      item: 'https://shabellehub.com' },
-      { '@type': 'ListItem', position: 2, name: 'Directory', item: 'https://shabellehub.com/tools' },
-      { '@type': 'ListItem', position: 3, name: tool.name,   item: `https://shabellehub.com/tools/${tool.slug}` },
-    ],
-  };
-
-  // CTA label — discontinued tools take priority, then paid vs free/freemium
-  const isDiscontinued = tool.badge === 'Discontinued';
-  const ctaLabel = isDiscontinued
-    ? `See Alternatives →`
-    : tool.priceTier === 'paid'
-    ? `Visit ${tool.name} →`
-    : `Try ${tool.name} Free →`;
-  const ctaAriaLabel = isDiscontinued
-    ? `See alternatives to ${tool.name}`
-    : tool.priceTier === 'paid'
-    ? `Visit ${tool.name} website`
-    : `Try ${tool.name} for free`;
-
+export default function ToolPage({ tool }) {
+  if (!tool) return null;
   return (
-    <>
-      <NextSeo {...seo} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-
-      <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px 20px' }}>
-
-        {/* Breadcrumb — semantic ol/li for screen readers + schema */}
-        <nav aria-label="Breadcrumb" style={{ fontSize: 13, color: '#8ba3ca', marginBottom: 24 }}>
-          <ol style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            <li><Link href="/"      style={{ color: '#8ba3ca' }}>Home</Link></li>
-            <li aria-hidden="true"  style={{ margin: '0 4px' }}>›</li>
-            <li><Link href="/tools" style={{ color: '#8ba3ca' }}>Directory</Link></li>
-            <li aria-hidden="true"  style={{ margin: '0 4px' }}>›</li>
-            <li><span style={{ color: '#e8f0ff' }} aria-current="page"><span className="notranslate">{tool.name}</span></span></li>
-          </ol>
-        </nav>
-
-        <ContentUpdateNotice
-          lastUpdated={tool.updated_at ? new Date(tool.updated_at).toISOString() : "2026-06-12"}
-          frequency="monthly"
-          label="Data last synced"
-        />
-
-        {/* Hero card */}
-        <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 28, marginBottom: 24 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
-
-            {/* Identity */}
-            <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-              <div aria-hidden="true" style={{
-                width: 64, height: 64, borderRadius: 16, flexShrink: 0,
-                background: 'rgba(20,255,244,0.1)', border: '1px solid rgba(20,255,244,0.25)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 26, fontWeight: 800, color: '#14FFF4', fontFamily: 'Space Grotesk, sans-serif',
-              }}>
-                <span className="notranslate">{tool.name[0]}</span>
-              </div>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-                  <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(22px, 5vw, 30px)', fontWeight: 800, color: '#e8f0ff' }}>
-                    <span className="notranslate">{tool.name}</span>
-                  </h1>
-                  {tool.hot   && <Badge text="HOT"        variant="hot" />}
-                  {tool.badge && <Badge text={tool.badge} />}
-                </div>
-                <div style={{ color: '#8ba3ca', fontSize: 13 }}>{tool.category}</div>
-              </div>
-            </div>
-
-            {/* CTAs */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end' }}>
-              <button
-                onClick={handleAffiliateCTA}
-                aria-label={ctaAriaLabel}
-                style={{
-                  background: '#14FFF4', color: '#080d1a', border: 'none',
-                  borderRadius: 12, padding: '12px 24px', fontWeight: 800, fontSize: 15, cursor: 'pointer',
-                }}
-              >
-                {ctaLabel}
-              </button>
-              <button
-                onClick={() => toggleFavorite && toggleFavorite(tool.id)}
-                aria-label={isSaved ? `Unsave ${tool.name}` : `Save ${tool.name}`}
-                aria-pressed={isSaved}
-                style={{
-                  background: 'none', border: '1px solid #1a2d4a', borderRadius: 10,
-                  padding: '8px 16px', fontSize: 13, cursor: 'pointer',
-                  color: isSaved ? '#ff4d6d' : '#8ba3ca',
-                }}
-              >
-                {isSaved ? '❤️ Saved' : '🤍 Save Tool'}
-              </button>
-            </div>
-          </div>
-
-          {/* Rating row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 20, flexWrap: 'wrap' }}>
-            {tool.rating ? (
-              <>
-                <StarRating rating={tool.rating} size={16} />
-                <span style={{ color: '#8ba3ca', fontSize: 13 }}>Shabelle Hub Rating</span>
-              </>
-            ) : (
-              <span style={{ color: '#8ba3ca', fontSize: 13, fontStyle: 'italic' }}>ShabelleHub Rating — Not yet rated</span>
-            )}
-            <span style={{
-              background: 'rgba(20,255,244,0.1)', color: '#14FFF4',
-              border: '1px solid rgba(20,255,244,0.2)', borderRadius: 6,
-              padding: '3px 10px', fontSize: 12, fontWeight: 700,
-            }}>
-              {tool.price}
-            </span>
-            <span style={{ color: '#8ba3ca', fontSize: 12 }}>
-              Last updated <time dateTime={meta.lastUpdated}>{new Date(meta.lastUpdated).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</time>
-            </span>
-          </div>
-        </div>
-
-        <nav aria-label="Table of contents" style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 20, padding: '10px 0', borderBottom: '1px solid #1a2d4a' }}>
-          <a href="#overview" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>Overview</a>
-          <a href="#pros-cons" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>Pros & Cons</a>
-          <a href="#use-cases" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>Use Cases</a>
-          <a href="#faq" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>FAQ</a>
-          <a href="#alternatives" style={{ color: '#8ba3ca', fontSize: 13, textDecoration: 'none' }}>Alternatives</a>
-        </nav>
-
-        {recentUpdate && (
-          <div style={{ background: '#0f1829', border: '1px solid rgba(20,255,244,0.25)', borderRadius: 14, padding: '14px 20px', marginBottom: 16 }}>
-            <div style={{ color: '#14FFF4', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
-              📋 Recent Update ({new Date(recentUpdate.shippedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
-            </div>
-            <div style={{ color: '#8ba3ca', fontSize: 13 }}>
-              {CATEGORY_LABELS_LOCAL[recentUpdate.category] || recentUpdate.category} changed
-              {recentUpdate.oldValue ? `: ${recentUpdate.oldValue} → ` : ': '}
-              {recentUpdate.newValue || '(updated)'}
-            </div>
-          </div>
-        )}
-
-        {/* Trust block — author, reviewer, last updated/reviewed, editorial links */}
-        <TrustBlock author={author} reviewer={reviewer} lastUpdated={meta.lastUpdated} lastReviewed={meta.lastReviewed} type="tool" />
-
-        <AdSlot slot="3333333333" label="Tool review ad (top)" />
-
-        {/* Overview */}
-        <div id="overview" style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 24, marginBottom: 20 }}>
-          <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 14 }}>Overview</h2>
-          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.75 }}>{tool.longDesc}</p>
-        </div>
-
-        {/* Pros & Cons */}
-        <div id="pros-cons" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16, marginBottom: 20 }}>
-          <div style={{ background: '#0f1829', border: '1px solid rgba(0,208,132,0.2)', borderRadius: 16, padding: 22 }}>
-            <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, color: '#00d084', marginBottom: 14 }}>✅ Pros</h3>
-            <ul style={{ listStyle: 'none' }}>
-              {tool.pros.length > 0 ? tool.pros.map((p, i) => (
-                <li key={i} style={{ color: '#e8f0ff', fontSize: 14, display: 'flex', gap: 8, marginBottom: 8 }}>
-                  <span aria-hidden="true" style={{ color: '#00d084', flexShrink: 0 }}>+</span>{p}
-                </li>
-              )) : (
-                <li style={{ color: '#8ba3ca', fontSize: 14, fontStyle: 'italic' }}>Not yet assessed</li>
-              )}
-            </ul>
-          </div>
-          <div style={{ background: '#0f1829', border: '1px solid rgba(255,77,109,0.2)', borderRadius: 16, padding: 22 }}>
-            <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, color: '#ff4d6d', marginBottom: 14 }}>❌ Cons</h3>
-            <ul style={{ listStyle: 'none' }}>
-              {tool.cons.length > 0 ? tool.cons.map((c, i) => (
-                <li key={i} style={{ color: '#e8f0ff', fontSize: 14, display: 'flex', gap: 8, marginBottom: 8 }}>
-                  <span aria-hidden="true" style={{ color: '#ff4d6d', flexShrink: 0 }}>–</span>{c}
-                </li>
-              )) : (
-                <li style={{ color: '#8ba3ca', fontSize: 14, fontStyle: 'italic' }}>Not yet assessed</li>
-              )}
-            </ul>
-          </div>
-        </div>
-
-        {/* Use Cases */}
-        <div id="use-cases" style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 22, marginBottom: 20 }}>
-          <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, marginBottom: 14 }}>Best Use Cases</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {tool.useCases.map((u, i) => (
-              <span key={i} style={{
-                background: 'rgba(20,255,244,0.08)', color: '#14FFF4',
-                border: '1px solid rgba(20,255,244,0.2)', borderRadius: 8,
-                padding: '6px 14px', fontSize: 13, fontWeight: 500,
-              }}>
-                {u}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div id="faq">
-          <ToolFAQ faqs={faqs} toolName={tool.name} />
-        </div>
-
-        {/* Trust badge */}
-        <div style={{
-          background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16,
-          padding: 18, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12,
-        }}>
-          <span aria-hidden="true" style={{ fontSize: 22 }}>🛡️</span>
-          {(tool.rating || tool.pros.length > 0 || tool.cons.length > 0) ? (
-            <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>
-              <strong style={{ color: '#e8f0ff' }}>Independently reviewed by {author ? author.name : 'Shabelle Hub'}.</strong>{' '}
-              Our ratings are based on hands-on testing and are never influenced by affiliate relationships.
-              Meet {' '}
-              <Link href="/team" style={{ color: '#14FFF4' }}>{author ? author.name : 'the team'}</Link>.
-            </p>
-          ) : (
-            <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.6 }}>
-              <strong style={{ color: '#e8f0ff' }}>Reviewed by {author ? author.name : 'Shabelle Hub'}.</strong>{' '}
-              This listing is based on publicly available information from the provider&apos;s official site — it has not yet been independently rated or hands-on tested.
-              Meet {' '}
-              <Link href="/team" style={{ color: '#14FFF4' }}>{author ? author.name : 'the team'}</Link>.
-            </p>
-          )}
-        </div>
-
-        {/* CTA box */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(20,255,244,0.05), rgba(20,255,244,0.02))',
-          border: '1px solid rgba(20,255,244,0.2)', borderRadius: 16, padding: 28,
-          textAlign: 'center', marginBottom: 28,
-        }}>
-          <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 20, fontWeight: 800, marginBottom: 10 }}>
-            Ready to try <span className="notranslate">{tool.name}</span>?
-          </h3>
-          <p style={{ color: '#8ba3ca', fontSize: 14, marginBottom: 22 }}>
-            {tool.priceTier === 'freemium'
-              ? 'Start for free — no credit card required.'
-              : tool.priceTier === 'free'
-              ? 'Completely free to use.'
-              : `Plans start at ${tool.price}`}
-          </p>
-          <button
-            onClick={handleAffiliateCTA}
-            aria-label={ctaAriaLabel}
-            style={{
-              background: '#14FFF4', color: '#080d1a', border: 'none',
-              borderRadius: 12, padding: '14px 32px', fontWeight: 800, fontSize: 15, cursor: 'pointer',
-            }}
-          >
-            {ctaLabel}
-          </button>
-          {customDisclosure
-            ? <p style={{ fontSize: 12, color: '#8ba3ca', marginTop: 8, lineHeight: 1.6 }}>{customDisclosure}</p>
-            : <AffiliateDisclosure compact />
-          }
-        </div>
-
-        <AdSlot slot="4444444444" label="Tool review ad (bottom)" />
-
-        {/* Related tools */}
-        {related.length > 0 && (
-          <section id="alternatives" aria-label={`Alternatives to ${tool.name}`}>
-            <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 16 }}>
-              {tool.alternatives && tool.alternatives.length > 0
-                ? `Popular Alternatives to ${tool.name}`
-                : `Similar Tools in ${tool.category}`}
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14 }}>
-              {related.map(t => (
-                <Link key={t.id} href={`/tools/${t.slug}`} style={{ textDecoration: 'none' }}>
-                  <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 12, padding: 16 }}>
-                    <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, color: '#e8f0ff', marginBottom: 6 }}>{t.name}</div>
-                    <StarRating rating={t.rating} size={12} />
-                    <div style={{ color: '#8ba3ca', fontSize: 12, marginTop: 6 }}>{t.price}</div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            {hasAlternativesPage && (
-              <div style={{ marginTop: 14 }}>
-                <Link href={`/tools/${tool.slug}/alternatives`} style={{ color: '#14FFF4', fontSize: 13, textDecoration: 'none' }}>
-                  View all alternatives →
-                </Link>
-              </div>
-            )}
-          </section>
-        )}
-
-        <SmartStack stack={stack} />
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 24 }}>
-          <AffiliateDisclosure />
-          <AdvertisingNotice />
-        </div>
-      </div>
-    </>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold">{tool.name}</h1>
+      <p className="mt-2 text-gray-600">{tool.description}</p>
+    </div>
   );
 }
