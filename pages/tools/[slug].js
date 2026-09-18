@@ -26,7 +26,7 @@ export async function getStaticPaths() {
       paths = res.data.map(t => ({ params: { slug: t.slug } }));
     }
   } catch (err) {
-    console.warn('[getStaticPaths] Supabase fetch failed, falling back to staticTools');
+    console.warn('[getStaticPaths] DB fetch failed, using static fallback');
   }
   return {
     paths,
