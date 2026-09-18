@@ -20,8 +20,16 @@ import { isAlternativesPageEligible } from '../../lib/alternatives';
 import ToolFAQ from '../../components/tools/ToolFAQ';
 
 export async function getStaticPaths() {
+  let paths = staticTools.map(t => ({ params: { slug: t.slug } }));
+  try {
+    const res = await listTools({ status: 'published', lim: 1000 });
+      paths = res.data.map(t => ({ params: { slug: t.slug } }));
+    }
+  } catch (err) {
+    console.warn('[getStaticPaths] Supabase fetch failed, falling back to staticTools');
+  }
   return {
-    paths: staticTools.map(t => ({ params: { slug: t.slug } })),
+    paths,
     fallback: 'blocking',
   };
 }
