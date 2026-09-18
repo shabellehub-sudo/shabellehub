@@ -457,7 +457,7 @@ function SmartStackMatcher({ tool }) {
 
               {result.reasons.length === 0 && (
                 <p className="sh-muted">
-                  We don't have enough matching signals yet.
+                  We don&apos;t have enough matching signals yet.
                   Consider checking the alternatives below.
                 </p>
               )}
