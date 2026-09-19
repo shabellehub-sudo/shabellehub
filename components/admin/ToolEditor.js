@@ -37,6 +37,7 @@ const EMPTY = {
   tags: [],                 // ['string']
   useCases: [],             // ['string']
   faqs: [],                 // [{ question, answer }]
+  stack: [],                // ['string'] — integrations/platforms/tech stack
   alternatives: [],         // ['slug']
   featured: false, hot: false,
   seoTitle: '', seoDescription: '', seoKeywords: [],
@@ -54,6 +55,7 @@ function mapToForm(tool) {
     cons: tool.cons || [],
     useCases: tool.useCases || [],
     faqs: tool.faqs || [],
+    stack: tool.stack || [],
     alternatives: tool.alternatives || [],
     seoKeywords: tool.seoKeywords || [],
     screenshots: tool.screenshots || [],
@@ -324,6 +326,7 @@ export default function ToolEditor({ mode, initialTool, onSaved }) {
           <ListEditor label="Pros" items={form.pros} onChange={v => set('pros', v)} placeholder="e.g. Best reasoning quality" />
           <ListEditor label="Cons" items={form.cons} onChange={v => set('cons', v)} placeholder="e.g. No image generation" />
           <ListEditor label="Use Cases" items={form.useCases} onChange={v => set('useCases', v)} placeholder="e.g. Long-form writing" />
+          <ListEditor label="Stack / Integrations" items={form.stack} onChange={v => set('stack', v)} placeholder="e.g. Slack, Zapier, VS Code" />
         </AdminCard>
 
         {/* FAQ */}
