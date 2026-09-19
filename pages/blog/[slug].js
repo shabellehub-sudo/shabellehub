@@ -267,6 +267,13 @@ function BlockContent({ blocks }) {
 }
 
 // ── FAQ Schema block ─────────────────────────────────────────────────────────
+function safeJsonLd(value) {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
+}
+
 function FAQSchema({ faqs }) {
   if (!faqs?.length) return null;
   const schema = {
@@ -278,7 +285,7 @@ function FAQSchema({ faqs }) {
       acceptedAnswer: { '@type': 'Answer', text: f.answer },
     })),
   };
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }} />;
 }
 
 // ── Page ─────────────────────────────────────────────────────────────────────
