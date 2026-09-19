@@ -36,6 +36,7 @@ const EMPTY = {
   cons: [],                 // ['string']
   tags: [],                 // ['string']
   useCases: [],             // ['string']
+  faqs: [],                 // [{ question, answer }]
   alternatives: [],         // ['slug']
   featured: false, hot: false,
   seoTitle: '', seoDescription: '', seoKeywords: [],
@@ -52,6 +53,7 @@ function mapToForm(tool) {
     pros: tool.pros || [],
     cons: tool.cons || [],
     useCases: tool.useCases || [],
+    faqs: tool.faqs || [],
     alternatives: tool.alternatives || [],
     seoKeywords: tool.seoKeywords || [],
     screenshots: tool.screenshots || [],
@@ -131,6 +133,29 @@ function ImageUploader({ label, currentUrl, onUpload, uploading, accept = 'image
 }
 
 // ── Main editor ───────────────────────────────────────────────────────────────
+function FAQRow({ faq, index, onChange, onRemove }) {
+  return (
+    <div style={{ border: '1px solid #1a2d4a', borderRadius: 8, padding: 12, marginBottom: 10 }}>
+      <TextInput
+        label={`Question ${index + 1}`}
+        value={faq.question}
+        onChange={e => onChange(index, 'question', e.target.value)}
+        placeholder="e.g. Is ChatGPT free to use?"
+      />
+      <TextArea
+        label="Answer"
+        rows={3}
+        value={faq.answer}
+        onChange={e => onChange(index, 'answer', e.target.value)}
+        placeholder="Answer shown in the FAQ accordion and FAQ schema"
+      />
+      <Button variant="secondary" onClick={() => onRemove(index)} style={{ fontSize: 12, padding: '6px 12px', marginTop: 4 }}>
+        Remove
+      </Button>
+    </div>
+  );
+}
+
 export default function ToolEditor({ mode, initialTool, onSaved }) {
   const auth = useAuth();
   const [form, setForm] = useState(() => mode === 'edit' && initialTool ? mapToForm(initialTool) : EMPTY);
@@ -144,6 +169,17 @@ export default function ToolEditor({ mode, initialTool, onSaved }) {
 
   const uid = auth.user?.uid;
   const set = useCallback((field, value) => setForm(f => ({ ...f, [field]: value })), []);
+
+  function addFAQ() {
+    set('faqs', [...(form.faqs || []), { question: '', answer: '' }]);
+  }
+  function updateFAQ(idx, field, value) {
+    const next = (form.faqs || []).map((f, i) => i === idx ? { ...f, [field]: value } : f);
+    set('faqs', next);
+  }
+  function removeFAQ(idx) {
+    set('faqs', (form.faqs || []).filter((_, i) => i !== idx));
+  }
 
   function handleNameChange(value) {
     set('name', value);
@@ -288,6 +324,20 @@ export default function ToolEditor({ mode, initialTool, onSaved }) {
           <ListEditor label="Pros" items={form.pros} onChange={v => set('pros', v)} placeholder="e.g. Best reasoning quality" />
           <ListEditor label="Cons" items={form.cons} onChange={v => set('cons', v)} placeholder="e.g. No image generation" />
           <ListEditor label="Use Cases" items={form.useCases} onChange={v => set('useCases', v)} placeholder="e.g. Long-form writing" />
+        </AdminCard>
+
+        {/* FAQ */}
+        <AdminCard style={{ marginBottom: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, color: '#6b82a8', textTransform: 'uppercase', letterSpacing: 0.5, margin: 0 }}>FAQ (FAQ Schema)</h3>
+            <Button variant="secondary" onClick={addFAQ} style={{ fontSize: 12, padding: '6px 12px' }}>+ Add FAQ</Button>
+          </div>
+          {(form.faqs || []).length === 0 && (
+            <p style={{ color: '#6b82a8', fontSize: 13 }}>No FAQs yet. Add questions to show the FAQ accordion and generate FAQ schema for Google.</p>
+          )}
+          {(form.faqs || []).map((faq, i) => (
+            <FAQRow key={i} faq={faq} index={i} onChange={updateFAQ} onRemove={removeFAQ} />
+          ))}
         </AdminCard>
 
         {/* Images */}
