@@ -65,11 +65,20 @@ export default function AdminMonitoringPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  async function handleReview(id, decision) {
+  async function handleReview(c, decision) {
     const supabase = getSupabaseClient();
     const { data: { session } } = await supabase.auth.getSession();
-    const result = await reviewChange(id, decision, session?.user?.id);
+    const result = await reviewChange(c.id, decision, session?.user?.id);
     if (result.error) { setError(result.error); return; }
+    if (c.tool_slug) {
+      try {
+        await fetch('/api/admin/revalidate-change', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token || ''}` },
+          body: JSON.stringify({ slug: c.tool_slug }),
+        });
+      } catch { /* best-effort; page still updates within the normal ISR window */ }
+    }
     load();
   }
 
@@ -246,7 +255,7 @@ export default function AdminMonitoringPage() {
                     {shipping[c.id] ? 'Shipping…' : 'Confirm & Ship'}
                   </Button>
                   <Button variant="secondary" onClick={() => handleSkipShip(c.id)} style={{ fontSize: 11, padding: '5px 9px' }}>Skip Ship</Button>
-                  <Button variant="danger" onClick={() => handleReview(c.id, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
+                  <Button variant="danger" onClick={() => handleReview(c, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
                 </div>
               </div>
             ))}
@@ -325,8 +334,8 @@ export default function AdminMonitoringPage() {
                   )}
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <Button variant="secondary" onClick={() => handleReview(c.id, 'confirmed')} style={{ fontSize: 11, padding: '5px 9px' }}>Confirm</Button>
-                  <Button variant="danger" onClick={() => handleReview(c.id, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
+                  <Button variant="secondary" onClick={() => handleReview(c, 'confirmed')} style={{ fontSize: 11, padding: '5px 9px' }}>Confirm</Button>
+                  <Button variant="danger" onClick={() => handleReview(c, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
                 </div>
               </div>
               {c.ai_summary ? (
@@ -391,8 +400,8 @@ export default function AdminMonitoringPage() {
                     )}
                   </div>
                     <div style={{ display: 'flex', gap: 6 }}>
-                    <Button variant="secondary" onClick={() => handleReview(c.id, 'confirmed')} style={{ fontSize: 11, padding: '5px 9px' }}>Confirm</Button>
-                    <Button variant="danger" onClick={() => handleReview(c.id, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
+                    <Button variant="secondary" onClick={() => handleReview(c, 'confirmed')} style={{ fontSize: 11, padding: '5px 9px' }}>Confirm</Button>
+                    <Button variant="danger" onClick={() => handleReview(c, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
                   </div>
                 </div>
                 {c.ai_summary ? (

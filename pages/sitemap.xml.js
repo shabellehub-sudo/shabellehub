@@ -45,6 +45,24 @@ export async function getServerSideProps({ res }) {
   const entries = [...generateSitemapEntries(tools, livePosts, categories, teamMembers), ...alternativesEntries, ...comparisonEntries];
   const today   = new Date().toISOString().split('T')[0];
 
+  // /changes entry uses its own SITE_URL (see lib/changes/site.js), which is
+  // intentionally a different host than the existing BASE_URL above (Session
+  // 3 will reconcile this). Wrapped so a missing/invalid NEXT_PUBLIC_SITE_URL
+  // only drops this one entry rather than breaking the whole sitemap.
+  let changesEntryXml = '';
+  try {
+    const { SITE_URL } = await import('../lib/changes/site');
+    changesEntryXml = `  <url>
+    <loc>${SITE_URL}/changes</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+`;
+  } catch (err) {
+    console.warn('[sitemap] /changes entry skipped:', err.message);
+  }
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -54,7 +72,7 @@ ${entries.map(e => `  <url>
     <changefreq>${e.changefreq}</changefreq>
     <priority>${e.priority}</priority>
   </url>`).join('\n')}
-</urlset>`;
+${changesEntryXml}</urlset>`;
 
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=3600');

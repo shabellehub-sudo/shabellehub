@@ -36,3 +36,4 @@ firestore_audit*.txt
 data/*.bak
 data/*.bak-*
 index-diff.txt
+.tmp-patches/

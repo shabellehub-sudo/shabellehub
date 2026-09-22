@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { tools as staticTools } from '../../data';
 import { listTools } from '../../lib/cms/tools';
+import { getToolChangeHistory } from '../../lib/changes';
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                    */
@@ -727,10 +728,13 @@ export async function getStaticProps({ params }) {
       .slice(0, 3);
   }
 
+  const changeHistory = await getToolChangeHistory(tool.slug);
+
   return {
     props: {
       tool,
       related,
+      changeHistory,
     },
 
     revalidate: 3600,
@@ -744,6 +748,7 @@ export async function getStaticProps({ params }) {
 export default function ToolPage({
   tool,
   related = [],
+  changeHistory = [],
 }) {
   if (!tool) return null;
 
@@ -1323,6 +1328,39 @@ export default function ToolPage({
           )}
 
           <FAQSection faq={faq} />
+
+          {changeHistory && changeHistory.length > 0 && (
+            <section className="sh-section" id="change-history">
+              <div className="sh-section-heading">
+                <div>
+                  <span className="sh-eyebrow">CHANGE LOG</span>
+                  <h2>Change History</h2>
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {changeHistory.map((c) => (
+                  <a
+                    key={c.anchor}
+                    href={`/changes#${c.anchor}`}
+                    style={{ display: 'block', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: '14px 16px', textDecoration: 'none' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent-2)', background: 'rgba(108,92,255,0.12)', borderRadius: 999, padding: '2px 10px' }}>
+                        {c.category}
+                      </span>
+                      <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--muted)' }}>
+                        {new Date(c.detected_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })}
+                      </span>
+                    </div>
+                    <p style={{ color: 'var(--muted)', fontSize: 13, margin: 0 }}>{c.summary}</p>
+                  </a>
+                ))}
+              </div>
+              <Link href="/changes" style={{ display: 'inline-block', marginTop: 12, fontSize: 13, color: 'var(--accent-2)' }}>
+                View all changes →
+              </Link>
+            </section>
+          )}
 
         </div>
       </main>

@@ -117,6 +117,7 @@ export default async function handler(req, res) {
   // surfaced as a warning rather than an error.
   try {
     await res.revalidate(`/tools/${slug}`);
+    await res.revalidate('/changes');
   } catch (revalidateErr) {
     return res.status(200).json({
       ok: true,
