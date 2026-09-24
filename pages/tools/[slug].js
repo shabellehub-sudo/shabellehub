@@ -824,6 +824,19 @@ export default function ToolPage({
 
   const ratingValue = Number(rating) || 0;
 
+  const priceText = String(price || '');
+  const isFreeTier =
+    ['free', 'freemium'].includes(priceTier) ||
+    /^ *free/i.test(priceText);
+  const priceMatch = priceText.match(
+    /[$] ?([0-9]+(?:[.][0-9]+)?)/
+  );
+  const offerPrice = isFreeTier
+    ? '0'
+    : priceMatch
+      ? priceMatch[1]
+      : null;
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -839,19 +852,30 @@ export default function ToolPage({
       : {}),
     ...(ratingValue > 0
       ? {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue,
-            bestRating: 5,
-            worstRating: 1,
+          review: {
+            '@type': 'Review',
+            author: {
+              '@type': 'Organization',
+              name: 'ShabelleHub',
+            },
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue,
+              bestRating: 5,
+              worstRating: 1,
+            },
           },
         }
       : {}),
-    ...(price
+    ...(offerPrice !== null
       ? {
           offers: {
             '@type': 'Offer',
-            description: String(price),
+            price: offerPrice,
+            priceCurrency: 'USD',
+            ...(price
+              ? { description: String(price) }
+              : {}),
           },
         }
       : {}),
