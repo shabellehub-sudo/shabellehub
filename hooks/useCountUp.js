@@ -1,4 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+
+// SSR has no layout effects, so fall back to useEffect there (avoids the
+// React warning); on the client we want useLayoutEffect specifically so
+// the reset-to-0 below happens before paint, with no visible flash.
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 /**
  * useCountUp — animates a number from 0 to `target` once, starting when
@@ -7,11 +12,25 @@ import { useEffect, useRef, useState } from 'react';
  *
  * Ease-out cubic gives a natural "quick start, gentle finish" feel
  * instead of a linear tick-up.
+ *
+ * SSR/hydration note: initial state is `target`, not 0, so the
+ * server-rendered HTML and the first client render both show the real
+ * value (no hydration mismatch, real stats visible to crawlers/no-JS).
+ * A layout effect then resets to 0 client-side, before the browser
+ * paints, so JS-enabled users still see the original 0 → target
+ * count-up animation with no visible flash of the final value first.
  */
 export function useCountUp(target, { duration = 1200, decimals = 0 } = {}) {
   const ref = useRef(null);
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(target);
   const startedRef = useRef(false);
+
+  useIsomorphicLayoutEffect(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+    setValue(0);
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
