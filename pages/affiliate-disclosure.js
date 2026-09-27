@@ -2,9 +2,8 @@ import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import { siteConfig } from '../data';
 import { PageTitle } from '../components/ui';
-import { listTools } from '../lib/cms/tools';
 
-const FALLBACK_TOOL_NAMES = ['ChatGPT', 'Claude', 'Midjourney', 'Notion AI', 'Grammarly', 'Perplexity AI'];
+const FALLBACK_TOOL_NAMES = ['Sembly AI', 'Profitio'];
 
 const getSections = (sampleToolNames) => [
   {
@@ -13,7 +12,7 @@ const getSections = (sampleToolNames) => [
   },
   {
     title: 'Programs We Currently Participate In',
-    body: `Shabelle Hub participates in affiliate or referral programs for some of the tools we cover, including ${sampleToolNames.join(', ')}, and others. Not every tool listed on this site has an affiliate relationship attached to it — some links are simply direct, non-monetized links to the provider's site.`,
+    body: `Shabelle Hub currently participates in affiliate programs with ${sampleToolNames.join(' and ')}. We may earn a commission when readers sign up for or purchase these products through qualifying links. Not every tool listed on this site has an affiliate relationship attached to it — most links are direct, non-monetized links to the provider's site.`,
   },
   {
     title: 'Editorial Independence: How We Keep Reviews Honest',
@@ -42,20 +41,14 @@ const getSections = (sampleToolNames) => [
 ];
 
 export async function getStaticProps() {
-  try {
-    const toolsRes = await listTools({ status: 'published', lim: 6 });
-    if (toolsRes.error) throw new Error(toolsRes.error);
-    const names = toolsRes.data.map((t) => t.name).filter(Boolean);
-    return {
-      props: { sampleToolNames: names.length ? names : FALLBACK_TOOL_NAMES },
-      revalidate: 3600,
-    };
-  } catch {
-    return {
-      props: { sampleToolNames: FALLBACK_TOOL_NAMES },
-      revalidate: 60,
-    };
-  }
+  // Only Sembly AI and Profitio are active affiliate partners today.
+  // Update FALLBACK_TOOL_NAMES above when a new affiliate program goes
+  // live — do NOT source this list from all published tools again (that
+  // previously caused unrelated tools to be listed here by mistake).
+  return {
+    props: { sampleToolNames: FALLBACK_TOOL_NAMES },
+    revalidate: 3600,
+  };
 }
 
 export default function AffiliateDisclosurePage({ sampleToolNames = FALLBACK_TOOL_NAMES }) {
