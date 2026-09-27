@@ -65,41 +65,39 @@ export default async function handler(req, res) {
   const safeEmail = email.trim().toLowerCase();
 
   try {
-    // ── Resend (recommended) ────────────────────────────────────────────────
-    // Uncomment and set RESEND_API_KEY + CONTACT_TO_EMAIL in environment vars.
-    //
-    // const resendRes = await fetch('https://api.resend.com/emails', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-    //   },
-    //   body: JSON.stringify({
-    //     from: 'Shabelle Hub <contact@shabellehub.com>',
-    //     to: process.env.CONTACT_TO_EMAIL,
-    //     reply_to: safeEmail,
-    //     subject: `[Contact] ${reason || 'General'} — ${name.trim()}`,
-    //     text: `From: ${name.trim()} <${safeEmail}>\nReason: ${reason || 'N/A'}\n\n${message.trim()}`,
-    //   }),
-    // });
-    // if (!resendRes.ok) throw new Error('Resend error');
-
-    // Until an email provider is configured above, log the submission so it's
-    // at least visible in server logs / Vercel function logs.
     console.log(
       `[Shabelle Hub] Contact form submission from ${escapeForLog(safeEmail)} ` +
       `(reason: ${escapeForLog(reason || 'N/A')}): ${escapeForLog(message.trim())}`
     );
 
-    // Fix: P1 Security Sprint -- Phase 1, item 3 (false-success behavior).
-    // The submission genuinely was received and logged, so this stays a
-    // 200 (not an error) -- but when no email provider is configured, the
-    // team will NOT see this until someone checks Vercel logs, so the
-    // response must say so rather than implying a person was notified.
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env.RESEND_API_KEY || !process.env.CONTACT_TO_EMAIL) {
       return res.status(200).json({
         success: true,
         warning: 'Message received and logged, but email delivery is not configured yet -- our team may not see this immediately.',
+      });
+    }
+
+    const resendRes = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'Shabelle Hub <onboarding@resend.dev>',
+        to: process.env.CONTACT_TO_EMAIL,
+        reply_to: safeEmail,
+        subject: `[Contact] ${reason || 'General'} — ${name.trim()}`,
+        text: `From: ${name.trim()} <${safeEmail}>\nReason: ${reason || 'N/A'}\n\n${message.trim()}`,
+      }),
+    });
+
+    if (!resendRes.ok) {
+      const errBody = await resendRes.text().catch(() => '');
+      console.error('[Shabelle Hub] Resend API error:', resendRes.status, escapeForLog(errBody));
+      return res.status(200).json({
+        success: true,
+        warning: 'Message received and logged, but the notification email failed to send -- our team may not see this immediately.',
       });
     }
 
