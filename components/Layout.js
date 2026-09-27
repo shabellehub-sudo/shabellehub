@@ -225,6 +225,7 @@ export function Footer() {
               { href: '/privacy',             label: 'Privacy Policy' },
               { href: '/terms',               label: 'Terms of Service' },
               { href: '/affiliate-disclosure', label: 'Affiliate Disclosure' },
+              { href: '/this-site-is-for-sale', label: 'Site For Sale' },
               { href: '/advertising-disclosure', label: 'Advertising Disclosure' },
             ].map(l => (
               <Link
