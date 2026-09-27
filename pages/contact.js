@@ -67,13 +67,21 @@ export default function ContactPage() {
         <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 28, fontWeight: 800, marginBottom: 8 }}>
           Get In Touch
         </h1>
-        <p style={{ color: '#8ba3ca', fontSize: 14, marginBottom: 28 }}>
+        <p style={{ color: '#8ba3ca', fontSize: 14, marginBottom: 12 }}>
           Submit a tool, discuss a partnership, or share feedback with the Shabelle Hub team.
+        </p>
+        <p style={{ marginBottom: 28 }}>
+          <a href="https://wa.me/252616956634" target="_blank" rel="noopener noreferrer" style={{ color: '#14FFF4', fontSize: 14, textDecoration: 'underline' }}>
+            Prefer WhatsApp? Message us directly →
+          </a>
         </p>
 
         {sent ? (
           <div style={{ background: 'rgba(20,255,244,0.06)', border: '1px solid rgba(20,255,244,0.2)', borderRadius: 12, padding: 24, color: '#14FFF4', fontWeight: 600, textAlign: 'center' }}>
-            🚀 Message sent! We&rsquo;ll get back to you within 48 hours.
+            🚀 Message received! For a faster reply, message us directly on{' '}
+            <a href="https://wa.me/252616956634" target="_blank" rel="noopener noreferrer" style={{ color: '#14FFF4' }}>
+              WhatsApp
+            </a>.
           </div>
         ) : (
           <div
