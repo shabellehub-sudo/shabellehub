@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { siteConfig } from '../data';
 import { PageTitle } from '../components/ui';
 
-const FALLBACK_TOOL_NAMES = ['Sembly AI', 'Profitio'];
+const FALLBACK_TOOL_NAMES = ['Sembly AI', 'Profitio', 'Noota'];
 
 const getSections = (sampleToolNames) => [
   {
