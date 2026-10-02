@@ -19,6 +19,41 @@ const CATEGORY_LABELS = {
   unknown: 'Unknown',
 };
 
+function looksLikeRawPageText(value) {
+  if (typeof value !== 'string') return false;
+  const text = value.trim();
+  if (!text) return false;
+
+  return (
+    /<\/?[a-z][^>]*>/i.test(text) ||
+    /(?:skip to content|accept cookies|cookie settings|all rights reserved|javascript is disabled|sign in|log in|menu)/i.test(text) ||
+    (text.length > 220 && text.split(/\s+/).length > 30)
+  );
+}
+
+function ValuePair({ oldValue, newValue }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8, marginTop: 10 }}>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ color: '#6b82a8', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', marginBottom: 3 }}>
+          Current / Old Value
+        </div>
+        <div style={{ color: '#e8f0ff', fontSize: 12, lineHeight: 1.45, overflowWrap: 'anywhere', wordBreak: 'break-word' }}>
+          {oldValue || '(none)'}
+        </div>
+      </div>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ color: '#6b82a8', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', marginBottom: 3 }}>
+          Detected / New Value
+        </div>
+        <div style={{ color: '#e8f0ff', fontSize: 12, lineHeight: 1.45, overflowWrap: 'anywhere', wordBreak: 'break-word' }}>
+          {newValue || '(none)'}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminMonitoringPage() {
   const [changes, setChanges] = useState([]);
   const [auditLog, setAuditLog] = useState([]);
@@ -40,17 +75,53 @@ export default function AdminMonitoringPage() {
   const load = useCallback(async () => {
     if (!isSupabaseConfigured()) { setLoading(false); return; }
     setLoading(true);
-    const [changesRes, auditRes, confirmedRes, toolsRes] = await Promise.all([
+    const [changesRes, auditRes, confirmedRes, dismissedRes, shippedRes, toolsRes] = await Promise.all([
       listPendingChanges({ lim: 50 }),
       listRecentAuditLog({ lim: 20 }),
       listAllChanges({ status: 'confirmed', lim: 50 }),
+      listAllChanges({ status: 'dismissed', lim: 50 }),
+      listAllChanges({ status: 'shipped', lim: 50 }),
       listTools({ lim: 200 }),
     ]);
     const idMap = {};
     for (const t of toolsRes.data || []) idMap[t.slug] = t.id;
     setToolIdBySlug(idMap);
     setChanges(changesRes.data || []);
-    setAuditLog(auditRes.data || []);
+
+    const reviewEvents = [
+      ...(confirmedRes.data || []).map((c) => ({
+        id: `review-confirmed-${c.id}`,
+        tool_slug: c.tool_slug,
+        action: 'confirmed',
+        detail: c.new_value ? `Change confirmed: ${c.new_value}` : 'Change confirmed',
+        reviewed_by: c.reviewed_by || null,
+        created_at: c.reviewed_at || c.updated_at || c.detected_at,
+      })),
+      ...(dismissedRes.data || []).map((c) => ({
+        id: `review-dismissed-${c.id}`,
+        tool_slug: c.tool_slug,
+        action: 'dismissed',
+        detail: c.new_value ? `Change dismissed: ${c.new_value}` : 'Change dismissed',
+        reviewed_by: c.reviewed_by || null,
+        created_at: c.reviewed_at || c.updated_at || c.detected_at,
+      })),
+      ...(shippedRes.data || []).map((c) => ({
+        id: `review-shipped-${c.id}`,
+        tool_slug: c.tool_slug,
+        action: 'shipped',
+        detail: c.confirmed_value
+          ? `Shipped value: ${c.confirmed_value}`
+          : 'Change shipped',
+        reviewed_by: c.shipped_by || c.reviewed_by || null,
+        created_at: c.shipped_at || c.updated_at || c.detected_at,
+      })),
+    ];
+
+    const mergedAudit = [...(auditRes.data || []), ...reviewEvents]
+      .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+      .slice(0, 30);
+
+    setAuditLog(mergedAudit);
     const eligible = (confirmedRes.data || []).filter((c) => (c.change_category === 'pricing' || c.change_category === 'status') && !c.ship_skipped);
     setShippable(eligible);
     setNeedsEditorial((confirmedRes.data || []).filter((c) => c.editorial_update_needed));
@@ -59,7 +130,14 @@ export default function AdminMonitoringPage() {
       for (const c of eligible) if (next[c.id] === undefined) next[c.id] = c.new_value || '';
       return next;
     });
-    setError(changesRes.error || auditRes.error || confirmedRes.error || null);
+    setError(
+      changesRes.error ||
+      auditRes.error ||
+      confirmedRes.error ||
+      dismissedRes.error ||
+      shippedRes.error ||
+      null
+    );
     setLoading(false);
   }, []);
 
@@ -232,9 +310,12 @@ export default function AdminMonitoringPage() {
                 <div style={{ fontWeight: 700, fontSize: 13 }}>
                   {c.tool_slug} — {CATEGORY_LABELS[c.change_category] || c.change_category}
                 </div>
-                <div style={{ color: '#6b82a8', fontSize: 11, margin: '4px 0' }}>
-                  {c.old_value || '(none)'} → {c.new_value || '(none)'}
-                </div>
+                <ValuePair oldValue={c.old_value} newValue={c.new_value} />
+                {looksLikeRawPageText(c.new_value) && (
+                  <div style={{ marginTop: 8, padding: '7px 9px', borderRadius: 7, border: '1px solid #f5a623', background: 'rgba(245,166,35,0.08)', color: '#f5a623', fontSize: 11, lineHeight: 1.4 }}>
+                    ⚠ Detected value may contain page text. Verify before shipping.
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
                   <input
                     type="text"
@@ -325,10 +406,16 @@ export default function AdminMonitoringPage() {
                   )}
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <Button variant="secondary" onClick={() => handleReview(c.id, 'confirmed')} style={{ fontSize: 11, padding: '5px 9px' }}>Confirm</Button>
+                  <Button variant="secondary" onClick={() => handleReview(c.id, 'confirmed')} style={{ fontSize: 11, padding: '5px 9px' }}>Confirm Change</Button>
                   <Button variant="danger" onClick={() => handleReview(c.id, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
                 </div>
               </div>
+              <ValuePair oldValue={c.old_value} newValue={c.new_value} />
+              {looksLikeRawPageText(c.new_value) && (
+                <div style={{ marginTop: 8, padding: '7px 9px', borderRadius: 7, border: '1px solid #f5a623', background: 'rgba(245,166,35,0.08)', color: '#f5a623', fontSize: 11, lineHeight: 1.4 }}>
+                  ⚠ Detected value may contain page text. Verify before shipping.
+                </div>
+              )}
               {c.ai_summary ? (
                 <div style={{ marginTop: 10, display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                   <span style={{ fontSize: 9, fontWeight: 700, color: '#14FFF4', border: '1px solid #14FFF4', borderRadius: 4, padding: '2px 5px', flexShrink: 0 }}>
@@ -344,7 +431,7 @@ export default function AdminMonitoringPage() {
               {c.diff_excerpt && (
                 <details style={{ marginTop: 8 }}>
                   <summary style={{ cursor: 'pointer', fontSize: 11, color: '#6b82a8' }}>Show raw diff</summary>
-                  <pre style={{ marginTop: 8, fontSize: 12, color: '#e8f0ff', background: '#0a0e16', padding: 10, borderRadius: 8, whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
+                  <pre style={{ marginTop: 8, fontSize: 12, color: '#e8f0ff', background: '#0a0e16', padding: 10, borderRadius: 8, whiteSpace: 'pre-wrap', overflowX: 'auto', overflowWrap: 'anywhere', wordBreak: 'break-word' }}>
                     {c.diff_excerpt}
                   </pre>
                 </details>
@@ -359,6 +446,9 @@ export default function AdminMonitoringPage() {
           <summary style={{ cursor: 'pointer', fontSize: 13, fontWeight: 700, color: '#6b82a8', marginBottom: 10 }}>
             Low Priority — Noise ({lowPriority.length})
           </summary>
+          <p style={{ color: '#6b82a8', fontSize: 11, margin: '4px 0 10px' }}>
+            Auto-filtered from main review queue
+          </p>
           <div style={{ margin: '10px 0' }}>
             <Button variant="secondary" onClick={handleDismissAllLowPriority} disabled={dismissingLow} style={{ fontSize: 11, padding: '5px 9px' }}>
               {dismissingLow ? 'Dismissing…' : `Dismiss All Low Priority (${lowPriority.length})`}
@@ -395,6 +485,12 @@ export default function AdminMonitoringPage() {
                     <Button variant="danger" onClick={() => handleReview(c.id, 'dismissed')} style={{ fontSize: 11, padding: '5px 9px' }}>Dismiss</Button>
                   </div>
                 </div>
+                <ValuePair oldValue={c.old_value} newValue={c.new_value} />
+                {looksLikeRawPageText(c.new_value) && (
+                  <div style={{ marginTop: 8, padding: '7px 9px', borderRadius: 7, border: '1px solid #f5a623', background: 'rgba(245,166,35,0.08)', color: '#f5a623', fontSize: 11, lineHeight: 1.4 }}>
+                    ⚠ Detected value may contain page text. Verify before shipping.
+                  </div>
+                )}
                 {c.ai_summary ? (
                     <div style={{ marginTop: 10, display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                     <span style={{ fontSize: 9, fontWeight: 700, color: '#14FFF4', border: '1px solid #14FFF4', borderRadius: 4, padding: '2px 5px', flexShrink: 0 }}>
@@ -428,16 +524,23 @@ export default function AdminMonitoringPage() {
         <AdminCard>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12 }}>
             {auditLog.map((a) => (
-              <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1a2d4a', paddingBottom: 6 }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
+              <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap', borderBottom: '1px solid #1a2d4a', paddingBottom: 8 }}>
+                <div style={{ flex: '1 1 220px', minWidth: 0, overflowWrap: 'anywhere', wordBreak: 'break-word' }}>
                   <span style={{ color: '#e8f0ff' }}>{a.tool_slug} — {a.action}</span>
                   {a.detail && (
                     <div style={{ color: '#6b82a8', fontSize: 11, marginTop: 2, wordBreak: 'break-word' }}>
                       {a.detail}
                     </div>
                   )}
+                  {a.reviewed_by && (
+                    <div style={{ color: '#6b82a8', fontSize: 10, marginTop: 2 }}>
+                      Reviewer: {a.reviewed_by}
+                    </div>
+                  )}
                 </div>
-                <span style={{ color: '#6b82a8' }}>{new Date(a.created_at).toLocaleString()}</span>
+                <span style={{ color: '#6b82a8', fontSize: 11, flexShrink: 0 }}>
+                  {new Date(a.created_at).toLocaleString()}
+                </span>
               </div>
             ))}
           </div>
