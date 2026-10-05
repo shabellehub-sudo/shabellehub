@@ -126,10 +126,11 @@ check('empty/invalid input -> unknown, low confidence (regression)', () => {
 // (incorrect) behavior so it fails loudly if silently "fixed" without
 // a deliberate follow-up decision, rather than passing silently). ────
 
-check('KNOWN GAP: "GPT-5.6" vs "GPT-5.5" diff -> currently unknown, NOT model_update (gpt-5 absent from MODEL_WORDS; tracked separately, not in scope for this fix)', () => {
-  const r = classifyChange('+ GPT-5.6\n- GPT-5.5');
-  assert.strictEqual(r.category, 'unknown', 'documents the known gap — expected to change only when MODEL_WORDS is deliberately extended');
-  assert.strictEqual(r.signal, false);
+check('modern GPT model versions -> model_update high confidence', () => {
+  const r = classifyChange('+ GPT-5.6');
+  assert.strictEqual(r.category, 'model_update');
+  assert.strictEqual(r.confidence, 'high');
+  assert.strictEqual(r.signal, true);
 });
 
 
@@ -152,13 +153,38 @@ check('COLLISION FIX: "New Zapier integration available" -> integration_change (
   assert.strictEqual(r.category, 'integration_change');
 });
 
+check('Zapier company news without integration context -> unknown', () => {
+  const r = classifyChange('+ Zapier acquired another company');
+  assert.strictEqual(r.category, 'unknown');
+  assert.strictEqual(r.signal, false);
+});
+
+check('generic credits language -> unknown', () => {
+  const r = classifyChange('+ Photo credits are available');
+  assert.strictEqual(r.category, 'unknown');
+  assert.strictEqual(r.signal, false);
+});
+
+check('generic browser extension language -> unknown', () => {
+  const r = classifyChange('+ Browser extension updated');
+  assert.strictEqual(r.category, 'unknown');
+  assert.strictEqual(r.signal, false);
+});
+
+check('Chrome extension remains a contextual integration signal', () => {
+  const r = classifyChange('+ Chrome extension updated');
+  assert.strictEqual(r.category, 'integration_change');
+  assert.strictEqual(r.confidence, 'high');
+  assert.strictEqual(r.signal, true);
+});
+
 check('COLLISION FIX: "subscription model" -> pricing, not model_update (pricing tier checked before model-generic fallback)', () => {
   const r = classifyChange('+ Introducing a new subscription model');
   assert.strictEqual(r.category, 'pricing');
   assert.strictEqual(r.confidence, 'high');
 });
 
-check('FALLBACK BEHAVIOR: "business model is changing" -> model_update at MEDIUM confidence (was HIGH) -- model-generic checked before business-generic within the fallback tier, so category is unchanged but confidence is downgraded', () => {
+check('generic business model context -> model_update at MEDIUM confidence', () => {
   const r = classifyChange('+ Our business model is changing');
   assert.strictEqual(r.category, 'model_update');
   assert.strictEqual(r.confidence, 'medium');
@@ -202,15 +228,18 @@ check('PASS 2 REGRESSION: digit-before-symbol order also fires pricing', () => {
   assert.strictEqual(r.confidence, 'high');
 });
 
-check('COLLISION FIX: "We plan to launch next quarter" -> not plan_change (bare "plan" verb moved to fallback; "launch" is a real feature_added signal)', () => {
+check('generic planning language -> unknown', () => {
   const r = classifyChange('+ We plan to launch next quarter');
-  assert.strictEqual(r.category, 'feature_added');
+  assert.strictEqual(r.category, 'unknown');
+  assert.strictEqual(r.confidence, 'low');
+  assert.strictEqual(r.signal, false);
 });
 
-check('FALLBACK BEHAVIOR: "Our business continues to grow" -> plan_change at MEDIUM confidence (was HIGH) -- bare "business" is a real word, not a substring collision, so category is unchanged but confidence is downgraded', () => {
+check('generic business language -> unknown', () => {
   const r = classifyChange('+ Our business continues to grow');
-  assert.strictEqual(r.category, 'plan_change');
-  assert.strictEqual(r.confidence, 'medium');
+  assert.strictEqual(r.category, 'unknown');
+  assert.strictEqual(r.confidence, 'low');
+  assert.strictEqual(r.signal, false);
 });
 
 check('COLLISION FIX: "No limitations on export size" -> unknown, not limit_change ("limit" word-boundary no longer matches inside "limitations")', () => {
@@ -218,16 +247,18 @@ check('COLLISION FIX: "No limitations on export size" -> unknown, not limit_chan
   assert.strictEqual(r.category, 'unknown');
 });
 
-check('FALLBACK BEHAVIOR: "Photo credits: Unsplash" -> limit_change at MEDIUM confidence (was HIGH) -- bare "credits" is a real word, not a substring collision, so category is unchanged but confidence is downgraded', () => {
+check('generic credits language -> unknown', () => {
   const r = classifyChange('+ Photo credits: Unsplash');
-  assert.strictEqual(r.category, 'limit_change');
-  assert.strictEqual(r.confidence, 'medium');
+  assert.strictEqual(r.category, 'unknown');
+  assert.strictEqual(r.confidence, 'low');
+  assert.strictEqual(r.signal, false);
 });
 
-check('FALLBACK BEHAVIOR: "Trial extension for all users" -> integration_change at MEDIUM confidence (was HIGH) -- bare "extension" is a real word, not a substring collision, so category is unchanged but confidence is downgraded', () => {
+check('generic extension language -> unknown', () => {
   const r = classifyChange('+ Trial extension for all users');
-  assert.strictEqual(r.category, 'integration_change');
-  assert.strictEqual(r.confidence, 'medium');
+  assert.strictEqual(r.category, 'unknown');
+  assert.strictEqual(r.confidence, 'low');
+  assert.strictEqual(r.signal, false);
 });
 
 // ── Regression guards: exact/multi-word phrases must keep working after removing their bare generic counterparts ──
