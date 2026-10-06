@@ -1,4 +1,5 @@
 import { NextSeo } from 'next-seo';
+import { siteConfig } from '../data';
 import Link from 'next/link';
 
 const SECTIONS = [
@@ -35,8 +36,8 @@ export default function PrivacyPage() {
       <NextSeo
         title="Privacy Policy"
         description="Privacy policy for Shabelle Hub — how we collect, use, and protect your data."
-        canonical="https://shabellehub.com/privacy"
-        openGraph={{ title: 'Privacy Policy — Shabelle Hub', description: 'Shabelle Hub privacy policy — how we collect, use, and protect your data.', url: 'https://shabellehub.com/privacy', type: 'website', siteName: 'Shabelle Hub', images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Privacy Policy — Shabelle Hub' }] }}
+        canonical={`${siteConfig.url}/privacy`}
+        openGraph={{ title: 'Privacy Policy — Shabelle Hub', description: 'Shabelle Hub privacy policy — how we collect, use, and protect your data.', url: `${siteConfig.url}/privacy`, type: 'website', siteName: 'Shabelle Hub', images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'Privacy Policy — Shabelle Hub' }] }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />
       <div style={{ maxWidth: 700, margin: '0 auto', padding: '36px 20px' }}>

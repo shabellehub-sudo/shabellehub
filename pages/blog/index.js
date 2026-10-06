@@ -9,6 +9,7 @@ import {
   adminListTags,
   adminListCategories,
 } from '../../lib/cms/postsAdmin';
+import { siteConfig } from '../../data';
 
 export async function getStaticProps() {
   try {
@@ -150,14 +151,14 @@ export default function BlogPage({ posts = [], tags = [], categories = [], debug
       <NextSeo
         title="AI Tools Blog 2026 — Reviews, Guides & Comparisons"
         description="In-depth AI tool reviews, comparisons, and guides from Shabelle Hub. Learn which AI tools are worth paying for and how to use them effectively."
-        canonical="https://shabellehub.com/blog"
+        canonical={`${siteConfig.url}/blog`}
         openGraph={{
           title: 'AI Tools Blog 2026 — Reviews, Guides & Comparisons',
           description: 'In-depth AI tool reviews, comparisons, and guides from Shabelle Hub.',
-          url: 'https://shabellehub.com/blog',
+          url: `${siteConfig.url}/blog`,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Shabelle Hub AI Blog' }],
+          images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'Shabelle Hub AI Blog' }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />

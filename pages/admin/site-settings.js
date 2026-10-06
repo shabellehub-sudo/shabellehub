@@ -60,7 +60,7 @@ export default function SiteSettingsCMS() {
           <AdminCard>
             <TextInput label="Site name" value={data.siteName ?? ''} onChange={e => set('siteName', e.target.value)} />
             <TextArea label="Site tagline" rows={2} value={data.siteTagline ?? ''} onChange={e => set('siteTagline', e.target.value)} />
-            <TextInput label="Site URL (e.g. https://shabellehub.com)" value={data.siteUrl ?? ''} onChange={e => set('siteUrl', e.target.value)} />
+            <TextInput label="Site URL (e.g. https://shabellehub.vercel.app)" value={data.siteUrl ?? ''} onChange={e => set('siteUrl', e.target.value)} />
           </AdminCard>
           <AdminCard>
             <p style={{ fontSize: 12.5, fontWeight: 700, color: '#9fb3d4', marginBottom: 12, textTransform: 'uppercase' }}>Logo & Favicon</p>

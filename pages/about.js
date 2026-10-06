@@ -1,7 +1,7 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import { TransparencyNotice } from '../components/compliance';
-import { toolsCount as staticToolsCount, categoriesCount as staticCategoriesCount } from '../data';
+import { toolsCount as staticToolsCount, categoriesCount as staticCategoriesCount, siteConfig } from '../data';
 import { listTools } from '../lib/cms/tools';
 
 export async function getStaticProps() {
@@ -40,14 +40,14 @@ export default function AboutPage({ toolsCount: fetchedCount, categoriesCount: f
       <NextSeo
         title="About — Independent AI Tool Reviews & Discovery"
         description="Shabelle Hub is an independent AI discovery platform. We help users find, compare, and choose the best AI tools through honest reviews and expert analysis. No sponsored content."
-        canonical="https://shabellehub.com/about"
+        canonical={`${siteConfig.url}/about`}
         openGraph={{
           title: 'About Shabelle Hub — Independent AI Tool Reviews',
           description: 'Shabelle Hub is an independent AI discovery platform. Honest reviews, no sponsored content.',
-          url: 'https://shabellehub.com/about',
+          url: `${siteConfig.url}/about`,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'About Shabelle Hub' }],
+          images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'About Shabelle Hub' }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />

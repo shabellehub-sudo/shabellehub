@@ -6284,7 +6284,7 @@ export const siteConfig = {
   name: "Shabelle Hub",
   tagline: "Discover, Compare & Choose the Best AI Tools",
   description: "Shabelle Hub helps users discover, compare, and choose the best AI tools through independent reviews, rankings, and expert insights.",
-  url: "https://shabellehub.com",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://shabellehub.vercel.app",
   twitterHandle: "@shabellehub",
 };
 

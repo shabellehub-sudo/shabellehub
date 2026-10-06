@@ -1,6 +1,6 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-import { toolsCount as staticToolsCount } from '../data';
+import { toolsCount as staticToolsCount, siteConfig } from '../data';
 import { listTools } from '../lib/cms/tools';
 
 export async function getStaticProps() {
@@ -104,8 +104,8 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://shabellehub.com' },
-      { '@type': 'ListItem', position: 2, name: 'Review Methodology', item: 'https://shabellehub.com/review-methodology' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+      { '@type': 'ListItem', position: 2, name: 'Review Methodology', item: `${siteConfig.url}/review-methodology` },
     ],
   };
 
@@ -115,14 +115,14 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
       <NextSeo
         title="Review Methodology"
         description="How Shabelle Hub selects, tests, and rates AI tools. Our selection criteria, hands-on testing process, rating factors, and what each star rating and pricing tier means."
-        canonical="https://shabellehub.com/review-methodology"
+        canonical={`${siteConfig.url}/review-methodology`}
         openGraph={{
           title: 'Review Methodology | Shabelle Hub',
           description: 'How we select, test, and rate every AI tool covered on Shabelle Hub — selection criteria, testing steps, and rating scale.',
-          url: 'https://shabellehub.com/review-methodology',
+          url: `${siteConfig.url}/review-methodology`,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Shabelle Hub Review Methodology' }],
+          images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'Shabelle Hub Review Methodology' }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />
