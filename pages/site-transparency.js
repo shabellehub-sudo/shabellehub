@@ -117,6 +117,47 @@ export default function SiteTransparencyPage({ toolsCount: fetchedCount }) {
           </dl>
         </div>
 
+        {/* Monitoring & Verification */}
+        <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 16, padding: 24, marginBottom: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+            <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 17, fontWeight: 700, color: '#e8f0ff', margin: 0 }}>
+              Monitoring & Verification
+            </h2>
+            <span style={{ color: '#14FFF4', fontSize: 12, fontWeight: 800 }}>● Operational</span>
+          </div>
+
+          <h3 style={{ color: '#e8f0ff', fontSize: 15, margin: '0 0 8px' }}>
+            Automated monitoring. Human-reviewed changes.
+          </h3>
+
+          <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7, margin: '0 0 18px' }}>
+            ShabelleHub runs automated monitoring twice daily to detect meaningful changes across listed AI tools,
+            including pricing, plans, and features. Detected changes are reviewed before verified information is published.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10, marginBottom: 18 }}>
+            {[
+              ['103', 'Tools'],
+              ['2× daily', 'Monitoring runs'],
+              ['5,000+', 'Monitoring snapshots'],
+              ['🟢', 'System status'],
+            ].map(([value, label]) => (
+              <div key={label} style={{ background: '#0b1528', border: '1px solid #1a2d4a', borderRadius: 10, padding: '12px 10px' }}>
+                <div style={{ color: '#e8f0ff', fontWeight: 800, fontSize: 15 }}>{value}</div>
+                <div style={{ color: '#8ba3ca', fontSize: 11, marginTop: 4 }}>{label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ color: '#14FFF4', fontSize: 12, fontWeight: 800, letterSpacing: 0.3, marginBottom: 12 }}>
+            MONITOR → DETECT → REVIEW → VERIFY & UPDATE
+          </div>
+
+          <p style={{ color: '#6f86aa', fontSize: 12.5, lineHeight: 1.6, margin: 0 }}>
+            Not every detected change represents a real product change. Automated detections are reviewed before they are treated as verified information.
+          </p>
+        </div>
+
         {/* Team */}
         <div style={{ marginBottom: 24 }}>
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 17, fontWeight: 700, color: '#e8f0ff', marginBottom: 14 }}>
