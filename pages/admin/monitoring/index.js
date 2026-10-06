@@ -262,7 +262,7 @@ export default function AdminMonitoringPage() {
       <AdminCard style={{ marginBottom: 20 }}>
         <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 10 }}>Scan Now (manual)</h3>
         <p style={{ color: '#6b82a8', fontSize: 12, marginBottom: 10 }}>
-          Comma-separated tool slugs, max 5. Checks immediately instead of waiting for the daily cron cursor.
+          Comma-separated tool slugs, max 5. Checks immediately instead of waiting for the scheduled monitoring run.
         </p>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <input
