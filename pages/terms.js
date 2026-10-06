@@ -1,4 +1,5 @@
 import { NextSeo } from 'next-seo';
+import { siteConfig } from '../data';
 import Link from 'next/link';
 
 const SECTIONS = [
@@ -42,8 +43,8 @@ export default function TermsPage() {
       <NextSeo
         title="Terms of Service"
         description="Terms of Service for Shabelle Hub — the rules and disclaimers that apply when using our AI tool reviews and content."
-        canonical="https://shabellehub.com/terms"
-        openGraph={{ title: 'Terms of Service — Shabelle Hub', description: 'Shabelle Hub terms of service — the conditions that govern your use of this site.', url: 'https://shabellehub.com/terms', type: 'website', siteName: 'Shabelle Hub', images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Terms of Service — Shabelle Hub' }] }}
+        canonical={`${siteConfig.url}/terms`}
+        openGraph={{ title: 'Terms of Service — Shabelle Hub', description: 'Shabelle Hub terms of service — the conditions that govern your use of this site.', url: `${siteConfig.url}/terms`, type: 'website', siteName: 'Shabelle Hub', images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'Terms of Service — Shabelle Hub' }] }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />
       <div style={{ maxWidth: 700, margin: '0 auto', padding: '36px 20px' }}>

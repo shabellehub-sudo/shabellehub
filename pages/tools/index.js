@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
-import { tools as staticTools, categories } from '../../data';
+import { tools as staticTools, categories, siteConfig } from '../../data';
 import { listTools } from '../../lib/cms/tools';
 import { getLatestUpdatedAt } from '../../lib/utils';
 
@@ -107,14 +107,14 @@ export default function ToolsPage({ favorites = [], toggleFavorite, tools: fetch
       <NextSeo
         title={seoTitle}
         description={`Browse ${toolsCount} AI tools across ${categoriesCount} categories. Independent reviews, honest ratings, and real-world testing. Compare and choose the perfect AI tool.`}
-        canonical="https://shabellehub.com/tools"
+        canonical={`${siteConfig.url}/tools`}
         openGraph={{
           title: seoTitle,
           description: `Browse ${toolsCount} AI tools across ${categoriesCount} categories. Independent reviews, honest ratings, and real-world testing.`,
-          url: 'https://shabellehub.com/tools',
+          url: `${siteConfig.url}/tools`,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Shabelle Hub AI Tools Directory' }],
+          images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'Shabelle Hub AI Tools Directory' }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />

@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { NextSeo } from 'next-seo';
-import { tools as staticTools, blogPosts } from '../data';
+import { tools as staticTools, blogPosts, siteConfig } from '../data';
 import { listTools } from '../lib/cms/tools';
 import { getOrganizationStructuredData, getWebsiteStructuredData } from '../lib/seo';
 import { Section } from '../components/ui';
-import AnimatedCounter from '../components/shared/AnimatedCounter/AnimatedCounter';
 import BlogCardSkeleton from '../components/shared/BlogCardSkeleton/BlogCardSkeleton';
 import { getHomepageBlogProps } from '../lib/cms/homepageBlog';
 import { getTrendingThisWeek, getFastestGrowing } from '../lib/trending';
@@ -109,15 +108,15 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
       {/* FIX #8/#18: title does NOT include '| Shabelle Hub' — titleTemplate appends it */}
       <NextSeo
         title="Discover the Best AI Tools in One Place"
-        description="Compare, review, and explore the world's top AI tools for writing, coding, productivity, design, video, automation, and more. Independent reviews. No sponsored content."
-        canonical="https://shabellehub.com"
+        description="Compare, review, and explore the world's top AI tools for writing, coding, productivity, design, video, automation, and more. Independent reviews. No paid rankings or sponsored reviews."
+        canonical={siteConfig.url}
         openGraph={{
           title: 'Shabelle Hub — Discover the Best AI Tools in One Place',
           description: "Compare, review, and explore the world's top AI tools. Independent reviews, honest rankings, and expert insights.",
-          url: 'https://shabellehub.com',
+          url: siteConfig.url,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Shabelle Hub — AI Tools Discovery Platform' }],
+          images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'Shabelle Hub — AI Tools Discovery Platform' }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />
@@ -150,7 +149,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
           ].map(s => (
             <div key={s.label} style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 22, fontWeight: 800, color: '#14FFF4' }}>
-                <AnimatedCounter value={s.value} decimals={s.decimals} suffix={s.suffix} />
+                {s.value.toFixed(s.decimals)}{s.suffix}
               </div>
               <div style={{ fontSize: 11, color: '#8ba3ca', marginTop: 2 }}>{s.label}</div>
             </div>
@@ -159,7 +158,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
 
         <div style={{ maxWidth: 1200, margin: '10px auto 0', display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap', alignItems: 'center', paddingTop: 10, borderTop: '1px solid rgba(26,45,74,0.6)' }}>
           {[
-            { icon: '🛡️', text: 'No Sponsored Content' },
+            { icon: '🛡️', text: 'No Paid Rankings or Sponsored Reviews' },
             { icon: '🔍', text: 'Tools Hands-On Tested'      },
             { icon: '📊', text: 'Honest Comparisons'   },
             { icon: '🔄', text: 'Updated Weekly'        },

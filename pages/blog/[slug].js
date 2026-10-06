@@ -10,6 +10,7 @@ import {
   adminGetAuthorById,
   adminGetCategoryById,
 } from '../../lib/cms/postsAdmin';
+import { siteConfig } from '../../data';
 
 // Phase 6B — block view components
 import ImageBlockView      from '../../components/blog/blocks/ImageBlockView';
@@ -290,7 +291,7 @@ function FAQSchema({ faqs }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function BlogPostPage({ post }) {
-  const siteUrl    = 'https://shabellehub.com';
+  const siteUrl    = siteConfig.url;
   const postUrl    = `${siteUrl}/blog/${post.slug}`;
   const seoTitle   = post.seo_title   || post.title;
   const seoDesc    = post.seo_description || post.excerpt || '';

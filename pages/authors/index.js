@@ -28,7 +28,7 @@ export default function AuthorsIndexPage() {
           url: `${siteConfig.url}/authors`,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Shabelle Hub Authors' }],
+          images: [{ url: '${siteConfig.url}/og-image.png', width: 1200, height: 630, alt: 'Shabelle Hub Authors' }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />

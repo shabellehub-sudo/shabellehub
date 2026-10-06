@@ -7,6 +7,7 @@ import {
   adminListTags,
   adminListPublishedPosts,
 } from '../../../lib/cms/postsAdmin';
+import { siteConfig } from '../../../data';
 import { getTagBySlug } from '../../../lib/cms/tags';
 
 export async function getStaticPaths() {
@@ -48,8 +49,8 @@ export default function TagArchivePage({ tag, posts }) {
       <NextSeo
         title={title}
         description={desc}
-        canonical={`https://shabellehub.com/blog/tag/${tag.slug}`}
-        openGraph={{ title, description: desc, url: `https://shabellehub.com/blog/tag/${tag.slug}`, type: 'website' }}
+        canonical={`${siteConfig.url}/blog/tag/${tag.slug}`}
+        openGraph={{ title, description: desc, url: `${siteConfig.url}/blog/tag/${tag.slug}`, type: 'website' }}
       />
 
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px 20px' }}>

@@ -49,7 +49,7 @@ export default function TeamPage({ toolsCount: fetchedCount }) {
           url: `${siteConfig.url}/team`,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Shabelle Hub Team' }],
+          images: [{ url: '${siteConfig.url}/og-image.png', width: 1200, height: 630, alt: 'Shabelle Hub Team' }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />

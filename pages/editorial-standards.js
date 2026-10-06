@@ -1,6 +1,6 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-import { toolsCount as staticToolsCount } from '../data';
+import { toolsCount as staticToolsCount, siteConfig } from '../data';
 import { listTools } from '../lib/cms/tools';
 
 export async function getStaticProps() {
@@ -105,8 +105,8 @@ export default function EditorialStandardsPage({ toolsCount: fetchedCount }) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://shabellehub.com' },
-      { '@type': 'ListItem', position: 2, name: 'Editorial Standards', item: 'https://shabellehub.com/editorial-standards' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
+      { '@type': 'ListItem', position: 2, name: 'Editorial Standards', item: `${siteConfig.url}/editorial-standards` },
     ],
   };
 
@@ -116,14 +116,14 @@ export default function EditorialStandardsPage({ toolsCount: fetchedCount }) {
       <NextSeo
         title="Editorial Standards"
         description="How Shabelle Hub researches, writes, fact-checks, and corrects AI tool reviews. Our editorial independence, sourcing standards, and use of AI in content production."
-        canonical="https://shabellehub.com/editorial-standards"
+        canonical={`${siteConfig.url}/editorial-standards`}
         openGraph={{
           title: 'Editorial Standards | Shabelle Hub',
           description: 'How we research, fact-check, and maintain independence across every AI tool review on Shabelle Hub.',
-          url: 'https://shabellehub.com/editorial-standards',
+          url: `${siteConfig.url}/editorial-standards`,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Shabelle Hub Editorial Standards' }],
+          images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'Shabelle Hub Editorial Standards' }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { NextSeo } from 'next-seo';
+import { siteConfig } from '../data';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -58,8 +59,8 @@ export default function ContactPage() {
       <NextSeo
         title="Contact — Submit a Tool or Partnership"
         description="Get in touch with Shabelle Hub. Submit a tool for review, ask about partnerships, or send feedback."
-        canonical="https://shabellehub.com/contact"
-        openGraph={{ title: 'Contact — Shabelle Hub', description: 'Get in touch with the Shabelle Hub team — corrections, tool submissions, and general enquiries.', url: 'https://shabellehub.com/contact', type: 'website', siteName: 'Shabelle Hub', images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'Contact — Shabelle Hub' }] }}
+        canonical={`${siteConfig.url}/contact`}
+        openGraph={{ title: 'Contact — Shabelle Hub', description: 'Get in touch with the Shabelle Hub team — corrections, tool submissions, and general enquiries.', url: `${siteConfig.url}/contact`, type: 'website', siteName: 'Shabelle Hub', images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'Contact — Shabelle Hub' }] }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />
 

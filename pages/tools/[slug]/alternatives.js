@@ -8,13 +8,13 @@
 
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-import { tools as staticTools } from '../../../data';
+import { tools as staticTools, siteConfig } from '../../../data';
 import { listTools, getToolBySlug } from '../../../lib/cms/tools';
 import { resolveAlternatives, isAlternativesPageEligible } from '../../../lib/alternatives';
 import { resolveComparisonPair, isComparisonPairEligible, comparisonUrl } from '../../../lib/comparisons';
 import { StarRating } from '../../../components/ui';
 
-const BASE_URL = 'https://shabellehub.com';
+const BASE_URL = siteConfig.url;
 
 export async function getStaticPaths() {
   const eligibleSlugs = staticTools

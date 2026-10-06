@@ -1,7 +1,7 @@
 import { NextSeo } from 'next-seo';
 import { getFaqs } from '../data/faqs';
 import { getToolCounts } from '../lib/cms/tools';
-import { tools as staticTools } from '../data';
+import { tools as staticTools, siteConfig } from '../data';
 
 // Supabase-backed counts — falls back to the static bundle if the DB
 // fetch failed, same fail-soft pattern used site-wide.
@@ -41,14 +41,14 @@ export default function FAQPage({ toolsCount, categoriesCount }) {
       <NextSeo
         title="Frequently Asked Questions"
         description="Answers to common questions about Shabelle Hub's AI tool reviews, our testing process, and editorial independence."
-        canonical="https://shabellehub.com/faq"
+        canonical={`${siteConfig.url}/faq`}
         openGraph={{
           title: 'FAQ — Shabelle Hub',
           description: 'Answers to common questions about Shabelle Hub — how we review AI tools, our editorial standards, and how to use the directory.',
-          url: 'https://shabellehub.com/faq',
+          url: `${siteConfig.url}/faq`,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: 'FAQ — Shabelle Hub' }],
+          images: [{ url: `${siteConfig.url}/og-image.png`, width: 1200, height: 630, alt: 'FAQ — Shabelle Hub' }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />

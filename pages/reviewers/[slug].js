@@ -52,7 +52,7 @@ export default function ReviewerProfilePage({ person, reviewedTools, reviewedPos
           url: canonical,
           type: 'profile',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: title }],
+          images: [{ url: '${siteConfig.url}/og-image.png', width: 1200, height: 630, alt: title }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />

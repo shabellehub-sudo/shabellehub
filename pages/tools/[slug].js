@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { tools as staticTools } from '../../data';
+import { tools as staticTools, siteConfig } from '../../data';
 import { listTools } from '../../lib/cms/tools';
 
 /* -------------------------------------------------------------------------- */
@@ -801,7 +801,7 @@ export default function ToolPage({
 
   const canonical =
     safeUrl(canonical_url) ||
-    `https://shabellehub.com/tools/${encodeURIComponent(
+    `${siteConfig.url}/tools/${encodeURIComponent(
       tool.slug
     )}`;
 

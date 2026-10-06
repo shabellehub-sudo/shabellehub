@@ -10,6 +10,7 @@
 
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
+import { siteConfig } from '../../data';
 import { tools as staticTools } from '../../data';
 import { listTools } from '../../lib/cms/tools';
 import {
@@ -21,7 +22,7 @@ import {
 } from '../../lib/comparisons';
 import { StarRating } from '../../components/ui';
 
-const BASE_URL = 'https://shabellehub.com';
+const BASE_URL = siteConfig.url;
 
 export async function getStaticPaths() {
   const pairs = getAllComparisonPairs(staticTools).filter(isComparisonPairEligible);

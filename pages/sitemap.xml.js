@@ -1,5 +1,5 @@
 // pages/sitemap.xml.js — merges static tools + Supabase published posts
-import { tools as staticTools, categories } from '../data';
+import { tools as staticTools, categories, siteConfig } from '../data';
 import { teamMembers } from '../data/team';
 import { generateSitemapEntries } from '../lib/seo';
 import { listPublishedPosts } from '../lib/cms/posts';
@@ -7,7 +7,7 @@ import { listTools } from '../lib/cms/tools';
 import { isAlternativesPageEligible } from '../lib/alternatives';
 import { getAllComparisonPairs, isComparisonPairEligible, comparisonUrl } from '../lib/comparisons';
 
-const BASE_URL = 'https://shabellehub.com';
+const BASE_URL = siteConfig.url;
 
 function SitemapPage() { return null; }
 

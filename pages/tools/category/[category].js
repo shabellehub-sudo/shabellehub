@@ -74,7 +74,7 @@ export default function CategoryPage({ category, categoryTools, toolsCount, favo
           url: canonical,
           type: 'website',
           siteName: 'Shabelle Hub',
-          images: [{ url: 'https://shabellehub.com/og-image.png', width: 1200, height: 630, alt: title }],
+          images: [{ url: '${siteConfig.url}/og-image.png', width: 1200, height: 630, alt: title }],
         }}
         twitter={{ handle: '@shabellehub', site: '@shabellehub', cardType: 'summary_large_image' }}
       />

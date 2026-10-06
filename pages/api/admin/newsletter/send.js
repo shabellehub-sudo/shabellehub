@@ -38,7 +38,7 @@ async function sendViaResend({ to, fromName, fromEmail, subject, html, text }) {
 // ── Batch send (max 50 per batch, 100ms delay between batches) ───────────────
 async function batchSend({ subscribers, fromName, fromEmail, subject, settings, newsletter }) {
   const BATCH = 50;
-  const siteUrl = settings?.siteUrl || 'https://shabellehub.com';
+  const siteUrl = settings?.siteUrl || 'https://shabellehub.vercel.app';
   let failed = 0;
 
   for (let i = 0; i < subscribers.length; i += BATCH) {
@@ -158,7 +158,7 @@ export default async function handler(req, res) {
       }
 
       // Build preview HTML for UI
-      const siteUrl = settings?.siteUrl || 'https://shabellehub.com';
+      const siteUrl = settings?.siteUrl || 'https://shabellehub.vercel.app';
       const previewHtml = buildEmailHtml({
         subject:        newsletter.subject,
         previewText:    newsletter.previewText || '',
