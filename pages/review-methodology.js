@@ -52,17 +52,17 @@ const TESTING_STEPS = [
   {
     step: '1',
     title: 'Sign-up & First Impressions',
-    body: 'We create an account using the same onboarding flow a new user would experience, including the free tier where one exists. Friction points \u2014 confusing setup, required credit cards, unclear plan differences \u2014 are noted here.',
+    body: 'Where access is available, we use the same onboarding flow a new user would experience, including the free tier where one exists. Friction points \u2014 confusing setup, required credit cards, unclear plan differences \u2014 are noted here.',
   },
   {
     step: '2',
     title: 'Core Task Testing',
-    body: 'We run the tool through tasks typical for its category: writing and editing for chat assistants, code generation and debugging for coding tools, prompt-to-image generation for image tools, and so on. We pay attention to output quality, speed, and how often results need manual correction.',
+    body: 'Where access is available, we run the tool through tasks typical for its category: writing and editing for chat assistants, code generation and debugging for coding tools, prompt-to-image generation for image tools, and so on. We pay attention to output quality, speed, and how often results need manual correction.',
   },
   {
     step: '3',
     title: 'Limits & Edge Cases',
-    body: 'We test what happens at the edges \u2014 free-tier usage caps, longer inputs, less common requests \u2014 since these are often where marketing claims and real-world experience diverge most.',
+    body: 'Where access is available, we test what happens at the edges \u2014 free-tier usage caps, longer inputs, less common requests \u2014 since these are often where marketing claims and real-world experience diverge most.',
   },
   {
     step: '4',
