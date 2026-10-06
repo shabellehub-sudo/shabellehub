@@ -17,7 +17,7 @@ export function getFaqs({ toolsCount = 100, categoriesCount = 14 } = {}) {
     },
     {
       q: 'How do you test each tool?',
-      a: 'Every tool is signed up for and used hands-on across realistic tasks relevant to its category. We test the free tier where one exists, then the paid tier, and note specific strengths and limitations we encounter. Ratings reflect this testing, not vendor marketing claims.',
+      a: 'We evaluate tools using available product information, documented features, pricing, and hands-on testing where access is available. We note specific strengths and limitations we can verify, and our ratings are based on the evidence available to us rather than vendor marketing claims.',
     },
     {
       q: 'How often is content updated?',

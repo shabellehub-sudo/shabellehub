@@ -216,14 +216,13 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
           3. How Comparison Articles Differ from Tool Reviews
         </h2>
         <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7 }}>
-          Individual tool pages in our directory go through the hands-on
-          testing process described above. Multi-tool comparison articles
+          Individual tool pages in our directory may include hands-on
+          testing where access is available, using the process described above. Multi-tool comparison articles
           on our blog synthesize official documentation, published pricing,
           and feature information for each tool rather than running an
           identical task across every tool — this is disclosed at the
           end of each comparison article. Where a comparison references a
-          specific tool&apos;s rating, that rating reflects the tool&apos;s
-          individual hands-on review.
+          specific tool&apos;s rating, that rating reflects the available evidence and evaluation for that tool.
         </p>
       </section>
 
@@ -233,7 +232,7 @@ export default function ReviewMethodologyPage({ toolsCount: fetchedCount }) {
             4. How the Star Rating Is Calculated
           </h2>
           <p style={{ color: '#8ba3ca', fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>
-            Every tool receives a rating out of 5, weighted across five factors observed during testing:
+            Every tool receives a rating out of 5, weighted across five factors based on the evidence available for that tool:
           </p>
           <div style={{ background: '#0f1829', border: '1px solid #1a2d4a', borderRadius: 14, padding: 4, overflow: 'hidden' }}>
             {RATING_FACTORS.map((f, i) => (

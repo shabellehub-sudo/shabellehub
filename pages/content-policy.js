@@ -6,15 +6,15 @@ import { PageTitle } from '../components/ui';
 const SECTIONS = [
   {
     title: 'What We Cover',
-    body: 'Shabelle Hub publishes hands-on reviews of AI tools, comparison guides, and explainer articles aimed at people choosing between AI products. We select tools to cover based on reader demand and relevance to our existing categories, not based on advertising or affiliate opportunity. We do not publish content about tools we have not used.',
+    body: 'Shabelle Hub publishes hands-on reviews of AI tools, comparison guides, and explainer articles aimed at people choosing between AI products. We select tools to cover based on reader demand and relevance to our existing categories, not based on advertising or affiliate opportunity. We do not present unverified product claims as first-hand experience.',
   },
   {
     title: 'How Content Is Produced',
-    body: 'Every review starts with hands-on use of the product: signing up, testing core features across the free and paid tiers where applicable, and recording pricing and limits directly from the provider. A named author then drafts the review, and a named editor independently verifies factual claims (pricing, features, limits) against the provider\u2019s current website before publication. See our Review Methodology for the full process.',
+    body: 'Our reviews use available product information, official documentation, pricing, and hands-on testing where access is available. A named author drafts the review, and factual claims are checked against current provider information where possible. See our Review Methodology for the full process.',
   },
   {
     title: 'Use of AI Writing Tools',
-    body: 'As a site that reviews AI tools, we sometimes use AI-assisted drafting or research tools as part of our own workflow \u2014 for example, to organize research notes or produce a first-draft outline. Every published page is written, fact-checked, and approved by a named human author and reviewer before going live; AI assistance is never a substitute for hands-on testing, and ratings reflect the author\u2019s genuine assessment, not generated content.',
+    body: 'As a site that reviews AI tools, we sometimes use AI-assisted drafting or research tools as part of our own workflow — for example, to organize research notes or produce a first-draft outline. Every published page is reviewed by a human author or editor before going live; AI assistance is not presented as first-hand product experience, and ratings reflect the available evidence and editorial assessment rather than generated claims.',
   },
   {
     title: 'Sourcing Standards',

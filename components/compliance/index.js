@@ -40,8 +40,8 @@ export function AdvertisingNotice({ compact = false }) {
   if (compact) {
     return (
       <p style={{ color: '#8ba3ca', fontSize: 11, opacity: 0.7, lineHeight: 1.5 }}>
-        This page may display ads served by Google AdSense and other third-party networks. Ads are
-        labeled and never written or endorsed by our editorial team. See our{' '}
+        This site does not currently display third-party advertisements. Any future ads will be
+        clearly labeled and separate from editorial content. See our{' '}
         <Link href="/advertising-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Advertising Disclosure</Link>.
       </p>
     );
@@ -53,12 +53,11 @@ export function AdvertisingNotice({ compact = false }) {
     }}>
       <span aria-hidden="true" style={{ fontSize: 18 }}>📢</span>
       <p style={{ color: '#8ba3ca', fontSize: 13, lineHeight: 1.65 }}>
-        <strong style={{ color: '#e8f0ff' }}>Advertising:</strong> This site may show ads served by Google
-        AdSense and other third-party advertising networks. Advertisements are visually separated from and
-        clearly distinguishable from our editorial content, and advertisers have no influence over our
-        reviews, ratings, or rankings. Read our{' '}
+        <strong style={{ color: '#e8f0ff' }}>Advertising:</strong> Shabelle Hub does not currently display
+        third-party advertisements. If display advertising is introduced, ads will be clearly separated from
+        editorial content, and advertisers will have no influence over our reviews, ratings, or rankings. Read our{' '}
         <Link href="/advertising-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Advertising Disclosure</Link>{' '}
-        for details, including how ad personalization works and how to opt out.
+        for future advertising details and related choices.
       </p>
     </div>
   );
@@ -132,8 +131,8 @@ export function ComplianceBanner() {
       <span aria-hidden="true" style={{ fontSize: 18 }}>✅</span>
       <p style={{ color: '#8ba3ca', fontSize: 12, lineHeight: 1.65 }}>
         Shabelle Hub is reader-supported. We may earn an affiliate commission when you sign up for a tool
-        through our links, and this site may display ads served by Google AdSense and other networks.
-        Neither affects our editorial ratings.{' '}
+        through our links. Third-party display advertising is not currently active, and monetization does not
+        influence our editorial ratings.{' '}
         <Link href="/affiliate-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Affiliate Disclosure</Link>{' '}
         ·{' '}
         <Link href="/advertising-disclosure" style={{ color: '#14FFF4', textDecoration: 'underline' }}>Advertising Disclosure</Link>{' '}
