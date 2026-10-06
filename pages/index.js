@@ -159,7 +159,7 @@ export default function HomePage({ favorites = [], toggleFavorite, featuredPosts
         <div style={{ maxWidth: 1200, margin: '10px auto 0', display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap', alignItems: 'center', paddingTop: 10, borderTop: '1px solid rgba(26,45,74,0.6)' }}>
           {[
             { icon: '🛡️', text: 'No Paid Rankings or Sponsored Reviews' },
-            { icon: '🔍', text: 'Tools Hands-On Tested'      },
+            { icon: '🔍', text: 'Hands-On Testing Where Available'      },
             { icon: '📊', text: 'Honest Comparisons'   },
             { icon: '🔄', text: 'Updated Weekly'        },
           ].map(item => (

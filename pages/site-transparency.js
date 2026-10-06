@@ -42,9 +42,9 @@ export default function SiteTransparencyPage({ toolsCount: fetchedCount }) {
     { label: 'Site name', value: 'Shabelle Hub' },
     { label: 'Founded', value: formatDate('2024-01-15') },
     { label: 'Ownership', value: 'Independently owned and operated; founder-led editorial team (see Our Team).' },
-    { label: 'Primary funding sources', value: 'Affiliate commissions from tool sign-ups and, where enabled, display advertising (Google AdSense and similar networks).' },
+    { label: 'Primary funding sources', value: 'Affiliate commissions from qualifying tool sign-ups; third-party display advertising is not currently active.' },
     { label: 'Editorial control', value: 'All ratings, rankings, and written content are produced by our editorial team and are not paid for or approved by the companies we review.' },
-    { label: 'Tools currently reviewed', value: `${toolsCount}, each hands-on tested by a named author.` },
+    { label: 'Tools currently reviewed', value: `${toolsCount} tools currently reviewed, with evaluation based on available evidence and hands-on testing where access is available.` },
     { label: 'Contact', value: 'Via the Contact page for editorial questions, corrections, and advertising inquiries.' },
   ];
 

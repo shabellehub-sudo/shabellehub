@@ -17,7 +17,7 @@ const SECTIONS = [
   },
   {
     title: 'Advertising',
-    body: "This site may display advertisements served by Google AdSense and other third-party advertising networks. These networks may use cookies, device identifiers, and similar technologies to serve ads based on your visits to this and other websites. Google's use of advertising cookies enables it and its partners to serve ads based on your visit to this site and/or other sites on the internet. You can opt out of personalized advertising by visiting Google's Ads Settings, and you can learn more about how Google uses data from sites that use its services at Google's Privacy & Terms site.",
+    body: 'Shabelle Hub currently does not display third-party advertisements and does not currently use third-party advertising cookies. Our monetization may include affiliate commissions from qualifying tool sign-ups, as described in our Affiliate Disclosure. If display advertising is introduced in the future, this policy will be updated to explain the relevant advertising technologies and choices.',
   },
   {
     title: 'Affiliate Links',

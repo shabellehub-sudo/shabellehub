@@ -5,20 +5,20 @@ import { PageTitle } from '../components/ui';
 
 const SECTIONS = [
   {
-    title: 'Advertising on Shabelle Hub',
-    body: 'Shabelle Hub may display advertisements provided by Google AdSense and other third-party advertising networks. These ads help support the cost of researching, testing, and writing the independent AI tool reviews and guides published on this site.',
+    title: 'Advertising Status',
+    body: 'Shabelle Hub currently does not display third-party advertisements. Our current monetization may include affiliate commissions from qualifying tool sign-ups, as described in our Affiliate Disclosure.',
   },
   {
-    title: 'Ads Are Separate From Our Editorial Content',
-    body: 'Advertisements are visually distinguished from editorial content and are not written, reviewed, or approved by our editorial team. No advertiser \u2014 including companies whose tools we review \u2014 has any influence over our ratings, rankings, rankings order, or written opinions. An ad appearing alongside a review does not imply endorsement of the advertiser by Shabelle Hub, nor does it imply that the advertised product was reviewed.',
+    title: 'If Display Advertising Is Introduced',
+    body: 'Advertisements are visually distinguished from editorial content and are not written, reviewed, or approved by our editorial team. No advertiser \u2014 including companies whose tools we review \u2014 has any influence over our ratings, rankings, ranking order, or written opinions. An ad appearing alongside a review does not imply endorsement of the advertiser by Shabelle Hub, nor does it imply that the advertised product was reviewed.',
   },
   {
-    title: 'How Third-Party Vendors Use Cookies',
-    body: "Third-party vendors, including Google, use cookies and similar technologies to serve ads based on a visitor's prior visits to this and other websites. Google's use of advertising cookies enables it and its partners to serve ads to visitors based on their visit to this site and/or other sites on the internet.",
+    title: 'Third-Party Advertising Cookies',
+    body: 'Shabelle Hub currently does not use third-party advertising cookies to serve display advertisements. Any future advertising technology will be disclosed here when introduced.'
   },
   {
-    title: 'Your Choices: Opting Out of Personalized Ads',
-    body: "Visitors can opt out of the use of cookies for personalized advertising by visiting Google's Ads Settings. Alternatively, visitors can opt out of a third-party vendor's use of cookies for personalized advertising by visiting www.aboutads.info. Most browsers also allow you to block or delete cookies entirely, though this may affect other site functionality.",
+    title: 'Advertising Choices',
+    body: 'Because Shabelle Hub currently does not display third-party advertisements, there are no Shabelle Hub advertising cookies to opt out of. Browser privacy and cookie controls remain available for other site functionality.'
   },
   {
     title: 'Children\u2019s Privacy',
@@ -26,18 +26,18 @@ const SECTIONS = [
   },
   {
     title: 'Relationship to Affiliate Links',
-    body: 'Display advertising is separate from the affiliate links that appear within our reviews and articles (for example, "Try Free" or "Visit" buttons). For details on those relationships, see our Affiliate Disclosure.',
+    body: 'Affiliate links may appear within our reviews and articles, such as "Try Free" or "Visit" buttons. These links are separate from display advertising. For details on affiliate relationships, see our Affiliate Disclosure.',
   },
   {
     title: 'Questions',
-    body: 'If you have questions about advertising on Shabelle Hub or how to opt out of personalized ads, contact us via the Contact page.',
+    body: 'If you have questions about advertising or affiliate relationships on Shabelle Hub, contact us via the Contact page.',
   },
 ];
 
 export default function AdvertisingDisclosurePage() {
   const canonical = `${siteConfig.url}/advertising-disclosure`;
   const title = 'Advertising Disclosure — Shabelle Hub';
-  const description = 'How Shabelle Hub uses Google AdSense and third-party advertising, how ads relate to our editorial content, and how to control ad personalization.';
+  const description = 'Shabelle Hub advertising status, affiliate relationships, and our separation of monetization from editorial ratings and opinions.';
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
