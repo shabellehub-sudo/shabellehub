@@ -1,4 +1,7 @@
-# ShabelleHub - Owner Handover Guide
+# ShabelleHub — Buyer Handover Guide
+
+## 0. Purpose
+This guide covers the key steps for transferring, verifying, and operating the production ShabelleHub platform.
 
 ## 1. Tech Stack
 - Next.js 14 (Pages Router)
@@ -7,7 +10,7 @@
 - Resend email
 - Supabase Auth, roles via profiles.role
 
-## 2. Domain
+## 2. Production URL and Domain
 Site runs on vercel.app subdomain. No custom domain purchased yet.
 To add one: buy domain, add in Vercel Settings - Domains, update DNS, update NEXT_PUBLIC_SITE_URL.
 
@@ -59,3 +62,24 @@ Row Level Security is enabled on all public tables with policies scoped to is_st
 - Next.js is on the 14.x line (Pages Router); upgrade is optional
 - Screenshots/Gallery field exists in tool schema but has no admin UI yet
 - Some tools have stack/faqs fields populated, others do not (optional per-tool fields)
+
+
+## 12. Buyer Verification
+- [ ] GitHub repository and  branch verified
+- [ ] Vercel production deployment verified
+- [ ] Supabase database, Auth, Storage and RLS verified
+- [ ] Buyer admin account verified
+- [ ] Monitoring GitHub Action and recent run verified
+- [ ] Resend/email configuration verified
+- [ ] Sitemap, robots.txt and key pages verified
+
+## 13. Transfer Order
+1. GitHub → 2. Vercel → 3. Supabase → 4. Resend → 5. Verify production → 6. Rotate seller credentials.
+
+## 14. Asset Scope
+Included: source code, Git history, website, published content, admin functionality, monitoring workflow, database/storage subject to transfer, deployment configuration and documentation.
+
+Not automatically included: seller personal accounts, credentials, payment accounts, custom domain (none currently configured), or third-party affiliate accounts that cannot be transferred.
+
+## 15. Final Acceptance
+Handover is complete when the buyer controls the required infrastructure, can access the admin, production is operational, monitoring is working, and seller credentials have been revoked or rotated.
