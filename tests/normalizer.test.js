@@ -8,7 +8,7 @@ function check(name, fn) {
 }
 const filler = '<p>' + 'Real product content that must always survive normalization. '.repeat(8) + '</p>';
 
-check('normalizer version is 2', () => assert.equal(NORMALIZER_VERSION, 2));
+check('normalizer version is 3', () => assert.equal(NORMALIZER_VERSION, 3));
 
 check('">" inside a quoted attribute does not leak', () => {
   const t = stripHtml('<main><div class="flex [&>svg]:px-3 gap-2"><p>Basic plan $9 per month</p></div>' + filler + '</main>');
@@ -46,6 +46,17 @@ check('unbalanced cookie div leaves content alone', () => {
 check('deterministic output', () => {
   const html = '<main><p>A &amp; B</p>' + filler + '</main>';
   assert.equal(stripHtml(html), stripHtml(html));
+});
+
+check('tiny first <article> without <main> does not hide the page', () => {
+  const t = stripHtml('<body><article><p>Ramp quote about agents and a shared workspace for engineers.</p></article><section><h2>Plans</h2><p>Free $0 forever</p><p>Pro $20 per month</p></section>' + filler + filler + '</body>', 'https://example.com/');
+  assert.ok(t.includes('Pro $20 per month'), t);
+});
+
+check('a <main> holding most of the page is still used alone', () => {
+  const t = stripHtml('<body><header><p>Site header text outside main</p></header><main>' + filler + filler + '</main></body>', 'https://example.com/');
+  assert.ok(!t.includes('Site header text outside main'), t);
+  assert.ok(t.includes('Real product content'), t);
 });
 
 process.exit(failed ? 1 : 0);
