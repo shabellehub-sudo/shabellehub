@@ -2,7 +2,7 @@
 import { tools as staticTools, categories, siteConfig } from '../data';
 import { teamMembers } from '../data/team';
 import { generateSitemapEntries } from '../lib/seo';
-import { listPublishedPosts } from '../lib/cms/posts';
+import { adminListPublishedPosts } from '../lib/cms/postsAdmin';
 import { listTools } from '../lib/cms/tools';
 import { isAlternativesPageEligible } from '../lib/alternatives';
 import { getAllComparisonPairs, isComparisonPairEligible, comparisonUrl } from '../lib/comparisons';
@@ -24,7 +24,7 @@ export async function getServerSideProps({ res }) {
   // Try to get live posts from Supabase; fall back to empty array
   let livePosts = [];
   try {
-    const { data } = await listPublishedPosts({ limit: 500 });
+    const { data } = await adminListPublishedPosts({ limit: 500 });
     if (data && data.length > 0) {
       livePosts = data.map(p => ({
         slug: p.slug,
