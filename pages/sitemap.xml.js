@@ -30,6 +30,8 @@ export async function getServerSideProps({ res }) {
         slug: p.slug,
         category: p.category_name || '',
         date: p.published_at ? new Date(p.published_at).toISOString().split('T')[0] : '',
+        published_at: p.published_at || null,
+        updated_at: p.updated_at || null,
       }));
     }
   } catch { /* Supabase not configured — sitemap still works */ }
@@ -43,14 +45,18 @@ export async function getServerSideProps({ res }) {
     .map((p) => ({ url: comparisonUrl(p.slug1, p.slug2), changefreq: 'monthly', priority: 0.5 }));
 
   const entries = [...generateSitemapEntries(tools, livePosts, categories, teamMembers), ...alternativesEntries, ...comparisonEntries];
-  const today   = new Date().toISOString().split('T')[0];
+  const iso = (d) => {
+    if (!d) return '';
+    const t = new Date(d);
+    return Number.isNaN(t.getTime()) ? '' : t.toISOString();
+  };
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${entries.map(e => `  <url>
     <loc>${BASE_URL}${e.url}</loc>
-    <lastmod>${today}</lastmod>
+    ${iso(e.lastmod) ? `<lastmod>${iso(e.lastmod)}</lastmod>` : ''}
     <changefreq>${e.changefreq}</changefreq>
     <priority>${e.priority}</priority>
   </url>`).join('\n')}

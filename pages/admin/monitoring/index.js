@@ -59,6 +59,7 @@ export default function AdminMonitoringPage() {
   const [auditLog, setAuditLog] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [warning, setWarning] = useState(null);
   const [scanSlug, setScanSlug] = useState('');
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
@@ -146,9 +147,11 @@ export default function AdminMonitoringPage() {
   async function handleReview(id, decision) {
     const supabase = getSupabaseClient();
     const { data: { session } } = await supabase.auth.getSession();
+    setWarning(null);
     const result = await reviewChange(id, decision, session?.user?.id);
     if (result.error) { setError(result.error); return; }
-    load();
+    await load();
+    if (result.warning) setWarning(result.warning);
   }
 
   async function handleDismissAllLowPriority() {
@@ -178,10 +181,12 @@ export default function AdminMonitoringPage() {
     setMarkingUpdated((m) => ({ ...m, [id]: true }));
     const supabase = getSupabaseClient();
     const { data: { session } } = await supabase.auth.getSession();
+    setWarning(null);
     const result = await markEditorialUpdated(id, session?.user?.id);
     setMarkingUpdated((m) => ({ ...m, [id]: false }));
     if (result.error) { setError(result.error); return; }
-    load();
+    await load();
+    if (result.warning) setWarning(result.warning);
   }
 
   async function handleShip(id) {
@@ -258,6 +263,13 @@ export default function AdminMonitoringPage() {
   return (
     <AdminLayout title="Tool Monitoring">
       <ErrorBanner message={error} />
+      {warning && (
+        <div role="status" style={{ marginBottom: 16, padding: '10px 12px', borderRadius: 8,
+          border: '1px solid #f5a623', background: 'rgba(245,166,35,0.08)',
+          color: '#f5a623', fontSize: 12, lineHeight: 1.5 }}>
+          {warning}
+        </div>
+      )}
 
       <AdminCard style={{ marginBottom: 20 }}>
         <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 10 }}>Scan Now (manual)</h3>
